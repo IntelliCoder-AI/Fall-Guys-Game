@@ -1,0 +1,6 @@
+const KEY='bean-dash-profile-v2';
+const blank=()=>({version:2,id:globalThis.crypto?.randomUUID?.()||Math.random().toString(36).slice(2),name:'Guest Bean',color:'#ff5b9d',unlocked:1,selected:1,crowns:0,races:0,bests:{},sound:true});
+export function createProfileStore(storage){let persistent=true,p=blank();try{const saved=JSON.parse(storage.getItem(KEY)||'null');if(saved?.version===2){p={...p,...saved};p.unlocked=Math.min(3,Math.max(1,Number(p.unlocked)||1));p.selected=Math.min(p.unlocked,Math.max(1,Number(p.selected)||1));p.bests=typeof p.bests==='object'&&p.bests?p.bests:{}}storage.setItem(KEY,JSON.stringify(p))}catch{persistent=false}
+ const save=()=>{try{storage.setItem(KEY,JSON.stringify(p))}catch{persistent=false}};
+ return {get:()=>structuredClone(p),isPersistent:()=>persistent,update(patch){for(const k of ['name','color','sound','selected'])if(k in patch)p[k]=patch[k];p.name=String(p.name).slice(0,20);p.selected=Math.min(p.unlocked,Math.max(1,Number(p.selected)||1));save()},record(level,seconds,win){p.races++;if(win){p.unlocked=Math.max(p.unlocked,Math.min(3,level+1));if(Number.isFinite(seconds)&&seconds>0)p.bests[level]=Math.min(p.bests[level]||Infinity,seconds);if(level===3)p.crowns++}save()},reset(){p=blank();save()}};
+}
