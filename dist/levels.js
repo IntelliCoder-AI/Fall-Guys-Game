@@ -1,3 +1,4 @@
+import {REFERENCE_TIMES} from './balance.js';
 export const MAX_LEVEL=50;
 export const WORLDS=[
  {name:'Sunshore',subtitle:'Find your rhythm',sky:0xb8e8ee,slime:0x39abb7,track:0x45c9d0,edge:0xe6f9f4,accent:0xffb264,scenery:0xf7d5ad},
@@ -6,62 +7,121 @@ export const WORLDS=[
  {name:'Frostline',subtitle:'Keep your cool',sky:0xc7e0fa,slime:0x8bb6dc,track:0x91b9e4,edge:0xf3ffff,accent:0xff9a75,scenery:0xe7eff9},
  {name:'Skyline Summit',subtitle:'Earn your legend',sky:0xb5b7ef,slime:0x7765aa,track:0x9b87ca,edge:0xffeab2,accent:0xffc455,scenery:0xbca7d8}
 ];
-const NAMES=['First Flight','Crosswind','Switchback','Momentum','High Frequency','Side Hustle','Overdrive','No Looking Back','The Long Run','Crown Run'];
-// New mechanics are introduced throughout the tour, not just in its opening world.
+const NAMES=['First Flight','Wheel Works','Island Hopping','Fireball Run','Gate Runner','Switchback','Tidal Rush','Pressure Point','Overdrive','Crown Gauntlet'];
 export const OBSTACLES=[
- ['sweeper',1,'Sweepers','Jump over the rotating arms.'],['hurdle',1,'Hurdles','Jump the striped barriers.'],
- ['bumper',2,'Bumpers','Dodge the bouncing drums.'],['gate',3,'Sliding gates','Follow the opening as it moves sideways.'],
- ['hammer',4,'Hammers','Watch the swinging head and pass behind it.'],['roller',5,'Crossing rollers','Dodge the balls rolling across your lane.'],
- ['conveyor',7,'Conveyors','Run against the belt or jump to escape its pull.'],['ice',10,'Ice lanes','Steer early: momentum carries you across the ice.'],
- ['wind',13,'Crosswinds','Lean into the wind or choose the sheltered lane.'],['piston',16,'Crushers','Pass when the overhead press is raised.'],
- ['laser',19,'Laser fences','Jump the active beam or wait for green.'],['launchpad',22,'Launch pads','Use the spring to vault the course.'],
- ['trapdoor',25,'Trapdoors','Orange warns you: jump before the floor opens.'],['slalom',28,'Slalom walls','Weave through three alternating openings.'],
- ['tunnel',31,'Low tunnels','Dive through the low arch or take the outside lane.'],['mud',34,'Sticky slime','Jump across the purple patch to keep your speed.'],
- ['magnet',38,'Magnet fields','Steer away from the pulsing magnet.'],['pulse',42,'Shockwave rings','Jump the expanding ring when it reaches you.'],
- ['boulder',46,'Boulder chutes','Move sideways to avoid balls rolling toward you.']
+ ['hurdle',1,'Jump school','Jump the striped barriers. They span the entire track.'],
+ ['wheel',2,'Roaming wheels','Huge spoked wheels roll all the way from one edge to the other.'],
+ ['bridge',3,'Sea bridges','Center yourself before the narrow bridge. Open sides mean real falls.'],
+ ['fireballs',4,'Fireball volleys','Watch the launchers. Dodge the orange volleys crossing three lanes.'],
+ ['gate',5,'Moving openings','Follow the opening. The panels block both edges.'],
+ ['sweeper',6,'Rotating arms','Jump the low arm; stay clear of its return swing.'],
+ ['bumper',7,'Bumper lanes','Drums guard the outside lanes. Weave between them.'],
+ ['conveyor',8,'Reverse belts','Jump or sprint against the belt.'],
+ ['roller',9,'Crossing rollers','Dodge the balls rolling across the full track.'],
+ ['hammer',10,'Hammer gauntlet','Time your pass under the swinging hammers.'],
+ ['ice',11,'Ice run-ups','Brake early. Ice leads directly toward a jump.'],
+ ['wind',12,'Wind bridges','Counter the wind on the narrow, unguarded bridge.'],
+ ['piston',14,'Timed crushers','Wait for the press to rise, then sprint underneath.'],
+ ['laser',16,'Laser fences','Jump the beam or wait for the green signal.'],
+ ['launchpad',18,'Spring islands','Use the spring to vault the next obstacle.'],
+ ['trapdoor',20,'Checkerboard floors','Orange tiles warn before opening. Stay on the closed tiles.'],
+ ['slalom',22,'Slalom walls','Weave through alternating openings.'],
+ ['tunnel',24,'Dive tunnels','Slide beneath the arch. Both edges are blocked.'],
+ ['mud',26,'Sticky run-ups','Jump off the slime before it steals your momentum.'],
+ ['moving',28,'Moving platforms','Ride the drifting platform and line up your next landing.'],
+ ['magnet',30,'Magnet fields','Steer away from the pull near an exposed edge.'],
+ ['vanishing',32,'Vanishing islands','Wait for the platform to return, then cross before it fades.'],
+ ['pulse',34,'Shockwave rings','Jump the expanding ring while weaving through the walls.'],
+ ['boulder',38,'Boulder chutes','Dodge incoming boulders and find the next opening.']
 ].map(([type,unlock,name,tip])=>({type,unlock,name,tip}));
-export const LEVELS=Array.from({length:50},(_,i)=>{
- const id=i+1,world=WORLDS[Math.floor(i/10)],distance=1000+Math.round(59000*Math.pow(i/49,1.3)/100)*100;
- const hazardCount=Math.floor(distance/(32-i*.25)),obstacleTypes=OBSTACLES.filter(o=>o.unlock<=id).map(o=>o.type);
- // Allow time for steering, waiting for cycles and recovering from dense late-course hazards.
- const gold=Math.ceil(distance/10.5*1.25+hazardCount*(1.1+i*.025)+15),silver=Math.ceil(gold*1.35);
- return {id,name:NAMES[i%10],world:world.name,worldIndex:Math.floor(i/10),theme:world,tag:i%10===9?'WORLD FINALE':world.subtitle.toUpperCase(),description:`${distance.toLocaleString()}m. ${hazardCount} obstacles across ${obstacleTypes.length} mechanics.`,distance,finishZ:4-distance,width:22-i*.12,hazardCount,obstacleTypes,newObstacles:OBSTACLES.filter(o=>o.unlock===id),speed:1+i*.014,seconds:Math.ceil(silver*2+120),runners:16,qualify:16,sky:world.sky,slime:world.slime,colors:[world.track,world.track,world.track,world.accent],gold,silver,difficulty:Math.min(5,Math.floor(i/10)+1)};
-});
-export function levelById(id){return LEVELS[Math.max(0,Math.min(49,(Math.floor(Number(id))||1)-1))]}
-// All course arrays are ordered from start to finish. Binary range queries keep the
-// cost per physics step independent of course length.
+function metadata(id,endurance=false){
+ const i=id-1,w=Math.floor(i/10),stage=i%10,theme=WORLDS[w],newObstacles=OBSTACLES.filter(o=>o.unlock===id);
+ const challenge=Math.min(1,w*.18+stage*.022+(stage===9?.12:0))*(newObstacles.length&&id>1?.94:1);
+ const distance=endurance?1000+Math.round(59000*Math.pow(i/49,1.3)/100)*100:1000+75*i;
+ const reference=REFERENCE_TIMES[i]||(1000+75*i)/7.5+20;
+ const gold=Math.ceil((endurance?reference*distance/(1000+75*i):reference)*1.1),silver=Math.ceil(gold*1.3);
+ return {id:id+(endurance?100:0),number:id,mode:endurance?'endurance':'tour',name:NAMES[stage],world:theme.name,worldIndex:w,theme,tag:stage===9?'WORLD FINALE':newObstacles.length?'NEW CHALLENGE':theme.subtitle.toUpperCase(),distance,finishZ:4-distance,width:20-w*2.1-stage*.14,challenge,spacing:30-19*challenge,speed:.8+challenge*1.1,gap:3+challenge*4.8,qualify:endurance?16:stage===9?8:12,runners:16,gold,silver,referenceTime:reference,seconds:Math.ceil(silver*1.65+30),difficulty:w+1,newObstacles,obstacleTypes:OBSTACLES.filter(o=>o.unlock<=id).map(o=>o.type),sky:theme.sky,slime:theme.slime};
+}
+export const LEVELS=Array.from({length:50},(_,i)=>metadata(i+1));
+export const ENDURANCE_LEVELS=Array.from({length:50},(_,i)=>metadata(i+1,true));
+export function levelById(value){const n=Math.floor(Number(value))||1;return n>=101&&n<=150?ENDURANCE_LEVELS[n-101]:LEVELS[Math.max(0,Math.min(49,n-1))]}
 export function nearby(items,z,radius=24){let lo=0,hi=items.length;while(lo<hi){const m=(lo+hi)>>>1;if(items[m].z>z+radius)lo=m+1;else hi=m}const start=lo;while(lo<items.length&&items[lo].z>=z-radius)lo++;return items.slice(start,lo)}
 const cache=new Map();
-export function buildLevel(id=1){
- id=levelById(id).id;if(cache.has(id))return cache.get(id);
- const l=levelById(id),platforms=[],checkpoints=[{x:0,z:4}],hazards=[],coins=[],boosts=[];let front=12,index=0;
- while(front>l.finishZ-14){const remaining=front-(l.finishZ-14),length=remaining<80?remaining:44,back=front-length;platforms.push({x:0,z:(front+back)/2,w:l.width,d:length,color:l.theme.track});if(index>0&&index%2===0&&length>16&&front>l.finishZ+25)checkpoints.push({x:0,z:front-5});front=back-(index%3===1?3.1+id*.018:0);index++}
- const ground=z=>nearby(platforms,z,80).some(p=>Math.abs(z-p.z)<p.d/2-9);
- const usable=[];for(let z=-18;z>l.finishZ+25;z-=2)if(ground(z)&&!nearby(checkpoints,z,10).length)usable.push(z);
- for(let i=0;i<l.hazardCount;i++){
-  const z=usable[Math.min(usable.length-1,Math.floor(i*usable.length/l.hazardCount))];
-  // Lead with the latest mechanic; later sectors remix every unlocked type.
-  const type=l.obstacleTypes[(i+l.obstacleTypes.length-1)%l.obstacleTypes.length],lane=((i*7+id)%3-1)*4;
-  hazards.push({id:i,type,z,x:['sweeper','slalom','laser','pulse'].includes(type)?0:lane,r:Math.min(8,l.width/2-1),w:Math.min(8,5+id*.045),d:8,speed:(.95+(i%3)*.18)*l.speed*(i%2?-1:1),phase:i*1.7,height:type==='hurdle'?.85:1.3});
+export function buildLevel(value=1){
+ const l=levelById(value);if(cache.has(l.id))return cache.get(l.id);
+ const platforms=[],hazards=[],checkpoints=[{x:0,z:4}],coins=[],boosts=[],sections=[];
+ const has=t=>l.obstacleTypes.includes(t),types=l.obstacleTypes.filter(t=>!['bridge','moving','vanishing'].includes(t));
+ let front=12,index=0,serial=0;
+ const addPlatform=(a,b,width,kind='track',phase=0)=>platforms.push({x:0,z:(a+b)/2,w:width,d:a-b,kind,rails:kind==='track'&&l.worldIndex===0,motion:kind==='moving'?'moving':kind==='vanishing'?'vanishing':null,phase,color:l.theme.track});
+ function hazard(type,z,x=0,extra={}){const full=['hurdle','gate','conveyor','ice','piston','laser','tunnel','mud'].includes(type);const h={id:serial++,type,z,x,r:l.width/2-.45,w:type==='piston'?l.width*.65:full?l.width:Math.min(6,l.width*.48),trackWidth:l.width,d:6,speed:l.speed*(1+(serial%3)*.08)*(serial%2?1:-1),phase:(serial*.37)%1,height:type==='hurdle'?.65+l.challenge*.65:2.8,opening:Math.max(3,5-l.challenge*1.7),challenge:l.challenge,...extra};hazards.push(h);return h}
+ while(front>l.finishZ-14){
+  const length=Math.min(100,front-(l.finishZ-14)),back=front-length,last=back<=l.finishZ-14,finale=l.number%10===0;
+  let kind='track';if(index>0&&length>80&&!last){if(has('bridge')&&index%3===1)kind='bridge';if(has('moving')&&index%7===3)kind='moving';if(has('vanishing')&&index%7===5)kind='vanishing'}
+  if(index>0&&front>l.finishZ+30)checkpoints.push({x:0,z:front-6});
+  const narrow=Math.max(3.6,6.4-l.challenge*2.7);
+  if(kind==='track')addPlatform(front,back,l.width);
+  else{addPlatform(front,front-24,l.width);if(kind==='vanishing'){for(let j=0;j<3;j++)addPlatform(front-24-j*17,front-38-j*17,narrow,'vanishing',-j*.24+index*.11);addPlatform(front-75,back,l.width)}else{addPlatform(front-24,front-76,narrow,kind,index*.7);addPlatform(front-76,back,l.width)}}
+  const section={index,front,back,z:(front+back)/2,kind,title:kind==='track'?'Obstacle arena':kind==='bridge'?'Sea crossing':kind==='moving'?'Drifting island':'Vanishing islands'};sections.push(section);
+  if(kind!=='track'){
+   hazard(kind,front-48,0,{w:narrow,d:40});
+   if(has('wind')){hazard('wind',front-44,0,{w:narrow,d:20});section.title='Crosswind crossing'}
+   if(has('fireballs')&&index%2===0)hazard('fireballs',front-67,0,{w:narrow});
+  }else{
+   const sectionStart=hazards.length;
+   const rows=Math.max(1,Math.min(Math.floor((length-24)/10),Math.round((length-24)/l.spacing)));
+   for(let j=0;j<rows;j++){
+    const z=front-18-j*(length-32)/Math.max(1,rows-1);
+    let type=types[(index*5+j*3+Math.floor(index/3))%types.length];
+    if(l.number===1)type='hurdle';
+    if(index===0&&j===0&&l.newObstacles.length)type=l.newObstacles.at(-1).type;
+    if(type==='sweeper'&&(index+j)%3!==0)type=has('wheel')?'wheel':'hurdle';
+    // The outside lanes are part of the course, not a permanent bypass.
+    const lane=['bumper','hammer','boulder'].includes(type)?(j%2?1:-1)*(l.width/2-1.2):0;
+    hazard(type,z,lane);
+   }
+   // A section has one authored combo; replace its generic rows so unrelated
+   // barriers cannot accidentally seal the intended route.
+   let combo=null;
+   if(l.worldIndex>=1&&length>85){if(has('laser')&&index%5===0)combo='gate';else if(has('piston')&&index%5===2)combo='press';else if(has('pulse')&&index%5===4)combo='pulse'}
+   if(finale&&index%3===2&&length>85)combo='finale';
+   if(combo){hazards.splice(sectionStart);hazard('hurdle',front-18);
+    if(combo==='gate'){hazard('gate',front-35);hazard('laser',front-46);hazard('wheel',front-68);section.title='Gate + laser'}
+    if(combo==='press'){hazard('conveyor',front-46);hazard('piston',front-46);hazard('wheel',front-70);section.title='Pressure belt'}
+    if(combo==='pulse'){hazard('slalom',front-40);hazard('pulse',front-53);hazard('fireballs',front-72);section.title='Shockwave slalom'}
+    if(combo==='finale'){hazard('wheel',front-34);hazard('gate',front-53);hazard('fireballs',front-72);section.title='Finale gauntlet'}
+    if(l.worldIndex>=2)hazard('hurdle',front-87);
+   }
+
+  }
+  const gap=!last&&back>l.finishZ+28&&index%3===1?l.gap:0;
+  if(gap&&has('ice'))hazard(index%2&&has('mud')?'mud':'ice',back+5,0,{d:8});
+  front=back-gap;index++;
  }
- let coinId=0;for(let z=-10;z>l.finishZ+10;z-=8)if(nearby(platforms,z,80).some(p=>Math.abs(z-p.z)<p.d/2-4))coins.push({id:coinId++,x:Math.sin(coinId*.65)*5,y:1.2,z});
- for(const p of checkpoints.slice(1))boosts.push({x:0,z:p.z-9,w:5,d:3});
- const result={...l,platforms,checkpoints,hazards,coins,boosts};cache.set(id,result);return result;
+ // Keep first introductions legible and preserve safe checkpoint landing areas.
+ hazards.sort((a,b)=>b.z-a.z);for(const p of checkpoints.slice(1))boosts.push({x:0,z:p.z-6,w:3,d:2});
+ let coinId=0;for(let z=-12;z>l.finishZ+12;z-=9){const p=nearby(platforms,z,100).find(p=>Math.abs(z-p.z)<p.d/2-2);if(p)coins.push({id:coinId++,x:Math.sin(coinId*.7)*Math.min(3,p.w*.25),y:1.2,z})}
+ const result={...l,hazardCount:hazards.length,platforms,hazards,checkpoints,coins,boosts,sections};cache.set(l.id,result);return result;
 }
+// Populate lobby counts from the same section generator used by physics.
+for(const l of[...LEVELS,...ENDURANCE_LEVELS])l.hazardCount=buildLevel(l.id).hazardCount;
+export function platformPosition(p,t=0){if(p.motion==='moving')return {x:Math.sin(t*.8+p.phase)*2.1,active:true};if(p.motion==='vanishing'){const cycle=((t*.16+p.phase)%1+1)%1;return {x:0,active:cycle<.76,warning:cycle>.58}}return {x:p.x,active:true}}
+export function obstaclePosition(h,t,level){
+ const l=levelById(level),cycle=((t*Math.abs(h.speed)*.22+h.phase)%1+1)%1,width=h.trackWidth||l.width;
+ if(h.type==='wheel'||h.type==='roller')return {x:Math.sin(t*Math.abs(h.speed)+h.phase)*(width/2-.3),y:h.type==='wheel'?1.8:1.1,z:h.z};
+ if(h.type==='bumper')return {x:h.x+Math.sin(t*1.4+h.phase)*.6,y:.9,z:h.z};
+ if(h.type==='gate')return {x:Math.sin(t*Math.abs(h.speed)*.6+h.phase)*(width/2-h.opening/2-.3),y:1.4,z:h.z};
+ if(h.type==='hammer')return {x:Math.sin(t*Math.abs(h.speed)+h.phase)*(width/2-.5),y:1.6,z:h.z};
+ if(h.type==='piston'){const safe=.46-l.challenge*.15;return {x:h.x,y:cycle<safe?4.5:cycle<safe+.12?4.5-(cycle-safe)/.12*4:cycle<.86?.5:.5+(cycle-.86)/.14*4,z:h.z,active:cycle>=safe&&cycle<.86}}
+ if(h.type==='laser')return {x:0,y:.7,z:h.z,active:cycle<.6+l.challenge*.15};
+ if(h.type==='trapdoor')return {x:h.x,y:0,z:h.z,active:cycle>.54,warning:cycle>.38};
+ if(h.type==='pulse')return {x:0,y:.3,z:h.z,radius:cycle*(width*.75),active:cycle<.9};
+ if(h.type==='boulder')return {x:h.x,y:1.2,z:h.z-8+cycle*16,active:true};
+ return {x:h.x,y:.7,z:h.z,cycle};
+}
+export function fireballPositions(h,t){return Array.from({length:3},(_,i)=>{const cycle=((t*(.24+Math.abs(h.speed)*.1)+i*.31+h.phase)%1+1)%1;return {x:(cycle-.5)*(h.trackWidth+6)*(i%2?-1:1),y:1.1+i%2*.4,z:h.z+(i-1)*3,active:cycle>.07&&cycle<.93}})}
 export const getPlatforms=id=>buildLevel(id).platforms;
 export const getSweepers=id=>buildLevel(id).hazards.filter(h=>h.type==='sweeper');
 export const getBumpers=id=>buildLevel(id).hazards.filter(h=>h.type==='bumper');
-export function obstaclePosition(h,t,level){
- const l=levelById(level),cycle=((t*Math.abs(h.speed)*.22+h.phase)%1+1)%1;
- if(h.type==='bumper')return {x:h.x+Math.sin(t*1.4+h.phase)*Math.min(2.2,.8+level*.025),y:.9,z:h.z};
- if(h.type==='gate'||h.type==='hammer')return {x:Math.sin(t*Math.abs(h.speed)+h.phase)*(l.width/2-h.w/2-1),y:h.type==='hammer'?1.6:.7,z:h.z};
- if(h.type==='roller')return {x:Math.sin(t*Math.abs(h.speed)+h.phase)*(l.width/2-2),y:1.1,z:h.z};
- if(h.type==='piston')return {x:h.x,y:cycle<.45?4.5:cycle<.6?4.5-(cycle-.45)/.15*4:cycle<.82?.5:.5+(cycle-.82)/.18*4,z:h.z,active:cycle>=.45&&cycle<.82};
- if(h.type==='laser')return {x:0,y:.7,z:h.z,active:cycle<.6};
- if(h.type==='trapdoor')return {x:h.x,y:0,z:h.z,active:cycle>.64,warning:cycle>.45};
- if(h.type==='pulse')return {x:0,y:.3,z:h.z,radius:cycle*9,active:cycle<.85};
- if(h.type==='boulder')return {x:h.x,y:1.2,z:h.z-6+cycle*12,active:true};
- return {x:h.x,y:.7,z:h.z,cycle};
-}
 export const bumperX=(h,t,id)=>obstaclePosition(h,t,id).x;
 export const gateX=(h,t,id=1)=>obstaclePosition(h,t,id).x;
+export function trapdoorTiles(h,t,level){const width=h.trackWidth/3;return Array.from({length:6},(_,i)=>{const col=i%3,row=Math.floor(i/3),state=obstaclePosition({...h,phase:h.phase+(col+row)*.5},t,level);return {x:(col-1)*width,z:h.z+(row-.5)*4,w:width-.08,d:3.92,active:state.active,warning:state.warning}})}

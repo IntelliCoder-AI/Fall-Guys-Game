@@ -1,0 +1,1202 @@
+[
+  {
+    "level": 1,
+    "world": 0,
+    "distance": 1000,
+    "hazards": 31,
+    "reference": 89.4,
+    "attempts": [
+      {
+        "time": 89.4,
+        "hits": 0,
+        "falls": 0
+      },
+      {
+        "time": 89.4,
+        "hits": 0,
+        "falls": 0
+      },
+      {
+        "time": 89.5,
+        "hits": 0,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 2,
+    "world": 0,
+    "distance": 1075,
+    "hazards": 32,
+    "reference": 100.8,
+    "attempts": [
+      {
+        "time": 99.37,
+        "hits": 0,
+        "falls": 0
+      },
+      {
+        "time": 100.8,
+        "hits": 0,
+        "falls": 0
+      },
+      {
+        "time": 100.8,
+        "hits": 0,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 3,
+    "world": 0,
+    "distance": 1150,
+    "hazards": 26,
+    "reference": 103.83,
+    "attempts": [
+      {
+        "time": 103.83,
+        "hits": 0,
+        "falls": 0
+      },
+      {
+        "time": 103.83,
+        "hits": 0,
+        "falls": 0
+      },
+      {
+        "time": 103.87,
+        "hits": 0,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 4,
+    "world": 0,
+    "distance": 1225,
+    "hazards": 31,
+    "reference": 117.9,
+    "attempts": [
+      {
+        "time": 117.9,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 117.9,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 119.23,
+        "hits": 4,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 5,
+    "world": 0,
+    "distance": 1300,
+    "hazards": 34,
+    "reference": 128.9,
+    "attempts": [
+      {
+        "time": 128.57,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 128.9,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 129.43,
+        "hits": 2,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 6,
+    "world": 0,
+    "distance": 1375,
+    "hazards": 35,
+    "reference": 135.43,
+    "attempts": [
+      {
+        "time": 135.43,
+        "hits": 5,
+        "falls": 0
+      },
+      {
+        "time": 135.43,
+        "hits": 5,
+        "falls": 0
+      },
+      {
+        "time": 135.43,
+        "hits": 5,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 7,
+    "world": 0,
+    "distance": 1450,
+    "hazards": 35,
+    "reference": 138.5,
+    "attempts": [
+      {
+        "time": 137.33,
+        "hits": 0,
+        "falls": 0
+      },
+      {
+        "time": 138.5,
+        "hits": 5,
+        "falls": 0
+      },
+      {
+        "time": 138.5,
+        "hits": 5,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 8,
+    "world": 0,
+    "distance": 1525,
+    "hazards": 38,
+    "reference": 147.37,
+    "attempts": [
+      {
+        "time": 147.37,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 147.37,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 147.4,
+        "hits": 2,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 9,
+    "world": 0,
+    "distance": 1600,
+    "hazards": 41,
+    "reference": 155.77,
+    "attempts": [
+      {
+        "time": 155.37,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 155.77,
+        "hits": 3,
+        "falls": 0
+      },
+      {
+        "time": 155.77,
+        "hits": 3,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 10,
+    "world": 0,
+    "distance": 1675,
+    "hazards": 47,
+    "reference": 163.63,
+    "attempts": [
+      {
+        "time": 163.63,
+        "hits": 4,
+        "falls": 0
+      },
+      {
+        "time": 163.63,
+        "hits": 4,
+        "falls": 0
+      },
+      {
+        "time": 163.63,
+        "hits": 4,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 11,
+    "world": 1,
+    "distance": 1750,
+    "hazards": 49,
+    "reference": 165.2,
+    "attempts": [
+      {
+        "time": 165.2,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 165.2,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 166.23,
+        "hits": 4,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 12,
+    "world": 1,
+    "distance": 1825,
+    "hazards": 58,
+    "reference": 174.6,
+    "attempts": [
+      {
+        "time": 170.7,
+        "hits": 0,
+        "falls": 0
+      },
+      {
+        "time": 174.6,
+        "hits": 4,
+        "falls": 0
+      },
+      {
+        "time": 174.6,
+        "hits": 4,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 13,
+    "world": 1,
+    "distance": 1900,
+    "hazards": 60,
+    "reference": 178.5,
+    "attempts": [
+      {
+        "time": 178.5,
+        "hits": 1,
+        "falls": 0
+      },
+      {
+        "time": 178.5,
+        "hits": 1,
+        "falls": 0
+      },
+      {
+        "time": 178.5,
+        "hits": 1,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 14,
+    "world": 1,
+    "distance": 1975,
+    "hazards": 65,
+    "reference": 192.73,
+    "attempts": [
+      {
+        "time": 190.9,
+        "hits": 1,
+        "falls": 0
+      },
+      {
+        "time": 192.73,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 192.73,
+        "hits": 2,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 15,
+    "world": 1,
+    "distance": 2050,
+    "hazards": 67,
+    "reference": 199.67,
+    "attempts": [
+      {
+        "time": 199.6,
+        "hits": 4,
+        "falls": 0
+      },
+      {
+        "time": 199.67,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 199.67,
+        "hits": 2,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 16,
+    "world": 1,
+    "distance": 2125,
+    "hazards": 74,
+    "reference": 199.77,
+    "attempts": [
+      {
+        "time": 199.77,
+        "hits": 0,
+        "falls": 0
+      },
+      {
+        "time": 199.77,
+        "hits": 0,
+        "falls": 0
+      },
+      {
+        "time": 199.77,
+        "hits": 0,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 17,
+    "world": 1,
+    "distance": 2200,
+    "hazards": 76,
+    "reference": 210.13,
+    "attempts": [
+      {
+        "time": 210.1,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 210.13,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 210.13,
+        "hits": 2,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 18,
+    "world": 1,
+    "distance": 2275,
+    "hazards": 78,
+    "reference": 217.67,
+    "attempts": [
+      {
+        "time": 213.9,
+        "hits": 1,
+        "falls": 0
+      },
+      {
+        "time": 217.67,
+        "hits": 1,
+        "falls": 0
+      },
+      {
+        "time": 217.67,
+        "hits": 1,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 19,
+    "world": 1,
+    "distance": 2350,
+    "hazards": 80,
+    "reference": 224.83,
+    "attempts": [
+      {
+        "time": 224.83,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 224.83,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 224.83,
+        "hits": 2,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 20,
+    "world": 1,
+    "distance": 2425,
+    "hazards": 93,
+    "reference": 232.87,
+    "attempts": [
+      {
+        "time": 232.77,
+        "hits": 3,
+        "falls": 0
+      },
+      {
+        "time": 232.87,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 232.87,
+        "hits": 2,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 21,
+    "world": 2,
+    "distance": 2500,
+    "hazards": 93,
+    "reference": 241.07,
+    "attempts": [
+      {
+        "time": 241.07,
+        "hits": 3,
+        "falls": 1
+      },
+      {
+        "time": 241.07,
+        "hits": 3,
+        "falls": 1
+      },
+      {
+        "time": 246.7,
+        "hits": 1,
+        "falls": 2
+      }
+    ]
+  },
+  {
+    "level": 22,
+    "world": 2,
+    "distance": 2575,
+    "hazards": 95,
+    "reference": 241.4,
+    "attempts": [
+      {
+        "time": 241.23,
+        "hits": 0,
+        "falls": 0
+      },
+      {
+        "time": 241.4,
+        "hits": 1,
+        "falls": 0
+      },
+      {
+        "time": 241.4,
+        "hits": 1,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 23,
+    "world": 2,
+    "distance": 2650,
+    "hazards": 96,
+    "reference": 250.9,
+    "attempts": [
+      {
+        "time": 250.9,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 250.9,
+        "hits": 2,
+        "falls": 0
+      },
+      {
+        "time": 250.9,
+        "hits": 2,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 24,
+    "world": 2,
+    "distance": 2725,
+    "hazards": 100,
+    "reference": 302.67,
+    "attempts": [
+      {
+        "time": 302.63,
+        "hits": 3,
+        "falls": 5
+      },
+      {
+        "time": 302.67,
+        "hits": 2,
+        "falls": 5
+      },
+      {
+        "time": 302.67,
+        "hits": 2,
+        "falls": 5
+      }
+    ]
+  },
+  {
+    "level": 25,
+    "world": 2,
+    "distance": 2800,
+    "hazards": 112,
+    "reference": 290.07,
+    "attempts": [
+      {
+        "time": 272.63,
+        "hits": 7,
+        "falls": 0
+      },
+      {
+        "time": 290.07,
+        "hits": 4,
+        "falls": 4
+      },
+      {
+        "time": 290.07,
+        "hits": 4,
+        "falls": 4
+      }
+    ]
+  },
+  {
+    "level": 26,
+    "world": 2,
+    "distance": 2875,
+    "hazards": 116,
+    "reference": 286.87,
+    "attempts": [
+      {
+        "time": 286.87,
+        "hits": 6,
+        "falls": 1
+      },
+      {
+        "time": 286.87,
+        "hits": 6,
+        "falls": 1
+      },
+      {
+        "time": 287.47,
+        "hits": 6,
+        "falls": 1
+      }
+    ]
+  },
+  {
+    "level": 27,
+    "world": 2,
+    "distance": 2950,
+    "hazards": 119,
+    "reference": 293.27,
+    "attempts": [
+      {
+        "time": 292.17,
+        "hits": 7,
+        "falls": 0
+      },
+      {
+        "time": 293.27,
+        "hits": 8,
+        "falls": 0
+      },
+      {
+        "time": 293.27,
+        "hits": 8,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 28,
+    "world": 2,
+    "distance": 3025,
+    "hazards": 116,
+    "reference": 295.23,
+    "attempts": [
+      {
+        "time": 295.23,
+        "hits": 7,
+        "falls": 0
+      },
+      {
+        "time": 295.23,
+        "hits": 6,
+        "falls": 1
+      },
+      {
+        "time": 295.23,
+        "hits": 6,
+        "falls": 1
+      }
+    ]
+  },
+  {
+    "level": 29,
+    "world": 2,
+    "distance": 3100,
+    "hazards": 119,
+    "reference": 301.77,
+    "attempts": [
+      {
+        "time": 301.77,
+        "hits": 8,
+        "falls": 0
+      },
+      {
+        "time": 301.77,
+        "hits": 8,
+        "falls": 0
+      },
+      {
+        "time": 301.83,
+        "hits": 7,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 30,
+    "world": 2,
+    "distance": 3175,
+    "hazards": 129,
+    "reference": 311.2,
+    "attempts": [
+      {
+        "time": 311.2,
+        "hits": 7,
+        "falls": 0
+      },
+      {
+        "time": 311.2,
+        "hits": 7,
+        "falls": 0
+      },
+      {
+        "time": 311.73,
+        "hits": 6,
+        "falls": 0
+      }
+    ]
+  },
+  {
+    "level": 31,
+    "world": 3,
+    "distance": 3250,
+    "hazards": 125,
+    "reference": 331.37,
+    "attempts": [
+      {
+        "time": 331.37,
+        "hits": 3,
+        "falls": 2
+      },
+      {
+        "time": 331.37,
+        "hits": 2,
+        "falls": 2
+      },
+      {
+        "time": 331.37,
+        "hits": 2,
+        "falls": 2
+      }
+    ]
+  },
+  {
+    "level": 32,
+    "world": 3,
+    "distance": 3325,
+    "hazards": 124,
+    "reference": 375.97,
+    "attempts": [
+      {
+        "time": 375.97,
+        "hits": 8,
+        "falls": 9
+      },
+      {
+        "time": 375.97,
+        "hits": 8,
+        "falls": 9
+      },
+      {
+        "time": 375.97,
+        "hits": 8,
+        "falls": 9
+      }
+    ]
+  },
+  {
+    "level": 33,
+    "world": 3,
+    "distance": 3400,
+    "hazards": 126,
+    "reference": 361.1,
+    "attempts": [
+      {
+        "time": 361.1,
+        "hits": 2,
+        "falls": 6
+      },
+      {
+        "time": 361.1,
+        "hits": 2,
+        "falls": 6
+      },
+      {
+        "time": 361.1,
+        "hits": 2,
+        "falls": 6
+      }
+    ]
+  },
+  {
+    "level": 34,
+    "world": 3,
+    "distance": 3475,
+    "hazards": 130,
+    "reference": 367.43,
+    "attempts": [
+      {
+        "time": 367.43,
+        "hits": 13,
+        "falls": 4
+      },
+      {
+        "time": 367.43,
+        "hits": 13,
+        "falls": 4
+      },
+      {
+        "time": 374.73,
+        "hits": 18,
+        "falls": 5
+      }
+    ]
+  },
+  {
+    "level": 35,
+    "world": 3,
+    "distance": 3550,
+    "hazards": 133,
+    "reference": 375.07,
+    "attempts": [
+      {
+        "time": 375.07,
+        "hits": 11,
+        "falls": 4
+      },
+      {
+        "time": 375.07,
+        "hits": 11,
+        "falls": 4
+      },
+      {
+        "time": 375.07,
+        "hits": 11,
+        "falls": 4
+      }
+    ]
+  },
+  {
+    "level": 36,
+    "world": 3,
+    "distance": 3625,
+    "hazards": 136,
+    "reference": 550.93,
+    "attempts": [
+      {
+        "time": 550.93,
+        "hits": 17,
+        "falls": 31
+      },
+      {
+        "time": 550.93,
+        "hits": 17,
+        "falls": 31
+      },
+      {
+        "time": 550.93,
+        "hits": 17,
+        "falls": 31
+      }
+    ]
+  },
+  {
+    "level": 37,
+    "world": 3,
+    "distance": 3700,
+    "hazards": 139,
+    "reference": 414.1,
+    "attempts": [
+      {
+        "time": 414.1,
+        "hits": 18,
+        "falls": 8
+      },
+      {
+        "time": 414.1,
+        "hits": 15,
+        "falls": 9
+      },
+      {
+        "time": 414.1,
+        "hits": 15,
+        "falls": 9
+      }
+    ]
+  },
+  {
+    "level": 38,
+    "world": 3,
+    "distance": 3775,
+    "hazards": 143,
+    "reference": 402.93,
+    "attempts": [
+      {
+        "time": 402.93,
+        "hits": 9,
+        "falls": 7
+      },
+      {
+        "time": 402.93,
+        "hits": 9,
+        "falls": 7
+      },
+      {
+        "time": 402.93,
+        "hits": 9,
+        "falls": 7
+      }
+    ]
+  },
+  {
+    "level": 39,
+    "world": 3,
+    "distance": 3850,
+    "hazards": 154,
+    "reference": 481.37,
+    "attempts": [
+      {
+        "time": 481.37,
+        "hits": 19,
+        "falls": 17
+      },
+      {
+        "time": 481.37,
+        "hits": 19,
+        "falls": 17
+      },
+      {
+        "time": 481.37,
+        "hits": 19,
+        "falls": 17
+      }
+    ]
+  },
+  {
+    "level": 40,
+    "world": 3,
+    "distance": 3925,
+    "hazards": 158,
+    "reference": 423.93,
+    "attempts": [
+      {
+        "time": 423.93,
+        "hits": 15,
+        "falls": 5
+      },
+      {
+        "time": 423.93,
+        "hits": 15,
+        "falls": 5
+      },
+      {
+        "time": 462.53,
+        "hits": 17,
+        "falls": 13
+      }
+    ]
+  },
+  {
+    "level": 41,
+    "world": 4,
+    "distance": 4000,
+    "hazards": 156,
+    "reference": 427,
+    "attempts": [
+      {
+        "time": 427,
+        "hits": 18,
+        "falls": 5
+      },
+      {
+        "time": 427,
+        "hits": 20,
+        "falls": 5
+      },
+      {
+        "time": 427,
+        "hits": 20,
+        "falls": 5
+      }
+    ]
+  },
+  {
+    "level": 42,
+    "world": 4,
+    "distance": 4075,
+    "hazards": 161,
+    "reference": 509.5,
+    "attempts": [
+      {
+        "time": 447.8,
+        "hits": 21,
+        "falls": 7
+      },
+      {
+        "time": 509.5,
+        "hits": 23,
+        "falls": 18
+      },
+      {
+        "time": 509.5,
+        "hits": 23,
+        "falls": 18
+      }
+    ]
+  },
+  {
+    "level": 43,
+    "world": 4,
+    "distance": 4150,
+    "hazards": 165,
+    "reference": 468,
+    "attempts": [
+      {
+        "time": 468,
+        "hits": 21,
+        "falls": 9
+      },
+      {
+        "time": 468,
+        "hits": 21,
+        "falls": 9
+      },
+      {
+        "time": 468,
+        "hits": 21,
+        "falls": 9
+      }
+    ]
+  },
+  {
+    "level": 44,
+    "world": 4,
+    "distance": 4225,
+    "hazards": 166,
+    "reference": 448.07,
+    "attempts": [
+      {
+        "time": 448.07,
+        "hits": 21,
+        "falls": 5
+      },
+      {
+        "time": 448.07,
+        "hits": 21,
+        "falls": 5
+      },
+      {
+        "time": 483.9,
+        "hits": 24,
+        "falls": 10
+      }
+    ]
+  },
+  {
+    "level": 45,
+    "world": 4,
+    "distance": 4300,
+    "hazards": 170,
+    "reference": 535.57,
+    "attempts": [
+      {
+        "time": 535.57,
+        "hits": 24,
+        "falls": 18
+      },
+      {
+        "time": 535.57,
+        "hits": 24,
+        "falls": 18
+      },
+      {
+        "time": 535.57,
+        "hits": 24,
+        "falls": 18
+      }
+    ]
+  },
+  {
+    "level": 46,
+    "world": 4,
+    "distance": 4375,
+    "hazards": 174,
+    "reference": 501.93,
+    "attempts": [
+      {
+        "time": 501.93,
+        "hits": 24,
+        "falls": 11
+      },
+      {
+        "time": 501.93,
+        "hits": 24,
+        "falls": 11
+      },
+      {
+        "time": 501.93,
+        "hits": 24,
+        "falls": 11
+      }
+    ]
+  },
+  {
+    "level": 47,
+    "world": 4,
+    "distance": 4450,
+    "hazards": 186,
+    "reference": 537.97,
+    "attempts": [
+      {
+        "time": 537.97,
+        "hits": 24,
+        "falls": 16
+      },
+      {
+        "time": 537.97,
+        "hits": 24,
+        "falls": 16
+      },
+      {
+        "time": 552.1,
+        "hits": 25,
+        "falls": 18
+      }
+    ]
+  },
+  {
+    "level": 48,
+    "world": 4,
+    "distance": 4525,
+    "hazards": 186,
+    "reference": 490.77,
+    "attempts": [
+      {
+        "time": 490.77,
+        "hits": 21,
+        "falls": 7
+      },
+      {
+        "time": 490.77,
+        "hits": 23,
+        "falls": 6
+      },
+      {
+        "time": 490.77,
+        "hits": 23,
+        "falls": 6
+      }
+    ]
+  },
+  {
+    "level": 49,
+    "world": 4,
+    "distance": 4600,
+    "hazards": 191,
+    "reference": 508.87,
+    "attempts": [
+      {
+        "time": 508.87,
+        "hits": 22,
+        "falls": 9
+      },
+      {
+        "time": 508.87,
+        "hits": 22,
+        "falls": 9
+      },
+      {
+        "time": 532.2,
+        "hits": 30,
+        "falls": 11
+      }
+    ]
+  },
+  {
+    "level": 50,
+    "world": 4,
+    "distance": 4675,
+    "hazards": 195,
+    "reference": 507.97,
+    "attempts": [
+      {
+        "time": 507.97,
+        "hits": 37,
+        "falls": 3
+      },
+      {
+        "time": 507.97,
+        "hits": 39,
+        "falls": 3
+      },
+      {
+        "time": 507.97,
+        "hits": 39,
+        "falls": 3
+      }
+    ]
+  }
+]

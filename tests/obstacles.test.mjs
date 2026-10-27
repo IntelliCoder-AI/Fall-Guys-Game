@@ -1,18 +1,18 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {LEVELS,OBSTACLES,buildLevel,nearby,obstaclePosition} from '../dist/levels.js';
+import {LEVELS,OBSTACLES,buildLevel,nearby,obstaclePosition,trapdoorTiles} from '../dist/levels.js';
 import {runnerState,stepRunner,botInput} from '../dist/simulation.js';
 const fixture=type=>{const h=buildLevel(50).hazards.find(h=>h.type===type);assert(h);return {h,b:{...runnerState(),x:h.x,z:h.z}}};
 const timeFor=(h,predicate)=>{for(let t=0;t<30;t+=.02)if(predicate(obstaclePosition(h,t,50)))return t;throw Error('No matching obstacle phase')};
-test('all unlocks actually appear and later courses retain earlier mechanics',()=>{assert.equal(OBSTACLES.length,19);for(const l of LEVELS){const c=buildLevel(l.id),types=new Set(c.hazards.map(h=>h.type));assert.deepEqual([...types].sort(),[...l.obstacleTypes].sort());for(const o of OBSTACLES)assert.equal(types.has(o.type),l.id>=o.unlock)}assert(LEVELS[49].newObstacles.length===0);assert(OBSTACLES.at(-1).unlock>=40);const c=buildLevel(50);assert(nearby(c.hazards,-30000,24).length<10);assert(nearby(c.platforms,-30000,80).length<8)});
+test('new obstacles appear early and later sections combine mechanics',()=>{assert.equal(OBSTACLES.length,24);assert.deepEqual([...new Set(buildLevel(1).hazards.map(h=>h.type))],['hurdle']);assert(buildLevel(2).hazards.some(h=>h.type==='wheel'));assert(buildLevel(3).platforms.some(p=>p.kind==='bridge'));assert(buildLevel(4).hazards.some(h=>h.type==='fireballs'));const c=buildLevel(50);for(const type of['wheel','fireballs','piston','gate','laser','trapdoor'])assert(c.hazards.some(h=>h.type===type),type);assert(c.sections.some(s=>s.title==='Pressure belt'));assert(c.sections.some(s=>s.title==='Finale gauntlet'));assert(c.platforms.some(p=>p.motion==='moving'));assert(c.platforms.some(p=>p.motion==='vanishing'));assert(nearby(c.hazards,-3000,24).length<15)});
 test('terrain mechanics change movement rather than only appearance',()=>{
- for(const type of['conveyor','ice','wind','mud','magnet']){const {h,b}=fixture(type);const t=type==='wind'?1:type==='magnet'?2:0;if(type==='magnet')b.x=h.x+2;const x=b.x,z=b.z;stepRunner(b,{dx:0,dz:-1},.1,t,50);
+ for(const type of['conveyor','ice','wind','mud','magnet']){const {h,b}=fixture(type);const t=type==='wind'?1:type==='magnet'?(Math.PI/2-h.phase)/2:0;if(type==='magnet')b.x=h.x+2;const x=b.x,z=b.z;stepRunner(b,{dx:0,dz:-1},.1,t,50);
  if(type==='conveyor')assert(b.z-z>-.9);if(type==='ice')assert(b.vz<-.4);if(type==='mud')assert(b.z-z>-.7);if(type==='wind'||type==='magnet')assert(Math.abs(b.x-x)>.01,type);
  }
  const {b}=fixture('launchpad');assert(stepRunner(b,{},.05,0,50).includes('spring'));assert(b.vy>12);
 });
 test('timed crushers, lasers and trapdoors have different open and active phases',()=>{
  for(const type of['piston','laser']){const {h,b}=fixture(type);const active=timeFor(h,p=>type==='piston'?p.y<1:p.active);assert(stepRunner(b,{},.01,active,50).includes('hit'),type+' active');const safe={...runnerState(),x:h.x,z:h.z};const open=timeFor(h,p=>type==='piston'?p.y>4:!p.active);assert(!stepRunner(safe,{},.01,open,50).includes('hit'),type+' safe')}
- const {h,b}=fixture('trapdoor'),open=timeFor(h,p=>p.active);for(let i=0;i<10;i++)stepRunner(b,{},.03,open,50);assert(b.y<-.5);const safe={...runnerState(),x:h.x,z:h.z};stepRunner(safe,{},.03,timeFor(h,p=>!p.active),50);assert.equal(safe.y,0);
+ const {h,b}=fixture('trapdoor'),open=timeFor(h,p=>p.active);const tile=trapdoorTiles(h,open,50).find(p=>p.active);b.x=tile.x;b.z=tile.z;for(let i=0;i<10;i++)stepRunner(b,{},.03,open,50);assert(b.y<-.5);const closed=trapdoorTiles(h,open,50).find(p=>!p.active),safe={...runnerState(),x:closed.x,z:closed.z};stepRunner(safe,{},.03,open,50);assert.equal(safe.y,0);
 });
 test('tunnels require diving, slalom walls alternate, and boulders travel along the course',()=>{
  const {h,b}=fixture('tunnel');assert(stepRunner(b,{},.01,0,50).includes('hit'));const slide={...runnerState(),x:h.x,z:h.z};assert(!stepRunner(slide,{dive:true},.01,0,50).includes('hit'));
