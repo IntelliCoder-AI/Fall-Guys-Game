@@ -15,7 +15,7 @@ export function createProfileStore(storage){
  }
  if(saved&&typeof saved==='object'&&!Array.isArray(saved)){
   p={...p,...saved,version:3,courseRevision:COURSE_REVISION};
-  if(saved.courseRevision!==COURSE_REVISION){p.legacyBests={...(saved.legacyBests||{}),...(saved.bests||{})};p.bests={};p.medals={}}
+  if(saved.courseRevision!==COURSE_REVISION){p.legacyBests={...(saved.legacyBests||{}),...(saved.bests||{})};p.bests={}}
   p.name=cleanName(p.name);p.unlocked=Math.max(1,bounded(p.unlocked,MAX_LEVEL));p.selected=Math.max(1,bounded(p.selected,p.unlocked));
   for(const key of ['crowns','races','coins','xp'])p[key]=bounded(p[key]);
   const scores=(value,max)=>Object.fromEntries(Object.entries(value&&typeof value==='object'&&!Array.isArray(value)?value:{}).filter(([k,v])=>/^\d+$/.test(k)&&+k>=1&&+k<=50&&Number.isFinite(v)&&v>0&&v<=max));
