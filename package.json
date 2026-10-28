@@ -1,12 +1,14 @@
 {
   "name": "bean-dash-online",
-  "version": "9.1.0",
+  "version": "9.2.0",
   "private": true,
   "type": "module",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
+    "build": "node scripts/verify-build.mjs",
+    "pretest": "npm run build",
     "start": "node server/index.js",
     "dev": "node server/index.js",
     "test": "node --test tests/*.test.mjs",

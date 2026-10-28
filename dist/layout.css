@@ -57,3 +57,18 @@ dialog p,dialog input,dialog select{font-size:16px;line-height:1.55}.mini-label,
 @media(min-width:701px) and (max-width:1100px),(min-width:701px) and (max-height:699px){.hero{grid-row:2}.tour-strip{grid-row:2}#lobby footer{grid-row:3}}
 @media(max-width:700px){.lobby-welcome{order:1;width:100%;padding:22px}.lobby-welcome h1{font-size:40px}.hero{order:2}.tour-strip{order:3}#lobby footer{order:4}}
 @media(min-width:1101px) and (min-height:700px){.runner-caption{max-width:210px}}
+/* Mobile actions precede the decorative preview and welcome copy. */
+@media(max-width:700px){#lobby{padding-top:16px}.hero{order:0}.runner-caption{order:1;margin-top:240px}.lobby-welcome{order:2}}
+/* Height-aware landscape layout reserves a separate status and control band. */
+@media(orientation:landscape) and (max-height:600px){
+ header,.racing header{height:58px;padding:8px 3%;background:#e8eef8}.brand{font-size:17px}.brand-mark{height:32px;width:32px;font-size:25px}.brand small,header nav{display:none}.icon-button{width:36px;height:36px}
+ #lobby{top:58px;padding-top:12px;grid-template-columns:minmax(290px,360px) 1fr}.hero{grid-row:1;grid-column:1}.lobby-welcome{grid-row:2;grid-column:1}.runner-caption{top:20px;max-width:180px}.tour-strip{grid-row:2;margin:0}#lobby footer{grid-row:3}
+ .hud-left{top:66px;left:3%;width:34%;max-width:none;padding:8px 10px}.hud-left h2{font-size:18px;margin:5px 0}.hud-eyebrow{font-size:10px;gap:6px}#checkpoint{font-size:11px}
+ .hud-right{top:66px;right:3%;width:25%;display:flex;gap:6px}.race-clock{min-width:0;padding:8px;flex:1}.race-clock b{font-size:23px}.race-clock .mini-label,.race-clock small{font-size:10px}
+ .hud-bottom{top:auto;bottom:calc(12px + env(safe-area-inset-bottom));left:27%;right:27%;padding:9px;gap:8px;min-height:58px}.hud-bottom .speed{display:none}.hud-bottom .mini-label{font-size:10px}.progress-labels{font-size:11px;flex-wrap:wrap}.position strong{font-size:22px}
+ #touch{left:3%;right:3%;bottom:calc(10px + env(safe-area-inset-bottom))}.dpad{grid-template-columns:repeat(3,40px);grid-template-rows:repeat(2,40px);gap:3px}.touch-actions button{height:46px;width:46px;font-size:11px}.touch-actions button:last-child{height:60px;width:56px}.touch-actions{gap:6px}
+ .power-bar{left:3%;right:3%;top:172px;bottom:auto;max-width:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.power-bar button{font-size:12px;min-height:32px;padding:5px}#online-status{top:60px;left:40%;right:auto;transform:none;font-size:10px}
+ #level-intro{top:40%;font-size:12px}#countdown{font-size:72px}
+}
+.arrow-icon{display:inline-block;flex:none;vertical-align:middle;margin-left:6px;width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none}
+@media(pointer:coarse) and (min-width:701px) and (min-height:601px){.power-bar{left:4%;right:4%;top:235px;bottom:auto;max-width:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}}

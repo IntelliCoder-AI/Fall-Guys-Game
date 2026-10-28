@@ -6,6 +6,8 @@ import {WebSocketServer,WebSocket} from 'ws';
 import {RaceRoom} from './rooms.js';
 import {visibleCollected} from '../dist/simulation.js';
 import {levelById} from '../dist/levels.js';
+const {version}=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8'));
+const commit=/^[a-f0-9]{40}$/i.test(process.env.RENDER_GIT_COMMIT||'')?process.env.RENDER_GIT_COMMIT:null;
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const mime={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8','.woff2':'font/woff2','.txt':'text/plain; charset=utf-8','.svg':'image/svg+xml'};
 export function createGameServer({waitSeconds=45,maxRooms=40}={}){
@@ -13,7 +15,7 @@ export function createGameServer({waitSeconds=45,maxRooms=40}={}){
  const server=http.createServer(async(req,res)=>{res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'");
   if(req.method!=='GET'&&req.method!=='HEAD'){res.writeHead(405);return res.end()}
   let pathname;try{pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname)}catch{res.writeHead(400);return res.end()}
-  if(pathname==='/health'){res.setHeader('Content-Type','application/json');return res.end(JSON.stringify({ok:true,version:'9.1.0',rooms:rooms.size}))}
+  if(pathname==='/health'){res.setHeader('Content-Type','application/json');return res.end(JSON.stringify({ok:true,version,commit,rooms:rooms.size}))}
   const target=path.resolve(root,'.'+(pathname==='/'?'/index.html':pathname));if(!target.startsWith(root)){res.writeHead(403);return res.end()}
   try{if(!(await stat(target)).isFile())throw Error();const body=await readFile(target);res.setHeader('Content-Type',mime[path.extname(target)]||'application/octet-stream');res.setHeader('Cache-Control',pathname.includes('/vendor/')?'public, max-age=86400':'no-cache');res.end(req.method==='HEAD'?undefined:body)}catch{res.writeHead(404);res.end('Not found')}
  });
@@ -22,7 +24,9 @@ export function createGameServer({waitSeconds=45,maxRooms=40}={}){
  const send=(ws,data)=>{if(ws.readyState===WebSocket.OPEN&&ws.bufferedAmount<128000)ws.send(JSON.stringify(data))};
  wss.on('connection',ws=>{ws.alive=true;ws.rate=0;ws.rateAt=Date.now();ws.on('pong',()=>ws.alive=true);ws.on('error',()=>{});
   ws.on('message',raw=>{if(Date.now()-ws.rateAt>1000){ws.rate=0;ws.rateAt=Date.now()}if(++ws.rate>80)return ws.close(1008,'Too many messages');let data;try{data=JSON.parse(raw)}catch{return send(ws,{type:'error',message:'Invalid message'})}if(!data||typeof data!=='object')return;
-   if(data.type==='join'){if(connections.has(ws))return;let room;
+   if(data.type==='join'){if(connections.has(ws))return;
+    if(['name','color','outfit','mode','room','action'].some(k=>data[k]!==undefined&&typeof data[k]!=='string')||(data.level!==undefined&&!Number.isInteger(data.level)))return send(ws,{type:'error',message:'Invalid join fields'});
+    let room;
     if(data.room){room=rooms.get(String(data.room).toUpperCase());if(!room||room.phase!=='waiting'||room.players.length>=16)return send(ws,{type:'error',message:'Room not found, already started, or full. Check the code or ask your friend to generate a new one.'})}
     else if(data.action!=='create')room=[...rooms.values()].find(r=>!r.privateRoom&&r.phase==='waiting'&&r.level===levelById(data.level).number&&r.mode===(data.mode==='endurance'?'endurance':'tour')&&r.players.length<16);
     if(!room){if(rooms.size>=maxRooms)return send(ws,{type:'error',message:'All races are full. Please try again shortly.'});room=new RaceRoom({waitSeconds,level:data.level,mode:data.mode,privateRoom:data.action==='create'});rooms.set(room.id,room)}

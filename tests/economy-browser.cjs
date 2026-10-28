@@ -20,12 +20,12 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
   await page.keyboard.press('Escape');assert(await page.locator('#modal').evaluate(e=>e.open));
   await page.locator('#revive').evaluate(b=>{b.click();b.click()});await page.waitForFunction(()=>qa.state().mode==='race');const revived=await page.evaluate(()=>qa.state());
   assert.equal((await page.evaluate(()=>qa.profile())).coins,230);assert.equal(revived.player.cp,1);assert.equal(revived.player.coins,10);assert.equal(revived.player.collected.length,10);assert(revived.player.invincible>0);assert(revived.time>=before.time);assert(!revived.player.eliminated);await page.waitForFunction(()=>qa.pose()===0);
-  await page.evaluate(()=>qa.kill());await page.waitForSelector('#revive');assert((await page.locator('#revive').innerText()).includes('150'));
-  await page.reload();await page.waitForFunction(()=>window.qa);await page.locator('#play').click();await page.locator('#start-level').click();await page.waitForSelector('#revive');assert.equal((await page.evaluate(()=>qa.state())).mode,'revival');assert((await page.locator('#revive').innerText()).includes('150'));
-  await page.locator('#revive').click();await page.waitForFunction(()=>qa.state().mode==='race');assert.equal((await page.evaluate(()=>qa.profile())).coins,80);
-  await page.evaluate(()=>qa.kill());await page.waitForSelector('#revive');assert(await page.locator('#revive').isDisabled());assert((await page.locator('#modal-content').innerText()).includes('225'));
+  await page.evaluate(()=>qa.kill());await page.waitForSelector('#revive');assert((await page.locator('#revive').innerText()).includes('125'));
+  await page.reload();await page.waitForFunction(()=>window.qa);await page.locator('#play').click();await page.locator('#start-level').click();await page.waitForSelector('#revive');assert.equal((await page.evaluate(()=>qa.state())).mode,'revival');assert((await page.locator('#revive').innerText()).includes('125'));
+  await page.locator('#revive').click();await page.waitForFunction(()=>qa.state().mode==='race');assert.equal((await page.evaluate(()=>qa.profile())).coins,105);
+  await page.evaluate(()=>qa.kill());await page.waitForSelector('#revive');assert(await page.locator('#revive').isDisabled());assert((await page.locator('#modal-content').innerText()).includes('150'));
   await page.setViewportSize({width:390,height:844});await page.screenshot({path:'economy-revival-mobile.png'});assert(await page.locator('#modal').evaluate(e=>e.scrollWidth<=e.clientWidth+1));
-  await page.locator('#end-run').click();await page.waitForSelector('#next-level');assert.equal((await page.evaluate(()=>qa.profile())).coins,80);assert((await page.evaluate(()=>qa.profile())).economyRun.complete);
+  await page.locator('#end-run').click();await page.waitForSelector('#next-level');assert.equal((await page.evaluate(()=>qa.profile())).coins,105);assert((await page.evaluate(()=>qa.profile())).economyRun.complete);
   await page.evaluate(()=>qa.online());assert(await page.locator('.power-bar').isHidden());assert.deepEqual(errors,[]);
   console.log('Shop, preview orbit, duplicate clicks, powers, paid revival, checkpoint state, pending reload, insufficient funds, mobile layout and online restriction passed.');
  }finally{await browser.close();await app.close()}

@@ -1,4 +1,5 @@
 import * as T from './vendor/three.module.js';
+import {mountainGeometry} from './scenery.js';
 import {terrainHeightAt} from './terrain.js';
 
 // One camera rig is shared by the lobby, wardrobe and live race.
@@ -7,8 +8,8 @@ export function enhanceExperience(view){
  const canvas=view.renderer.domElement;
  const orbit={yaw:0,pitch:.32,zoom:1,active:false,drag:null};
  const smooth={yaw:0,pitch:.32,zoom:1};
- const reset=()=>{orbit.yaw=0;orbit.pitch=.32;orbit.zoom=1;orbit.active=false;};
- view.cameraInput=orbit;
+ const reset=()=>{orbit.yaw=0;orbit.pitch=.32;orbit.zoom=1;orbit.active=false;orbit.drag=null;Object.assign(smooth,{yaw:0,pitch:.32,zoom:1});view.camera.up.set(0,1,0);view.camera.clearViewOffset();view.snapCamera=true;};
+ view.cameraInput=orbit;view.resetCamera=reset;
  const allowed=e=>e.target===canvas;
  const outsideWardrobe=e=>view.customizing&&e.target.tagName==='DIALOG'&&(()=>{const r=e.target.getBoundingClientRect();return e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom})();
  document.addEventListener('pointerdown',e=>{if(e.button!==0||(!allowed(e)&&!outsideWardrobe(e)))return;orbit.drag={x:e.clientX,y:e.clientY,id:e.pointerId};orbit.active=true;e.target.setPointerCapture?.(e.pointerId);e.preventDefault();});
@@ -42,8 +43,7 @@ export function enhanceExperience(view){
  const fabricCanvas=document.createElement('canvas');fabricCanvas.width=fabricCanvas.height=128;const ctx=fabricCanvas.getContext('2d');
  const pixels=ctx.createImageData(128,128);for(let y=0;y<128;y++)for(let x=0;x<128;x++){const i=(y*128+x)*4,v=190+((x%3===0||y%3===0)?35:0);pixels.data.set([v,v,v,255],i);}ctx.putImageData(pixels,0,0);
  const fabric=new T.CanvasTexture(fabricCanvas);fabric.wrapS=fabric.wrapT=T.RepeatWrapping;fabric.repeat.set(5,5);
- const mountain=new T.ConeGeometry(1,1,48,20);const vertices=mountain.attributes.position;
- for(let i=0;i<vertices.count;i++){const x=vertices.getX(i),y=vertices.getY(i),z=vertices.getZ(i),a=Math.atan2(z,x);const ridges=1+.13*Math.sin(a*5+y*8)+.07*Math.cos(a*11-y*13);vertices.setXYZ(i,x*ridges,y,z*ridges);}mountain.computeVertexNormals();
+ const mountain=mountainGeometry();
  const chunk=view.buildChunk.bind(view);view.buildChunk=index=>{const part=chunk(index);part.root.traverse(m=>{if(!m.isMesh)return;if(m.geometry.type==='ConeGeometry'&&m.geometry.parameters.radius===1){m.geometry=mountain;m.material.bumpMap=fabric;m.material.bumpScale=.07;m.material.roughness=1;}if(m.material.isMeshStandardMaterial&&m.material.color.getHex()===view.course.theme.track){m.material.bumpMap=fabric;m.material.bumpScale=.025;m.material.roughness=.88;}});return part;};
  // Rebuild the visible scenery once; subsequent chunks inherit the same detail.
  view.load(view.level);

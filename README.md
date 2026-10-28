@@ -22,9 +22,11 @@ Progress stays in your browser profile. Solo checkpoint saves let you resume aft
 
 ## Coins and the shop
 
-Course coins are credited immediately, with a maximum of 500 earned per run including the finish bonus. **Endurance revival costs 100 coins, then 150, 225, and 50% more each time** in the same run (capped at 10,000). You return to your checkpoint or the starting line with 3 seconds of protection; your clock, score, and collected coins carry over. A second trip past a collected coin earns nothing.
+Course coins are credited immediately. Tour earnings cap at 500 per run; Endurance's cap scales at 100 coins per kilometre (minimum 500), including finish bonuses. Its HUD shows the cap. **Endurance revival costs 100 coins, then 125, 150, and 25 more each time**, capped at 250. You return to your checkpoint or the starting line with 3 seconds of protection; your clock, score, and collected coins carry over. A second trip past a collected coin earns nothing.
 
 Open **Coin Shop** for persistent outfits, a helmet, wings, trails, particles and a victory animation (120–180 coins). Tour respawns cost no coins. Press **R**, use **Restart now** in the pause menu, or tap **Try again** after a loss to restart without a countdown. Solo consumables cost 25–35 coins: shield, sprint, double jump and magnet. Activate them using the race buttons. Supply chests cost 25 coins with a clearly stated 25% chance of each consumable. All currency is earned in-game; there are no real-money purchases. Purchases and the wallet stay in this browser, including when reloading a pending revival. Online races show your cosmetics without paid gameplay advantages.
+
+A clean-run bonus requires no obstacle hits (including shield impacts), no water falls and no checkpoint recoveries.
 
 ## Play with friends
 

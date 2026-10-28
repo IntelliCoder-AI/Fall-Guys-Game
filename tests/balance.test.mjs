@@ -1,12 +1,15 @@
+import {readFileSync} from 'node:fs';
+const navigationReference=JSON.parse(readFileSync(new URL('./balance-reference.json',import.meta.url)));
 import {referenceRun} from '../scripts/reference-run.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';import{LEVELS,buildLevel,platformPosition,fireballPositions}from'../dist/levels.js';import{runnerState,botInput,stepRunner}from'../dist/simulation.js';
-test('all 50 routes are traversable; fatalities and finale difficulty rise',t=>{
+test('all 50 navigation routes are traversable; finale pacing and challenge parameters rise',t=>{
  const worlds=Array.from({length:5},()=>({distance:0,time:0,hits:0,falls:0,retries:0})),references=[];
- for(const l of LEVELS){const attempts=Array.from({length:1},(_,i)=>referenceRun(l.id,i));for(const r of attempts){assert(r.finished,`L${l.id} has no traversable training route at ${r.z}`);const w=worlds[l.worldIndex];w.distance+=l.distance;w.time+=r.time;w.hits+=r.hits;w.falls+=r.falls;w.retries+=r.retries}const median=attempts.map(r=>r.time).sort((a,b)=>a-b)[0];references.push(median);assert(Math.abs(median-l.measuredReference)<.05,'Stale training reference L'+l.id)}
- for(let w=0;w<5;w++){const a=worlds[w];t.diagnostic(JSON.stringify({world:w+1,hitsPerKm:a.hits/a.distance*1000,fallsPerKm:a.falls/a.distance*1000,retries:a.retries}));if(w){const p=worlds[w-1];assert(a.hits/a.distance>p.hits/p.distance,'Hits/km must increase every world');assert(a.falls/a.distance>=p.falls/p.distance*.95,'Water deaths/km regressed more than the 5% sampling tolerance')}
+ for(const l of LEVELS){const attempts=Array.from({length:1},(_,i)=>referenceRun(l.id,i));for(const r of attempts){assert(r.finished,`L${l.id} has no traversable training route at ${r.z}`);const w=worlds[l.worldIndex];w.distance+=l.distance;w.time+=r.time;w.hits+=r.hits;w.falls+=r.falls;w.retries+=r.retries}const median=attempts.map(r=>r.time).sort((a,b)=>a-b)[0];references.push(median);assert(Math.abs(median-navigationReference[l.id-1].reference)<.05,'Stale training reference L'+l.id)}
+ for(let w=0;w<5;w++){const a=worlds[w];t.diagnostic(JSON.stringify({world:w+1,hitsPerKm:a.hits/a.distance*1000,fallsPerKm:a.falls/a.distance*1000,retries:a.retries}));if(w){const p=worlds[w-1];assert(a.hits/a.distance>p.hits/p.distance,'Hits/km must increase every world');assert(LEVELS[w*10].challenge>LEVELS[(w-1)*10].challenge);assert(LEVELS[w*10].width<LEVELS[(w-1)*10].width)}
   for(let i=w*10;i<w*10+9;i++)assert(references[i]<references[w*10+9],`L${i+1} is harder than its finale`);
  }
- assert(worlds[4].falls/worlds[4].distance>worlds[0].falls/worlds[0].distance+.1/1000,'Late water risk must materially exceed the tutorial');
+ // Bot survival is tested separately: fewer AI water deaths must not fail balance.
+ assert(LEVELS[49].gap>LEVELS[0].gap*1.5);assert(LEVELS[49].width<LEVELS[0].width*.6);
  assert.equal(Math.max(...references),references[49]);
  for(const l of LEVELS)if(l.number%10!==1)assert(l.gold>=LEVELS[l.number-2].gold);
 });

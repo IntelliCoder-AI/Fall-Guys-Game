@@ -1,51 +1,32 @@
-# Course balance — V7
+# Course balance and bot navigation
 
-[Play](https://bean-dash-online.onrender.com/) · [CI results](https://github.com/IntelliCoder-AI/Fall-Guys-Game/actions/workflows/test.yml) · [Balance assertions](tests/balance.test.mjs)
+[Play](https://bean-dash-online.onrender.com/) · [Balance assertions](tests/balance.test.mjs) · [Bot survival assertions](tests/bot-survival.test.mjs)
 
-Live races now have **one life**. Wheels, fireballs, rotating arms, rollers, hammers, crushers, lasers, shockwaves, boulders, and water eliminate the runner immediately. Solid hurdles, gates, slalom walls, bumpers, and dive tunnels block movement on every physics step. A hit cooldown cannot let a runner phase through them. Death clears the active solo save; Retry starts the course again. Online death affects that runner while other racers continue.
+Tour returns players to flags with a four-second penalty. Hardcore and online races have one life. Endurance offers paid recovery. Bots use the same movement and collision physics as players, with no shields, immunity or checkpoint recovery.
 
-Exposed bridges begin at level 3 and narrow further from level 8. Normal-track rails end at level 6. World 3 onward adds ice to windy bridges. Vanishing islands stay solid for about 65% of an eight-second cycle in world 5, with a visible orange warning before disappearing. World openings ease off; the second and third levels retain active obstacle types instead of generic passive-terrain rows.
+All 50 courses retain their platforms, obstacles, collision rules and existing human medal targets. Exposed bridges begin at level 3, rails end at level 6, and later worlds narrow the decks, widen gaps and combine hazards. These physical challenge parameters and actual edge/floor behavior are tested independently of AI skill.
 
-Training measurements for this release:
+## What the checks establish
 
-| World | Hits/km | Water deaths/km |
-|---|---:|---:|
-| 1 | 2.070 | 0.000 |
-| 2 | 3.318 | 0.142 |
-| 3 | 5.684 | 0.139 |
-| 4 | 7.641 | 0.414 |
-| 5 | 11.005 | 0.494 |
+- The deterministic training route completes all 50 levels at 30 Hz and 60 Hz. Only this offline harness retries from checkpoints; its results are feasibility evidence, not guaranteed human completion.
+- Training times match the current navigation fixture. World finales remain longer than their preceding training routes, hits/km increase, and late track widths/gaps remain harder than the tutorial.
+- Full bot rooms on levels 1, 10, 25, 40 and 50 must finish with at least eight runners on L1 and four on every other sampled course. At most twelve bots may die. These are minimum competition gates, not promises for every starting phase or skill level.
+- Bot tests also assert no immunity, shields or recoveries. Qualification still ends a round at the established limit.
+- Bot water deaths are diagnostic data, not a required increasing difficulty metric: better AI should be allowed to avoid falls. Exposed-edge fall behavior is still tested directly.
 
-## What CI proves
+The controller refreshes decisions on stable 30 Hz tick boundaries, predicts at the server step size, times jumps against expanding pulse rings, commits through vanishing-platform chains, and predicts braking toward lateral targets rather than holding a sideways input off the deck.
 
-`npm test` runs terminal collision tests, wall blocking and jump clearance, unchanged terminal positions, online death isolation, progress validation, hazard phases, finish safety, and course balance assertions. Full-room tests verify that races terminate and eliminated runners never respawn.
+## Fixtures and medals
 
-The route-feasibility test uses **one deterministic player-speed training controller** for every level at 30 Hz, plus another sweep at 60 Hz. In this offline test only, a dead controller restarts at its previous checkpoint. The harness counts retries, hits, and water deaths; it never runs in the deployed game. Passing this check establishes a traversable sequence of course sections, not a flawless full-course bot run or guaranteed human completion.
-
-CI fails if a course cannot be traversed within the bounded retry budget, reference times are stale, a non-finale training time exceeds its finale, level 50 loses its overall peak, or hits/km fail to increase between worlds, or water deaths/km regress by more than 5% between adjacent worlds. Water deaths must also rise materially from the first to last world. The 5% tolerance avoids treating a tiny sample-rate difference as a design regression. It also checks density, open edges, moving floors, and medal-target ordering. Statistics come from the offline training runs and must not be described as live single-life finish rates.
-
-`npm run calibrate` records those training times and retries in `tests/balance-reference.json` and updates the medal baseline. Gold is 1.10× the highest training reference so far within the world, rounded up; silver is 1.30× gold. These are forgiving training-derived targets, not measured expert clean-run records. Further human playtesting can tune them.
+`npm run calibrate` updates `tests/balance-reference.json` for navigation regression. It does **not** change medal targets. Use `npm run calibrate -- --medals` only for an intentional medal rebalance after human playtesting. Gold/silver targets continue using the existing baseline in `dist/balance.js`.
 
 ```sh
-npm ci
 npm test
 npm run test:balance
 node tests/endurance.mjs
+node tests/review-fixes-browser.cjs
 ```
 
-The browser checks in `tests/one-life-browser.cjs` verify wheel/water Game Over messages, no unlock on death, clearing the saved run, and restarting from the beginning. Other browser scripts verify friend invites, immediate finishes, customization, touch layouts, and bounded course streaming.
+Local Chromium checks cover landscape/portrait/tablet geometry, checkpoint camera recovery, all graphics quality modes, shops, wardrobe and private-room UI. Software rendering does not establish physical GPU performance, real phone usability or production multiplayer capacity.
 
-## References
-
-- [Fall Guys Creative](https://www.fallguys.com/creative): readable obstacle spaces and varied routes.
-- [Fall Guys Power Party](https://www.fallguys.com/news/fall-guys-power-party-update): moving platforms and dynamic crossings.
-- [Trackmania short-course guidance](https://doc.trackmania.com/create/map-review/weekly-shorts-guidelines/): readable, replayable courses.
-
-All character and obstacle models are original procedural assets.
-
-
-## V8 presentation and rooms
-
-Private rooms wait for a host to start after a friend joins. Public queues retain their timer. The new river shader uses directional ripples and foam, informed by [Unity’s water shader reference](https://docs.unity3d.com/Packages/com.unity.shadergraph@17.7/manual/Shader-Graph-Sample-Production-Ready-Water.html). Three trail profiles add rolling hills, ridges and summits from level 3. Heights are terrain-relative: runners and obstacles share the raised trail surface, while horizontal timing and the calibrated challenge remain unchanged. These are running slopes, not a separate hand-climbing mechanic.
-
-Losses remain terminal on the server; the client shows a 2.6-second impact scene before results. `tests/friends-browser.cjs` verifies two separate browsers joining the same code and starting together. `tests/one-life-browser.cjs` checks the visible loss state and retry. `tests/terrain.test.mjs` checks continuous trail heights and flat landings.
+Original character and obstacle models remain procedural assets. The course references include Fall Guys Creative and Trackmania's replayable timed courses; no third-party game models are used.
