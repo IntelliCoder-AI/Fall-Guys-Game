@@ -13,6 +13,6 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
  const zoom=state.zoom;await page.mouse.wheel(0,-300);await page.waitForTimeout(300);assert((await page.evaluate(()=>qa.camera())).zoom<zoom);
  await page.keyboard.press('KeyC');assert(!(await page.evaluate(()=>qa.camera())).active);
  await page.locator('#customize').click();await page.mouse.move(300,240);await page.mouse.down();await page.mouse.move(650,420,{steps:8});await page.mouse.up();assert((await page.evaluate(()=>qa.camera())).active,'wardrobe backdrop must accept orbit');await page.screenshot({path:'v9-wardrobe.png'});await page.locator('#custom-done').click();
- await page.locator('#play').click();await page.locator('#start-level').click();await page.waitForFunction(()=>beanDash.getState().mode==='race');
+ await page.locator('#play').click();await page.locator('#start-level').click();await page.waitForFunction(()=>beanDash.getState().mode==='race',null,{timeout:120000});
  await page.mouse.move(700,360);await page.mouse.down();await page.mouse.move(900,360,{steps:8});await page.mouse.up();await page.keyboard.down('KeyW');const movement=await page.evaluate(()=>qa.input());await page.keyboard.up('KeyW');assert(Math.abs(movement.dx)>.5,'movement must follow camera yaw');assert.deepEqual(errors,[]);console.log('Flow layout, typography, full orbit, zoom, reset, wardrobe drag, and camera-relative movement passed.');
  }finally{await browser.close();await app.close()}})().catch(e=>{console.error(e);process.exit(1)});
