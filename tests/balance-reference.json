@@ -38,15 +38,15 @@
     "world": 0,
     "distance": 1150,
     "hazards": 38,
-    "reference": 107.9,
+    "reference": 108.53,
     "attempts": [
       {
         "finished": true,
-        "time": 107.9,
-        "hits": 2,
+        "time": 108.53,
+        "hits": 3,
         "falls": 0,
         "retries": 0,
-        "z": -1146.0152238911198
+        "z": -1146.05164066063
       }
     ]
   },
@@ -55,15 +55,15 @@
     "world": 0,
     "distance": 1225,
     "hazards": 40,
-    "reference": 112.73,
+    "reference": 112.6,
     "attempts": [
       {
         "finished": true,
-        "time": 112.73,
+        "time": 112.6,
         "hits": 1,
         "falls": 0,
         "retries": 0,
-        "z": -1221.132313609656
+        "z": -1221.402910608803
       }
     ]
   },
@@ -72,15 +72,15 @@
     "world": 0,
     "distance": 1300,
     "hazards": 42,
-    "reference": 121.57,
+    "reference": 121.83,
     "attempts": [
       {
         "finished": true,
-        "time": 121.57,
-        "hits": 6,
+        "time": 121.83,
+        "hits": 2,
         "falls": 0,
         "retries": 0,
-        "z": -1296.161725033267
+        "z": -1296.0872252127142
       }
     ]
   },
@@ -89,15 +89,15 @@
     "world": 0,
     "distance": 1375,
     "hazards": 44,
-    "reference": 126.87,
+    "reference": 127.87,
     "attempts": [
       {
         "finished": true,
-        "time": 126.87,
+        "time": 127.87,
         "hits": 5,
         "falls": 0,
         "retries": 1,
-        "z": -1371.3151398187829
+        "z": -1371.311085636083
       }
     ]
   },
@@ -106,15 +106,15 @@
     "world": 0,
     "distance": 1450,
     "hazards": 48,
-    "reference": 129.07,
+    "reference": 134.13,
     "attempts": [
       {
         "finished": true,
-        "time": 129.07,
-        "hits": 7,
+        "time": 134.13,
+        "hits": 1,
         "falls": 0,
-        "retries": 1,
-        "z": -1446.243943838208
+        "retries": 0,
+        "z": -1446.0873123570775
       }
     ]
   },
@@ -157,15 +157,15 @@
     "world": 0,
     "distance": 1825,
     "hazards": 78,
-    "reference": 171.13,
+    "reference": 171.53,
     "attempts": [
       {
         "finished": true,
-        "time": 171.13,
-        "hits": 5,
+        "time": 171.53,
+        "hits": 4,
         "falls": 0,
         "retries": 0,
-        "z": -1821.2527981353837
+        "z": -1821.188860330257
       }
     ]
   },
@@ -174,15 +174,15 @@
     "world": 1,
     "distance": 1750,
     "hazards": 78,
-    "reference": 159.97,
+    "reference": 160.37,
     "attempts": [
       {
         "finished": true,
-        "time": 159.97,
+        "time": 160.37,
         "hits": 3,
         "falls": 0,
         "retries": 0,
-        "z": -1746.0905635664494
+        "z": -1746.404058579366
       }
     ]
   },
@@ -191,15 +191,15 @@
     "world": 1,
     "distance": 1825,
     "hazards": 90,
-    "reference": 168.97,
+    "reference": 169.23,
     "attempts": [
       {
         "finished": true,
-        "time": 168.97,
-        "hits": 5,
+        "time": 169.23,
+        "hits": 6,
         "falls": 0,
         "retries": 0,
-        "z": -1821.0615473686096
+        "z": -1821.1235226908543
       }
     ]
   },
@@ -208,15 +208,15 @@
     "world": 1,
     "distance": 1900,
     "hazards": 92,
-    "reference": 178.6,
+    "reference": 176.43,
     "attempts": [
       {
         "finished": true,
-        "time": 178.6,
-        "hits": 4,
-        "falls": 1,
-        "retries": 1,
-        "z": -1896.3551410192144
+        "time": 176.43,
+        "hits": 3,
+        "falls": 0,
+        "retries": 0,
+        "z": -1896.3860722968388
       }
     ]
   },
@@ -225,15 +225,15 @@
     "world": 1,
     "distance": 1975,
     "hazards": 103,
-    "reference": 182.33,
+    "reference": 193.93,
     "attempts": [
       {
         "finished": true,
-        "time": 182.33,
-        "hits": 4,
+        "time": 193.93,
+        "hits": 5,
         "falls": 0,
-        "retries": 0,
-        "z": -1971.1529387680378
+        "retries": 2,
+        "z": -1971.3798294043854
       }
     ]
   },
@@ -242,15 +242,15 @@
     "world": 1,
     "distance": 2050,
     "hazards": 109,
-    "reference": 190.13,
+    "reference": 196.57,
     "attempts": [
       {
         "finished": true,
-        "time": 190.13,
+        "time": 196.57,
         "hits": 5,
-        "falls": 0,
-        "retries": 0,
-        "z": -2046.3571650192134
+        "falls": 1,
+        "retries": 1,
+        "z": -2046.105052352322
       }
     ]
   },
@@ -259,15 +259,15 @@
     "world": 1,
     "distance": 2125,
     "hazards": 134,
-    "reference": 211.67,
+    "reference": 194.87,
     "attempts": [
       {
         "finished": true,
-        "time": 211.67,
-        "hits": 7,
-        "falls": 1,
-        "retries": 2,
-        "z": -2121.2105076207154
+        "time": 194.87,
+        "hits": 5,
+        "falls": 0,
+        "retries": 0,
+        "z": -2121.368307009347
       }
     ]
   },
@@ -276,15 +276,15 @@
     "world": 1,
     "distance": 2200,
     "hazards": 145,
-    "reference": 213.87,
+    "reference": 205.6,
     "attempts": [
       {
         "finished": true,
-        "time": 213.87,
-        "hits": 7,
-        "falls": 1,
-        "retries": 2,
-        "z": -2196.3247452482524
+        "time": 205.6,
+        "hits": 8,
+        "falls": 0,
+        "retries": 0,
+        "z": -2196.3816576237373
       }
     ]
   },
@@ -293,15 +293,15 @@
     "world": 1,
     "distance": 2275,
     "hazards": 148,
-    "reference": 219.4,
+    "reference": 213.4,
     "attempts": [
       {
         "finished": true,
-        "time": 219.4,
-        "hits": 11,
+        "time": 213.4,
+        "hits": 5,
         "falls": 0,
-        "retries": 2,
-        "z": -2271.0953258913846
+        "retries": 0,
+        "z": -2271.424164742426
       }
     ]
   },
@@ -310,15 +310,15 @@
     "world": 1,
     "distance": 2350,
     "hazards": 154,
-    "reference": 236.53,
+    "reference": 217.67,
     "attempts": [
       {
         "finished": true,
-        "time": 236.53,
-        "hits": 13,
+        "time": 217.67,
+        "hits": 6,
         "falls": 0,
-        "retries": 3,
-        "z": -2346.1313319296446
+        "retries": 0,
+        "z": -2346.0543540052013
       }
     ]
   },
@@ -327,15 +327,15 @@
     "world": 1,
     "distance": 2650,
     "hazards": 185,
-    "reference": 257.87,
+    "reference": 251.03,
     "attempts": [
       {
         "finished": true,
-        "time": 257.87,
-        "hits": 11,
+        "time": 251.03,
+        "hits": 13,
         "falls": 0,
-        "retries": 2,
-        "z": -2646.323808042129
+        "retries": 1,
+        "z": -2646.326297033855
       }
     ]
   },
@@ -344,15 +344,15 @@
     "world": 2,
     "distance": 2500,
     "hazards": 193,
-    "reference": 253.23,
+    "reference": 233.2,
     "attempts": [
       {
         "finished": true,
-        "time": 253.23,
-        "hits": 10,
-        "falls": 0,
-        "retries": 4,
-        "z": -2496.40289784191
+        "time": 233.2,
+        "hits": 8,
+        "falls": 1,
+        "retries": 1,
+        "z": -2496.052840211088
       }
     ]
   },
@@ -361,15 +361,15 @@
     "world": 2,
     "distance": 2575,
     "hazards": 197,
-    "reference": 243.43,
+    "reference": 260.97,
     "attempts": [
       {
         "finished": true,
-        "time": 243.43,
-        "hits": 15,
+        "time": 260.97,
+        "hits": 20,
         "falls": 0,
-        "retries": 1,
-        "z": -2571.308206010673
+        "retries": 4,
+        "z": -2571.225890095101
       }
     ]
   },
@@ -378,15 +378,15 @@
     "world": 2,
     "distance": 2650,
     "hazards": 207,
-    "reference": 252.53,
+    "reference": 247.97,
     "attempts": [
       {
         "finished": true,
-        "time": 252.53,
+        "time": 247.97,
         "hits": 18,
-        "falls": 1,
-        "retries": 1,
-        "z": -2646.0818356915634
+        "falls": 0,
+        "retries": 0,
+        "z": -2646.204356877638
       }
     ]
   },
@@ -395,15 +395,15 @@
     "world": 2,
     "distance": 2725,
     "hazards": 209,
-    "reference": 250.37,
+    "reference": 255.43,
     "attempts": [
       {
         "finished": true,
-        "time": 250.37,
-        "hits": 14,
+        "time": 255.43,
+        "hits": 16,
         "falls": 0,
-        "retries": 0,
-        "z": -2721.17714285838
+        "retries": 1,
+        "z": -2721.110350748818
       }
     ]
   },
@@ -412,15 +412,15 @@
     "world": 2,
     "distance": 2800,
     "hazards": 212,
-    "reference": 266.7,
+    "reference": 257.93,
     "attempts": [
       {
         "finished": true,
-        "time": 266.7,
-        "hits": 16,
+        "time": 257.93,
+        "hits": 12,
         "falls": 0,
-        "retries": 2,
-        "z": -2796.110332758597
+        "retries": 0,
+        "z": -2796.370370241489
       }
     ]
   },
@@ -429,15 +429,15 @@
     "world": 2,
     "distance": 2875,
     "hazards": 222,
-    "reference": 271.9,
+    "reference": 271.3,
     "attempts": [
       {
         "finished": true,
-        "time": 271.9,
-        "hits": 19,
+        "time": 271.3,
+        "hits": 23,
         "falls": 0,
-        "retries": 1,
-        "z": -2871.108730938387
+        "retries": 2,
+        "z": -2871.168892974892
       }
     ]
   },
@@ -446,15 +446,15 @@
     "world": 2,
     "distance": 2950,
     "hazards": 231,
-    "reference": 291.47,
+    "reference": 285.23,
     "attempts": [
       {
         "finished": true,
-        "time": 291.47,
-        "hits": 21,
+        "time": 285.23,
+        "hits": 19,
         "falls": 1,
-        "retries": 4,
-        "z": -2946.1769118762545
+        "retries": 2,
+        "z": -2946.3502603572865
       }
     ]
   },
@@ -463,15 +463,15 @@
     "world": 2,
     "distance": 3025,
     "hazards": 231,
-    "reference": 283.87,
+    "reference": 294.67,
     "attempts": [
       {
         "finished": true,
-        "time": 283.87,
-        "hits": 14,
-        "falls": 0,
-        "retries": 1,
-        "z": -3021.1858970625967
+        "time": 294.67,
+        "hits": 24,
+        "falls": 1,
+        "retries": 3,
+        "z": -3021.35962475448
       }
     ]
   },
@@ -480,15 +480,15 @@
     "world": 2,
     "distance": 3100,
     "hazards": 243,
-    "reference": 294.43,
+    "reference": 294.07,
     "attempts": [
       {
         "finished": true,
-        "time": 294.43,
+        "time": 294.07,
         "hits": 20,
         "falls": 0,
-        "retries": 2,
-        "z": -3096.090033741885
+        "retries": 1,
+        "z": -3096.0670337509164
       }
     ]
   },
@@ -497,15 +497,15 @@
     "world": 2,
     "distance": 3475,
     "hazards": 289,
-    "reference": 346.7,
+    "reference": 337.17,
     "attempts": [
       {
         "finished": true,
-        "time": 346.7,
-        "hits": 16,
-        "falls": 2,
-        "retries": 6,
-        "z": -3471.1971556866647
+        "time": 337.17,
+        "hits": 17,
+        "falls": 1,
+        "retries": 4,
+        "z": -3471.373378328321
       }
     ]
   },

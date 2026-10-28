@@ -5,7 +5,7 @@ const KEY='bean-dash-profile-v3',RUN_KEY='bean-dash-run-v7',COURSE_REVISION=7;
 export const OUTFITS=[{id:'dash',name:'Dash',description:'The original street runner',unlock:1,color:'#ff725e'},{id:'nova',name:'Nova',description:'A fresh perspective',unlock:5,color:'#9279ff'},{id:'ace',name:'Ace',description:'Built for the podium',unlock:15,color:'#44c9b4'},{id:'gold',name:'Gold Rush',description:'For the long-distance legends',unlock:30,color:'#ffcb66'}];
 const cleanName=value=>String(value??'').trim().slice(0,20)||'Guest Runner';
 const bounded=(v,max=Number.MAX_SAFE_INTEGER)=>Math.min(max,Math.max(0,Number.isFinite(Number(v))?Math.floor(Number(v)):0));
-const blank=()=>({version:3,courseRevision:COURSE_REVISION,id:globalThis.crypto?.randomUUID?.()||Math.random().toString(36).slice(2),name:'Guest Runner',color:'#ff725e',outfit:'dash',appearance:legacyAppearance('dash'),raceMode:'tour',enduranceBests:{},unlocked:1,selected:1,crowns:0,races:0,coins:0,xp:0,bests:{},medals:{},sound:true,quality:'auto',tutorial:false});
+const blank=()=>({version:3,courseRevision:COURSE_REVISION,id:globalThis.crypto?.randomUUID?.()||Math.random().toString(36).slice(2),name:'Guest Runner',color:'#ff725e',outfit:'dash',appearance:legacyAppearance('dash'),raceMode:'tour',enduranceBests:{},unlocked:1,selected:1,crowns:0,races:0,coins:0,xp:0,bests:{},medals:{},hardcoreBests:{},hardcoreMedals:{},hardcore:false,sound:true,quality:'auto',tutorial:false});
 export function medalFor(level,seconds){if(!Number.isFinite(seconds)||seconds<=0)return 0;const l=levelById(level);return seconds<=l.gold?3:seconds<=l.silver?2:1}
 export function createProfileStore(storage){
  let persistent=true,p=blank(),raw;
@@ -21,7 +21,7 @@ export function createProfileStore(storage){
   p.appearance=normalizeAppearance(saved.appearance||legacyAppearance(saved.outfit));p.raceMode=saved.raceMode==='endurance'?'endurance':'tour';p.name=cleanName(p.name);p.unlocked=Math.max(1,bounded(p.unlocked,MAX_LEVEL));p.selected=Math.max(1,bounded(p.selected,p.unlocked));
   for(const key of ['crowns','races','coins','xp'])p[key]=bounded(p[key]);
   const scores=(value,max)=>Object.fromEntries(Object.entries(value&&typeof value==='object'&&!Array.isArray(value)?value:{}).filter(([k,v])=>/^\d+$/.test(k)&&+k>=1&&+k<=50&&Number.isFinite(v)&&v>0&&v<=max));
-  p.bests=scores(p.bests,86400);p.enduranceBests=scores(p.enduranceBests,86400);p.medals=scores(p.medals,3);
+  p.bests=scores(p.bests,86400);p.enduranceBests=scores(p.enduranceBests,86400);p.medals=scores(p.medals,3);p.hardcoreBests=scores(p.hardcoreBests,86400);p.hardcoreMedals=scores(p.hardcoreMedals,3);p.hardcore=!!p.hardcore;
   if(!OUTFITS.some(o=>o.id===p.outfit&&o.unlock<=p.unlocked))p.outfit='dash';
  }}
  normalizeEconomy(p);
@@ -31,16 +31,16 @@ export function createProfileStore(storage){
  return {
   ...economyMethods(()=>p,save,refresh),
   get:()=>{refresh();return structuredClone(p)},isPersistent:()=>persistent,
-  update(patch){refresh();for(const k of ['name','color','sound','selected','outfit','quality','tutorial','appearance','raceMode'])if(k in patch)p[k]=patch[k];p.appearance=normalizeAppearance(p.appearance);p.raceMode=p.raceMode==='endurance'?'endurance':'tour';p.name=cleanName(p.name);p.selected=Math.max(1,bounded(p.selected,p.unlocked));if(!OUTFITS.some(o=>o.id===p.outfit&&o.unlock<=p.unlocked))p.outfit='dash';save()},
-  record(level,seconds,win,{coins=0,rank=0,falls=0,raceMode='tour',runId=null}={}){
+  update(patch){refresh();for(const k of ['name','color','sound','selected','outfit','quality','tutorial','appearance','raceMode','hardcore'])if(k in patch)p[k]=patch[k];p.appearance=normalizeAppearance(p.appearance);p.raceMode=p.raceMode==='endurance'?'endurance':'tour';p.name=cleanName(p.name);p.selected=Math.max(1,bounded(p.selected,p.unlocked));if(!OUTFITS.some(o=>o.id===p.outfit&&o.unlock<=p.unlocked))p.outfit='dash';save()},
+  record(level,seconds,win,{coins=0,rank=0,falls=0,raceMode='tour',hardcore=false,runId=null}={}){
    refresh();const run=runId?p.economyRun:null;
    if(runId&&(!run||run.id!==runId||run.complete||run.level!==level||run.mode!==raceMode))return {accepted:false,reason:'settled',reward:0,xp:0,medal:0};
    if(!Number.isInteger(level)||level<1||level>MAX_LEVEL||level>p.unlocked||!Number.isFinite(seconds)||seconds<=0)return {accepted:false,reason:level>p.unlocked?'locked':'invalid',medal:0,reward:0,xp:0,newBest:false,first:false,newOutfit:null};
-   level=levelById(level).id;const records=raceMode==='endurance'?p.enduranceBests:p.bests;const oldUnlocked=p.unlocked,previous=records[level],medal=win?medalFor(level+(raceMode==='endurance'?100:0),seconds):0,first=win&&!previous;
+   level=levelById(level).id;const records=hardcore?p.hardcoreBests:raceMode==='endurance'?p.enduranceBests:p.bests;const medals=hardcore?p.hardcoreMedals:p.medals;const oldUnlocked=p.unlocked,previous=records[level],medal=win?medalFor(level+(raceMode==='endurance'?100:0),seconds):0,first=win&&!previous;
    p.races++;const reward=Math.max(0,Math.min(500,bounded(coins,500)+(win?20+level*2:0))-(run?.credited||0));p.coins+=reward;
    if(run){run.complete=true;run.pending=null;}
    const xp=win?100+level*5+medal*25+(falls===0?50:0):20;p.xp+=xp;
-   if(win){p.unlocked=Math.max(p.unlocked,Math.min(MAX_LEVEL,level+1));records[level]=Math.min(previous||Infinity,seconds);if(raceMode!=='endurance')p.medals[level]=Math.max(p.medals[level]||0,medal);if(rank===1)p.crowns++}
+   if(win){p.unlocked=Math.max(p.unlocked,Math.min(MAX_LEVEL,level+1));records[level]=Math.min(previous||Infinity,seconds);if(raceMode!=='endurance')medals[level]=Math.max(medals[level]||0,medal);if(rank===1)p.crowns++}
    save();return {accepted:true,medal,reward,xp,newBest:win&&(!previous||seconds<previous),first,newOutfit:OUTFITS.find(o=>o.unlock>oldUnlocked&&o.unlock<=p.unlocked)||null};
   },
   saveRun(run){try{storage.setItem(RUN_KEY,JSON.stringify({...run,revision:COURSE_REVISION}));return true}catch{return false}},

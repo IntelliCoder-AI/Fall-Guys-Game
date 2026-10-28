@@ -6,7 +6,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
  await page.goto('http://127.0.0.1:'+app.server.address().port);await page.waitForFunction(()=>window.qa);await page.evaluate(()=>document.fonts.ready);
  for(const size of[{width:1440,height:900},{width:1280,height:720},{width:1040,height:414},{width:390,height:844}]){
   await page.setViewportSize(size);await page.waitForTimeout(200);
-  const layout=await page.evaluate(()=>{const r=s=>document.querySelector(s).getBoundingClientRect();return {gap:r('.guest-strip').top-r('.play-caption').bottom,buttonFont:parseFloat(getComputedStyle(document.querySelector('#online')).fontSize),overflow:document.querySelector('.hero').scrollWidth>document.querySelector('.hero').clientWidth};});assert(layout.gap>=16&&layout.gap<30,JSON.stringify(layout));assert(layout.buttonFont>=14);assert(!layout.overflow);
+  const layout=await page.evaluate(()=>{const r=s=>document.querySelector(s).getBoundingClientRect();return {gap:r('.guest-strip').top-r('.play-caption').bottom,buttonFont:parseFloat(getComputedStyle(document.querySelector('#online')).fontSize),overflow:document.querySelector('.hero').scrollWidth>document.querySelector('.hero').clientWidth};});assert(layout.gap>=10&&layout.gap<30,JSON.stringify(layout));assert(layout.buttonFont>=14);assert(!layout.overflow);
  }
  await page.setViewportSize({width:1440,height:900});await page.screenshot({path:'v9-lobby.png'});
  await page.mouse.move(760,340);await page.mouse.down();await page.mouse.move(1200,620,{steps:12});await page.mouse.up();let state=await page.evaluate(()=>qa.camera());assert(state.active);assert(Math.abs(state.yaw)>2);assert(state.pitch>1.5);

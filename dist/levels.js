@@ -11,7 +11,7 @@ const NAMES=['First Flight','Wheel Works','Island Hopping','Fireball Run','Gate 
 export const OBSTACLES=[
  ['hurdle',1,'Jump school','Jump the striped barriers. They span the entire track.'],
  ['wheel',2,'Roaming wheels','Huge spoked wheels roll all the way from one edge to the other.'],
- ['bridge',3,'Sea bridges','Center yourself before the narrow bridge. Open sides mean real falls.'],
+ ['bridge',3,'Sea crossings','Cross narrow bridges and circular stepping drums. Stay near the centre; their curved edges drop into water.'],
  ['fireballs',4,'Fireball volleys','Watch the launchers. Dodge the orange volleys crossing three lanes.'],
  ['gate',5,'Moving openings','Follow the opening. The panels block both edges.'],
  ['sweeper',6,'Rotating arms','Jump the low arm; stay clear of its return swing.'],
@@ -64,7 +64,7 @@ export function buildLevel(value=1){
   if(index>0&&front>l.finishZ+30)checkpoints.push({x:0,z:front-6});
   const narrow=Math.max(3.2,(l.number>=8?5.4:6.4)-l.challenge*1.7-(l.worldIndex===4&&kind==='bridge'?.35:0));
   if(kind==='track'){addPlatform(front,back,l.width);if(l.number>=3&&index%3===2&&length>85&&!last){const p=platforms.at(-1);p.terrain=['hills','ridge','summit'][(Math.floor(index/3)+l.worldIndex)%3];p.height=p.terrain==='hills'?1.7+l.worldIndex*.25:3+l.worldIndex*.7;}}
-  else{addPlatform(front,front-32,l.width);if(kind==='vanishing'){for(let j=0;j<3;j++)addPlatform(front-32-j*17,front-46-j*17,narrow,'vanishing',-j*.22+index*.11);addPlatform(front-83,back,l.width)}else{addPlatform(front-32,front-76,narrow,kind,index*.7);addPlatform(front-76,back,l.width)}}
+  else{addPlatform(front,front-32,l.width);if(kind==='vanishing'){for(let j=0;j<3;j++)addPlatform(front-32-j*17,front-46-j*17,narrow,'vanishing',-j*.22+index*.11);addPlatform(front-83,back,l.width)}else{if(kind==='bridge'&&index%6===4&&l.worldIndex<3){for(let j=0;j<6;j++){const z=front-32-(j+.5)*44/6;platforms.push({x:0,z,w:8,d:8,shape:'disc',kind:'bridge',rails:false,color:l.theme.track});}}else addPlatform(front-32,front-76,narrow,kind,index*.7);addPlatform(front-76,back,l.width)}}
   const section={index,front,back,z:(front+back)/2,kind,title:kind==='track'?'Obstacle arena':kind==='bridge'?'Sea crossing':kind==='moving'?'Drifting island':'Vanishing islands'};sections.push(section);
   if(kind!=='track'){
    hazard(kind,front-48,0,{w:narrow,d:40});

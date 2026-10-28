@@ -33,7 +33,7 @@ export function enhanceExperience(view){
     camera.position.set(target.x+Math.sin(yaw)*Math.cos(pitch)*radius,target.y+Math.sin(pitch)*radius,target.z+Math.cos(yaw)*Math.cos(pitch)*radius);
     // Flip the up vector after passing a pole: a full vertical orbit remains stable.
     camera.up.set(0,Math.cos(pitch)>=0?1:-1,0);camera.lookAt(target);
-    if(lobby&&view.customizing&&innerWidth>700){camera.setViewOffset(innerWidth,innerHeight,innerWidth*.2,0,innerWidth,innerHeight);}else if(lobby&&innerWidth>700){camera.setViewOffset(innerWidth,innerHeight,-innerWidth*.16,0,innerWidth,innerHeight);}else if(lobby&&innerWidth<=700){camera.setViewOffset(innerWidth,innerHeight,0,innerHeight*.25,innerWidth,innerHeight);}else camera.clearViewOffset();
+    if(lobby&&view.customizing&&innerWidth>700){camera.setViewOffset(innerWidth,innerHeight,innerWidth*.2,0,innerWidth,innerHeight);}else if(lobby&&innerWidth>700){camera.setViewOffset(innerWidth,innerHeight,-innerWidth*(innerWidth>1100&&innerHeight>=700?.23:.16),0,innerWidth,innerHeight);}else if(lobby&&innerWidth<=700){camera.setViewOffset(innerWidth,innerHeight,0,innerHeight*.25,innerWidth,innerHeight);}else camera.clearViewOffset();
    }else {camera.up.set(0,1,0);camera.clearViewOffset();}
   }
   draw(scene,camera);
