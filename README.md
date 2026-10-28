@@ -2,7 +2,7 @@
 
 [![Game checks](https://github.com/IntelliCoder-AI/Fall-Guys-Game/actions/workflows/test.yml/badge.svg)](https://github.com/IntelliCoder-AI/Fall-Guys-Game/actions/workflows/test.yml)
 
-**[Play free in your browser →](https://bean-dash-online.onrender.com/)**
+### ***[Play free in your browser →](https://bean-dash-online.onrender.com/)***
 
 ## About
 
