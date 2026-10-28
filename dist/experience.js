@@ -17,7 +17,6 @@ export function enhanceExperience(view){
  document.addEventListener('wheel',e=>{if(!allowed(e)&&!outsideWardrobe(e))return;orbit.active=true;orbit.zoom=T.MathUtils.clamp(orbit.zoom*Math.exp(e.deltaY*.001),.4,2.5);e.preventDefault();},{passive:false});
  canvas.addEventListener('dblclick',reset);canvas.style.touchAction='none';
  window.addEventListener('keydown',e=>{if(e.code==='KeyC'&&!/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))reset();});
- const controls=document.createElement('div');controls.className='camera-guide';controls.innerHTML='<span>Drag to look around · Scroll to zoom</span><button type="button" aria-label="Reset camera">Reset view · C</button>';document.body.append(controls);controls.querySelector('button').onclick=reset;
  let state=null,lastLobby=null;
  const render=view.render.bind(view);view.render=args=>{state=args;if(lastLobby!==args.lobby){reset();lastLobby=args.lobby;}render(args);};
  const draw=view.renderer.render.bind(view.renderer);

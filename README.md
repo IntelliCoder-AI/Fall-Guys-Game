@@ -16,7 +16,7 @@ Bean Dash is a free browser obstacle racer with 50 World Tour levels, private mu
 
 **Controls:** WASD / arrows to move · Space to jump · Shift to dive or slide · Esc for the menu. Phones have touch controls. WebGL is required.
 
-Drag the 3D view to orbit horizontally or vertically; scroll to zoom. Press **C** or **Reset view** to restore the camera. These controls work in the lobby, wardrobe (drag the area outside its controls), and races. When looking around during a race, movement follows your camera direction. The characters use original stylized geometry with detailed clothing materials; they are not photorealistic human scans.
+Drag the 3D view to orbit horizontally or vertically; scroll to zoom. Press **C** to restore the camera. These controls work in the lobby, wardrobe (drag the area outside its controls), and races. When looking around during a race, movement follows your camera direction. The characters use original stylized geometry with detailed clothing materials; they are not photorealistic human scans.
 
 Progress stays in your browser profile. Solo checkpoint saves let you resume after pausing or closing the browser; solo deaths offer a paid checkpoint revival or Game Over. Online races cannot pause, revive, or use power-ups. Clearing browser data removes your save. Earned unlocks survive updates; redesigned courses reset personal-best times.
 

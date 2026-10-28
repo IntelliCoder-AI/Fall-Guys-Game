@@ -26,6 +26,7 @@ try{view=new GameView($('game'))}catch(error){
 }
 view.quality(profile.get().quality);view.load(courseId());enhanceExperience(view);if(graphicsAvailable)installCosmetics(view);
 document.querySelector('.hero').appendChild(document.querySelector('.guest-strip'));
+$('lobby').appendChild(document.querySelector('footer'));
 const ownAppearance=()=>{const p=profile.get(),o=OUTFITS.find(o=>o.id===p.outfit)||OUTFITS[0];return {id:'you',name:p.name,color:p.appearance.shirtColor,outfit:o.id,appearance:normalizeAppearance({...p.appearance,...shopPreview?.appearance,...((shopPreview?.kind==='helmet'||p.equipped.helmet)?{hat:'none'}:{})}),cosmetics:shopPreview?{...p.equipped,[shopPreview.kind]:shopPreview.id}:p.equipped,isBot:false}};
 function formatTime(seconds,decimal=false){seconds=Math.max(0,Number(seconds)||0);const hours=Math.floor(seconds/3600),minutes=Math.floor(seconds/60)%60;return `${hours?hours+':':''}${String(minutes).padStart(2,'0')}:${String(Math.floor(seconds)%60).padStart(2,'0')}${decimal?'.'+Math.floor(seconds%1*10):''}`}
 function tone(f=500,d=.1,type='sine'){if(!profile.get().sound)return;try{audioCtx??=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(f,audioCtx.currentTime);g.gain.setValueAtTime(.05,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+d);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d)}catch{}}
