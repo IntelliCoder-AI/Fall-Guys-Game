@@ -4,13 +4,15 @@
 
 **[Play free in your browser →](https://bean-dash-online.onrender.com/)**
 
-An obstacle racer with live multiplayer, solo races, and no account required.
+## About
+
+Bean Dash is a free browser obstacle racer with 50 World Tour levels, private multiplayer rooms, customizable runners, and an Endurance mode reaching 60 km. Race across hills, ridge trails, and bridges above flowing blue water. No account required.
 
 - **World Tour:** 50 levels across five worlds, from 1 to 5.825 km. Denser crossings and obstacle combinations increase the challenge; each world ends in an extended gauntlet.
 - **Endurance:** a separate long-distance mode reaching **60 km**.
 - **24 mechanics:** roaming wheels, fireball volleys, sea bridges, moving platforms, vanishing islands, crushers, and more.
 - **Your runner:** choose four characters and independently change clothes, hair, headwear, accessories, and colors.
-- **Online:** up to 16 runners, with labeled bots filling empty slots. Top 12 qualify; world finales take 8. Endurance allows all 16 to finish. Your result appears immediately. Water and dangerous hazards end your run; walls block movement until cleared. Locked courses joined through a friend are practice runs without rewards.
+- **Online:** up to 16 runners, with labeled bots filling empty slots. Top 12 qualify; world finales take 8. Endurance allows all 16 to finish. Finish results appear immediately; a loss shows a 2.6-second impact scene before Game Over. Water and dangerous hazards end your run; walls block movement until cleared. Locked courses joined through a friend are practice runs without rewards.
 
 **Controls:** WASD / arrows to move · Space to jump · Shift to dive or slide · Esc for the menu. Phones have touch controls. WebGL is required.
 
@@ -18,7 +20,11 @@ Progress stays in your browser profile. Solo checkpoint saves let you resume aft
 
 ## Play with friends
 
-Select **Race Online**, choose the course, and press **Copy Invite Link** in the lobby. Send that link to friends; they must open it before the 45-second lobby countdown ends. Empty places fill with labeled bots. Everyone plays without an account.
+1. Choose your course, then **Race Online → Generate Room Code**.
+2. Friends choose **Race Online**, enter that six-character code, and press **Join by Code**. Invite links also open the join form with the code filled in.
+3. When everyone has joined, the host presses **Start Race**. Private rooms wait for you; they do not use the public matchmaking timer. At least two people are required. Empty places fill with labeled bots.
+
+For a race on your own against public players and bots, choose **Quick race**. Rooms last until the race ends or everyone leaves; server restarts invalidate codes.
 
 ## Run locally
 

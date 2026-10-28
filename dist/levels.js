@@ -1,10 +1,10 @@
 import {REFERENCE_TIMES} from './balance.js';
 export const MAX_LEVEL=50;
 export const WORLDS=[
- {name:'Sunshore',subtitle:'Find your rhythm',sky:0xb8e8ee,slime:0x39abb7,track:0x45c9d0,edge:0xe6f9f4,accent:0xffb264,scenery:0xf7d5ad},
+ {name:'Sunshore',subtitle:'Find your rhythm',sky:0xb8e8ee,slime:0x39abb7,track:0xe2bc7e,edge:0xe6f9f4,accent:0xffb264,scenery:0xf7d5ad},
  {name:'Sundown City',subtitle:'Own the streets',sky:0xf6cab6,slime:0xb95e94,track:0xdc8ba9,edge:0xffe7bc,accent:0xffd45c,scenery:0xb67db2},
  {name:'Neon Heights',subtitle:'Chase the lights',sky:0x333856,slime:0x24263e,track:0x586cb4,edge:0x68f8c7,accent:0xf18bd1,scenery:0x555078},
- {name:'Frostline',subtitle:'Keep your cool',sky:0xc7e0fa,slime:0x8bb6dc,track:0x91b9e4,edge:0xf3ffff,accent:0xff9a75,scenery:0xe7eff9},
+ {name:'Frostline',subtitle:'Keep your cool',sky:0xc7e0fa,slime:0x8bb6dc,track:0xdde6ee,edge:0xf3ffff,accent:0xff9a75,scenery:0xe7eff9},
  {name:'Skyline Summit',subtitle:'Earn your legend',sky:0xb5b7ef,slime:0x7765aa,track:0x9b87ca,edge:0xffeab2,accent:0xffc455,scenery:0xbca7d8}
 ];
 const NAMES=['First Flight','Wheel Works','Island Hopping','Fireball Run','Gate Runner','Switchback','Tidal Rush','Pressure Point','Overdrive','Crown Gauntlet'];
@@ -63,7 +63,7 @@ export function buildLevel(value=1){
   let kind='track';if(index>0&&length>80&&!last){if(has('bridge')&&index%3===1)kind='bridge';if(has('moving')&&index%7===3)kind='moving';if(has('vanishing')&&index%7===5)kind='vanishing'}
   if(index>0&&front>l.finishZ+30)checkpoints.push({x:0,z:front-6});
   const narrow=Math.max(3.2,(l.number>=8?5.4:6.4)-l.challenge*1.7-(l.worldIndex===4&&kind==='bridge'?.35:0));
-  if(kind==='track')addPlatform(front,back,l.width);
+  if(kind==='track'){addPlatform(front,back,l.width);if(l.number>=3&&index%3===2&&length>85&&!last){const p=platforms.at(-1);p.terrain=['hills','ridge','summit'][(Math.floor(index/3)+l.worldIndex)%3];p.height=p.terrain==='hills'?1.7+l.worldIndex*.25:3+l.worldIndex*.7;}}
   else{addPlatform(front,front-32,l.width);if(kind==='vanishing'){for(let j=0;j<3;j++)addPlatform(front-32-j*17,front-46-j*17,narrow,'vanishing',-j*.22+index*.11);addPlatform(front-83,back,l.width)}else{addPlatform(front-32,front-76,narrow,kind,index*.7);addPlatform(front-76,back,l.width)}}
   const section={index,front,back,z:(front+back)/2,kind,title:kind==='track'?'Obstacle arena':kind==='bridge'?'Sea crossing':kind==='moving'?'Drifting island':'Vanishing islands'};sections.push(section);
   if(kind!=='track'){

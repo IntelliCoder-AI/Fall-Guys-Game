@@ -3,3 +3,21 @@ const until=(ws,predicate,timeout=3000)=>new Promise((resolve,reject)=>{const t=
 test('two anonymous clients share a race, separate identities, and server positions',async()=>{const app=createGameServer({waitSeconds:30});app.server.listen(0,'127.0.0.1');await once(app.server,'listening');const port=app.server.address().port;const a=new WebSocket(`ws://127.0.0.1:${port}/ws`),b=new WebSocket(`ws://127.0.0.1:${port}/ws`);try{await Promise.all([once(a,'open'),once(b,'open')]);let aj=until(a,s=>s.type==='joined');a.send(JSON.stringify({type:'join',name:'Alice'}));aj=await aj;let bj=until(b,s=>s.type==='joined');b.send(JSON.stringify({type:'join',name:'Bob',room:aj.room}));bj=await bj;assert.equal(aj.room,bj.room);assert.notEqual(aj.id,bj.id);const r=app.rooms.get(aj.room);r.start();r.phase='race';a.send(JSON.stringify({type:'input',dx:0,dz:-1,id:bj.id,x:9999}));const state=await until(b,s=>s.type==='state'&&s.phase==='race'&&s.players.find(p=>p.id===aj.id).z<3.9);assert.equal(state.players.find(p=>p.id===bj.id).z,4);assert(state.players.find(p=>p.id===aj.id).x<10);const health=await fetch(`http://127.0.0.1:${port}/health`);assert.equal(health.status,200);assert.equal((await health.json()).ok,true);const privateFile=await fetch(`http://127.0.0.1:${port}/server/index.js`);assert.equal(privateFile.status,404)}finally{a.close();b.close();await app.close()}});
 
 test('online appearances propagate and Tour and Endurance use separate rooms',async()=>{const app=createGameServer({waitSeconds:60});app.server.listen(0,'127.0.0.1');await once(app.server,'listening');const url=`ws://127.0.0.1:${app.server.address().port}/ws`,clients=[new WebSocket(url),new WebSocket(url),new WebSocket(url)];try{await Promise.all(clients.map(ws=>once(ws,'open')));const join=async(ws,data)=>{const reply=until(ws,s=>s.type==='joined');ws.send(JSON.stringify({type:'join',...data}));return reply};const first=await join(clients[0],{level:4,appearance:{character:'nova',top:'jacket',bottom:'skirt'}});const second=await join(clients[1],{level:4,appearance:{character:'ace',top:'tee'}});const marathon=await join(clients[2],{level:4,mode:'endurance'});assert.equal(first.room,second.room);assert.notEqual(first.room,marathon.room);const state=await until(clients[1],s=>s.type==='state'&&s.players.length===2);assert.equal(state.players.find(p=>p.id===first.id).appearance.bottom,'skirt');assert.equal(state.players.find(p=>p.id===second.id).appearance.character,'ace');assert.equal(app.rooms.get(marathon.room).courseId,104)}finally{for(const ws of clients)ws.close();await app.close()}});
+
+test('private code rooms wait for their host, reject strangers in matchmaking, and transfer host',async()=>{
+ const app=createGameServer({waitSeconds:.2});app.server.listen(0,'127.0.0.1');await once(app.server,'listening');
+ const url=`ws://127.0.0.1:${app.server.address().port}/ws`,clients=Array.from({length:4},()=>new WebSocket(url));
+ try{
+  await Promise.all(clients.map(ws=>once(ws,'open')));
+  const join=async(ws,data)=>{const reply=until(ws,s=>s.type==='joined');ws.send(JSON.stringify({type:'join',...data}));return reply};
+  const host=await join(clients[0],{action:'create',level:3}),room=app.rooms.get(host.room);
+  room.tick(100);assert.equal(room.phase,'waiting');
+  const notice=until(clients[0],s=>s.type==='notice');clients[0].send(JSON.stringify({type:'start'}));await notice;assert.equal(room.phase,'waiting');
+  const publicPlayer=await join(clients[2],{level:3});assert.notEqual(publicPlayer.room,host.room);
+  const invalid=until(clients[3],s=>s.type==='error');clients[3].send(JSON.stringify({type:'join',room:'BADBAD'}));await invalid;assert.equal(app.rooms.size,2);
+  const friend=await join(clients[1],{room:host.room.toLowerCase(),level:1});assert.equal(friend.room,host.room);assert.equal(room.level,3);
+  clients[1].send(JSON.stringify({type:'start'}));await until(clients[1],s=>s.type==='state');assert.equal(room.phase,'waiting');
+  clients[0].close();await until(clients[1],s=>s.type==='state'&&s.hostId===friend.id);assert.equal(room.hostId,friend.id);
+  await join(clients[3],{room:host.room});const started=until(clients[1],s=>s.phase==='countdown');clients[1].send(JSON.stringify({type:'start'}));await started;assert.equal(room.players.length,16);
+ }finally{clients.forEach(ws=>ws.close());await app.close()}
+});

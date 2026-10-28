@@ -42,3 +42,10 @@ The browser checks in `tests/one-life-browser.cjs` verify wheel/water Game Over 
 - [Trackmania short-course guidance](https://doc.trackmania.com/create/map-review/weekly-shorts-guidelines/): readable, replayable courses.
 
 All character and obstacle models are original procedural assets.
+
+
+## V8 presentation and rooms
+
+Private rooms wait for a host to start after a friend joins. Public queues retain their timer. The new river shader uses directional ripples and foam, informed by [Unity’s water shader reference](https://docs.unity3d.com/Packages/com.unity.shadergraph@17.7/manual/Shader-Graph-Sample-Production-Ready-Water.html). Three trail profiles add rolling hills, ridges and summits from level 3. Heights are terrain-relative: runners and obstacles share the raised trail surface, while horizontal timing and the calibrated challenge remain unchanged. These are running slopes, not a separate hand-climbing mechanic.
+
+Losses remain terminal on the server; the client shows a 2.6-second impact scene before results. `tests/friends-browser.cjs` verifies two separate browsers joining the same code and starting together. `tests/one-life-browser.cjs` checks the visible loss state and retry. `tests/terrain.test.mjs` checks continuous trail heights and flat landings.

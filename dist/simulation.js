@@ -1,4 +1,5 @@
 import {buildLevel,obstaclePosition,nearby,platformPosition,fireballPositions,trapdoorTiles} from './levels.js';
+import {terrainHeightAt} from './terrain.js';
 import {groundAt,segmentDistance,checkpointFor,resetPosition} from './physics.js';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 export const courseFor=buildLevel;
@@ -75,6 +76,7 @@ export function stepRunner(b,input,dt,t,level=1){
   if(collides){b.hits++;events.push('hit');die(h.type);return events}
  }
  if(b.y<-3||Math.abs(b.x)>c.width+8){b.falls++;events.push('fall');die('water');return events}
+ b.elevation=terrainHeightAt(c,b.z);
  b.actualSpeed=Math.hypot(b.x-previousX,b.z-previousZ)/dt;
  if(b.grounded){const cp=checkpointFor(b.z,b.cp,level);if(cp>b.cp){b.cp=cp;events.push('checkpoint')}for(const pad of nearby(c.boosts,b.z,4))if(Math.abs(b.z-pad.z)<pad.d/2&&Math.abs(b.x-pad.x)<pad.w/2&&b.boost<.5){b.boost=1.5;events.push('boost')}}
  if(!b.isBot)for(const coin of nearby(c.coins,b.z,2))if(Math.abs(b.z-coin.z)<1.1&&Math.abs(b.x-coin.x)<1.05&&Math.abs(b.y+1-coin.y)<1.6&&!collectedSet(b).has(coin.id)){const taken=collectedSet(b);b.collected.push(coin.id);taken.add(coin.id);b.coins++;events.push('coin')}
