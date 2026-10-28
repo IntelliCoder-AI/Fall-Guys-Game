@@ -37,7 +37,7 @@ export const OBSTACLES=[
 function metadata(id,endurance=false){
  const i=id-1,w=Math.floor(i/10),stage=i%10,theme=WORLDS[w],newObstacles=OBSTACLES.filter(o=>o.unlock===id);
  const challenge=Math.min(1,.15+w*.15+stage*.022+(stage===9?.12:0))*(newObstacles.length&&id>1?.94:1);
- const tourDistance=1000+75*i+(stage===9?150+w*75:0);
+ const tourDistance=1000+75*i+(stage===9?150+w*75+(w===4?700:0):0);
  const distance=endurance?1000+Math.round(59000*Math.pow(i/49,1.3)/100)*100:tourDistance;
  const measuredReference=REFERENCE_TIMES[i]||tourDistance/7.5+20;
  // Preserve the measured runs, but prevent medal targets stepping backward
@@ -56,13 +56,13 @@ export function buildLevel(value=1){
  const platforms=[],hazards=[],checkpoints=[{x:0,z:4}],coins=[],boosts=[],sections=[];
  const has=t=>l.obstacleTypes.includes(t),types=l.obstacleTypes.filter(t=>!['bridge','moving','vanishing'].includes(t));
  let front=12,index=0,serial=0;
- const addPlatform=(a,b,width,kind='track',phase=0)=>platforms.push({x:0,z:(a+b)/2,w:width,d:a-b,kind,rails:kind==='track'&&l.number<6,motion:kind==='moving'?'moving':kind==='vanishing'?'vanishing':null,phase,period:8,activeFraction:.86-l.challenge*.06,color:l.theme.track});
+ const addPlatform=(a,b,width,kind='track',phase=0)=>platforms.push({x:0,z:(a+b)/2,w:width,d:a-b,kind,rails:kind==='track'&&l.number<6,motion:kind==='moving'?'moving':kind==='vanishing'?'vanishing':null,phase,period:8,activeFraction:.82-l.challenge*.17,color:l.theme.track});
  function hazard(type,z,x=0,extra={}){const full=['hurdle','gate','conveyor','ice','piston','laser','tunnel','mud'].includes(type);const h={id:serial++,type,z,x,r:l.width/2-.45,w:type==='piston'?l.width*.65:full?l.width:Math.min(6,l.width*.48),trackWidth:l.width,d:6,speed:l.speed*(1+(serial%3)*.08)*(serial%2?1:-1),phase:(serial*.37)%1,height:type==='hurdle'?.65+l.challenge*.65:2.8,opening:Math.max(3,5-l.challenge*1.7),challenge:l.challenge,...extra};hazards.push(h);return h}
  while(front>l.finishZ-14){
   const length=Math.min(100,front-(l.finishZ-14)),back=front-length,last=back<=l.finishZ-14,finale=l.number%10===0;
   let kind='track';if(index>0&&length>80&&!last){if(has('bridge')&&index%3===1)kind='bridge';if(has('moving')&&index%7===3)kind='moving';if(has('vanishing')&&index%7===5)kind='vanishing'}
   if(index>0&&front>l.finishZ+30)checkpoints.push({x:0,z:front-6});
-  const narrow=Math.max(3.6,6.4-l.challenge*2.7);
+  const narrow=Math.max(3.2,(l.number>=8?5.4:6.4)-l.challenge*1.7-(l.worldIndex===4&&kind==='bridge'?.35:0));
   if(kind==='track')addPlatform(front,back,l.width);
   else{addPlatform(front,front-32,l.width);if(kind==='vanishing'){for(let j=0;j<3;j++)addPlatform(front-32-j*17,front-46-j*17,narrow,'vanishing',-j*.22+index*.11);addPlatform(front-83,back,l.width)}else{addPlatform(front-32,front-76,narrow,kind,index*.7);addPlatform(front-76,back,l.width)}}
   const section={index,front,back,z:(front+back)/2,kind,title:kind==='track'?'Obstacle arena':kind==='bridge'?'Sea crossing':kind==='moving'?'Drifting island':'Vanishing islands'};sections.push(section);
@@ -78,6 +78,7 @@ export function buildLevel(value=1){
     if(has('fireballs')&&index%2===0)hazard('fireballs',front-62,0,{w:narrow});
     else hazard('hurdle',front-62,0,{w:narrow,height:.65+l.challenge*.35});
     if(has('laser'))hazard('laser',front-75);
+    if(l.worldIndex>=2)hazard('ice',front-53,0,{w:narrow,d:8});
     if(has('magnet')&&index%2)hazard('magnet',front-53,(index%4===1?-1:1)*narrow*.6,{w:3,d:6});
    }
    if(l.worldIndex>=2){for(const x of[-l.width/2+1.4,l.width/2-1.4])hazard('bumper',front-10,x)}
@@ -88,7 +89,10 @@ export function buildLevel(value=1){
    const rows=Math.max(1,Math.min(8,Math.round((length-20)/l.spacing)));
    for(let j=0;j<rows;j++){
     const z=front-16-j*(length-28)/Math.max(1,rows-1);
-    let type=types[(index*5+j*3+Math.floor(index/3))%types.length];
+    // After the recovery opener, retain active challenges from the previous
+    // world instead of filling the second/third course with passive terrain.
+    const pool=l.worldIndex>0&&[1,2].includes((l.number-1)%10)?types.filter(t=>!['ice','wind','mud','conveyor','launchpad','magnet'].includes(t)):types;
+    let type=pool[(index*5+j*3+Math.floor(index/3))%pool.length];
     if(l.number===1)type='hurdle';
     if(index===0&&j===0&&l.newObstacles.length)type=l.newObstacles.at(-1).type;
     if(type==='sweeper'&&(index+j)%3!==0)type=has('wheel')?'wheel':'hurdle';

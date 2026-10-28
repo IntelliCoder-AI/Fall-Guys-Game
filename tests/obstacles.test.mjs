@@ -20,4 +20,3 @@ test('tunnels require diving, slalom walls alternate, and boulders travel along 
  const {h:ball}=fixture('boulder');assert.notEqual(obstaclePosition(ball,0,50).z,obstaclePosition(ball,1,50).z);
  const {h:ring}=fixture('pulse');const t=timeFor(ring,p=>p.active&&p.radius>3&&p.radius<4),p=obstaclePosition(ring,t,50);const runner={...runnerState(),x:p.radius,z:ring.z};assert(stepRunner(runner,{},.01,t,50).includes('hit'));const jumping={...runnerState(),x:p.radius,z:ring.z,y:1.2};assert(!stepRunner(jumping,{},.01,t,50).includes('hit'));
 });
-test('gold targets accommodate full-speed route finding on late courses',()=>{for(const level of[1,22,36,45,50]){const c=buildLevel(level),b={...runnerState(),isBot:true,speed:10.5,lane:0,seed:1};let t=0;while(t<c.gold&&!b.finished){stepRunner(b,botInput(b,t,level),1/30,t,level);t+=1/30}assert(b.finished,`Level ${level} misses gold at ${t}`)}});

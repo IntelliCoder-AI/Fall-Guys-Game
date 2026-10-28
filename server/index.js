@@ -8,12 +8,12 @@ import {visibleCollected} from '../dist/simulation.js';
 import {levelById} from '../dist/levels.js';
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const mime={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8','.woff2':'font/woff2','.txt':'text/plain; charset=utf-8','.svg':'image/svg+xml'};
-export function createGameServer({waitSeconds=12,maxRooms=40}={}){
+export function createGameServer({waitSeconds=45,maxRooms=40}={}){
  const rooms=new Map(),connections=new Map();
  const server=http.createServer(async(req,res)=>{res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'");
   if(req.method!=='GET'&&req.method!=='HEAD'){res.writeHead(405);return res.end()}
   let pathname;try{pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname)}catch{res.writeHead(400);return res.end()}
-  if(pathname==='/health'){res.setHeader('Content-Type','application/json');return res.end(JSON.stringify({ok:true,version:'6.0.0',rooms:rooms.size}))}
+  if(pathname==='/health'){res.setHeader('Content-Type','application/json');return res.end(JSON.stringify({ok:true,version:'7.0.0',rooms:rooms.size}))}
   const target=path.resolve(root,'.'+(pathname==='/'?'/index.html':pathname));if(!target.startsWith(root)){res.writeHead(403);return res.end()}
   try{if(!(await stat(target)).isFile())throw Error();const body=await readFile(target);res.setHeader('Content-Type',mime[path.extname(target)]||'application/octet-stream');res.setHeader('Cache-Control',pathname.includes('/vendor/')?'public, max-age=86400':'no-cache');res.end(req.method==='HEAD'?undefined:body)}catch{res.writeHead(404);res.end('Not found')}
  });

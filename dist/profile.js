@@ -1,6 +1,6 @@
 import {MAX_LEVEL,levelById,buildLevel} from './levels.js';
 import {normalizeAppearance,legacyAppearance} from './appearance.js';
-const KEY='bean-dash-profile-v3',RUN_KEY='bean-dash-run-v6',COURSE_REVISION=6;
+const KEY='bean-dash-profile-v3',RUN_KEY='bean-dash-run-v7',COURSE_REVISION=7;
 export const OUTFITS=[{id:'dash',name:'Dash',description:'The original street runner',unlock:1,color:'#ff725e'},{id:'nova',name:'Nova',description:'A fresh perspective',unlock:5,color:'#9279ff'},{id:'ace',name:'Ace',description:'Built for the podium',unlock:15,color:'#44c9b4'},{id:'gold',name:'Gold Rush',description:'For the long-distance legends',unlock:30,color:'#ffcb66'}];
 const cleanName=value=>String(value??'').trim().slice(0,20)||'Guest Runner';
 const bounded=(v,max=Number.MAX_SAFE_INTEGER)=>Math.min(max,Math.max(0,Number.isFinite(Number(v))?Math.floor(Number(v)):0));
