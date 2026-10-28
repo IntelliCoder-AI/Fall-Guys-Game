@@ -43,7 +43,7 @@ function tutorial(after){modal('<span class="pill">BEFORE YOUR FIRST RUN</span><
 function startSolo(resume=false){const saved=resume?profile.getRun():null;disconnect();$('modal').close();resetRun();if(saved?.level===level&&saved.mode===raceMode){const cp=resetPosition(saved.cp,level);Object.assign(player,saved,{x:0,y:0,z:cp.z});time=saved.time;worldTime=time;for(const b of bots)Object.assign(b,{cp:saved.cp,z:cp.z+3,x:b.lane*.7});}else profile.clearRun();mode='countdown';countTime=3;showRaceUI();$('countdown').hidden=false;$('countdown').textContent='3';$('level-intro').hidden=false;$('level-intro').textContent=`LEVEL ${level} / 50 · ${levelById(level).name.toUpperCase()}`;tone(440)}
 function showDeath(reason,onlineFinish=false){
  if(deathScene||lastResult)return;
- profile.clearRun();clearInput();$('modal').close();$('touch').hidden=true;$('countdown').hidden=true;$('level-intro').hidden=true;
+ if(!online&&!onlineFinish)profile.clearRun();clearInput();$('modal').close();$('touch').hidden=true;$('countdown').hidden=true;$('level-intro').hidden=true;
  deathScene={reason,onlineFinish,elapsed:0,started:performance.now(),x:player.x,y:player.y,z:player.z};mode='dying';
  toast((deathText[reason]||'Run ended')+' · watch your step');toastTime=4;tone(150,.35,'triangle');
 }
