@@ -36,11 +36,15 @@ export const OBSTACLES=[
 ].map(([type,unlock,name,tip])=>({type,unlock,name,tip}));
 function metadata(id,endurance=false){
  const i=id-1,w=Math.floor(i/10),stage=i%10,theme=WORLDS[w],newObstacles=OBSTACLES.filter(o=>o.unlock===id);
- const challenge=Math.min(1,w*.18+stage*.022+(stage===9?.12:0))*(newObstacles.length&&id>1?.94:1);
- const distance=endurance?1000+Math.round(59000*Math.pow(i/49,1.3)/100)*100:1000+75*i;
- const reference=REFERENCE_TIMES[i]||(1000+75*i)/7.5+20;
- const gold=Math.ceil((endurance?reference*distance/(1000+75*i):reference)*1.1),silver=Math.ceil(gold*1.3);
- return {id:id+(endurance?100:0),number:id,mode:endurance?'endurance':'tour',name:NAMES[stage],world:theme.name,worldIndex:w,theme,tag:stage===9?'WORLD FINALE':newObstacles.length?'NEW CHALLENGE':theme.subtitle.toUpperCase(),distance,finishZ:4-distance,width:20-w*2.1-stage*.14,challenge,spacing:30-19*challenge,speed:.8+challenge*1.1,gap:3+challenge*4.8,qualify:endurance?16:stage===9?8:12,runners:16,gold,silver,referenceTime:reference,seconds:Math.ceil(silver*1.65+30),difficulty:w+1,newObstacles,obstacleTypes:OBSTACLES.filter(o=>o.unlock<=id).map(o=>o.type),sky:theme.sky,slime:theme.slime};
+ const challenge=Math.min(1,.15+w*.15+stage*.022+(stage===9?.12:0))*(newObstacles.length&&id>1?.94:1);
+ const tourDistance=1000+75*i+(stage===9?150+w*75:0);
+ const distance=endurance?1000+Math.round(59000*Math.pow(i/49,1.3)/100)*100:tourDistance;
+ const measuredReference=REFERENCE_TIMES[i]||tourDistance/7.5+20;
+ // Preserve the measured runs, but prevent medal targets stepping backward
+ // inside a world. World openings deliberately reset after a finale.
+ const reference=Math.max(measuredReference,...REFERENCE_TIMES.slice(w*10,i+1));
+ const gold=Math.ceil((endurance?reference*distance/tourDistance:reference)*1.1),silver=Math.ceil(gold*1.3);
+ return {id:id+(endurance?100:0),number:id,mode:endurance?'endurance':'tour',name:NAMES[stage],world:theme.name,worldIndex:w,theme,tag:stage===9?'WORLD FINALE':newObstacles.length?'NEW CHALLENGE':theme.subtitle.toUpperCase(),distance,finishZ:4-distance,width:20-w*2.1-stage*.14,challenge,spacing:32-23*challenge,speed:.8+challenge*1.1,gap:3+challenge*4.8,qualify:endurance?16:stage===9?8:12,runners:16,gold,silver,referenceTime:reference,measuredReference,seconds:Math.ceil(silver*1.65+30),difficulty:w+1,newObstacles,obstacleTypes:OBSTACLES.filter(o=>o.unlock<=id).map(o=>o.type),sky:theme.sky,slime:theme.slime};
 }
 export const LEVELS=Array.from({length:50},(_,i)=>metadata(i+1));
 export const ENDURANCE_LEVELS=Array.from({length:50},(_,i)=>metadata(i+1,true));
@@ -52,7 +56,7 @@ export function buildLevel(value=1){
  const platforms=[],hazards=[],checkpoints=[{x:0,z:4}],coins=[],boosts=[],sections=[];
  const has=t=>l.obstacleTypes.includes(t),types=l.obstacleTypes.filter(t=>!['bridge','moving','vanishing'].includes(t));
  let front=12,index=0,serial=0;
- const addPlatform=(a,b,width,kind='track',phase=0)=>platforms.push({x:0,z:(a+b)/2,w:width,d:a-b,kind,rails:kind==='track'&&l.worldIndex===0,motion:kind==='moving'?'moving':kind==='vanishing'?'vanishing':null,phase,color:l.theme.track});
+ const addPlatform=(a,b,width,kind='track',phase=0)=>platforms.push({x:0,z:(a+b)/2,w:width,d:a-b,kind,rails:kind==='track'&&l.number<6,motion:kind==='moving'?'moving':kind==='vanishing'?'vanishing':null,phase,period:8,activeFraction:.86-l.challenge*.06,color:l.theme.track});
  function hazard(type,z,x=0,extra={}){const full=['hurdle','gate','conveyor','ice','piston','laser','tunnel','mud'].includes(type);const h={id:serial++,type,z,x,r:l.width/2-.45,w:type==='piston'?l.width*.65:full?l.width:Math.min(6,l.width*.48),trackWidth:l.width,d:6,speed:l.speed*(1+(serial%3)*.08)*(serial%2?1:-1),phase:(serial*.37)%1,height:type==='hurdle'?.65+l.challenge*.65:2.8,opening:Math.max(3,5-l.challenge*1.7),challenge:l.challenge,...extra};hazards.push(h);return h}
  while(front>l.finishZ-14){
   const length=Math.min(100,front-(l.finishZ-14)),back=front-length,last=back<=l.finishZ-14,finale=l.number%10===0;
@@ -60,17 +64,30 @@ export function buildLevel(value=1){
   if(index>0&&front>l.finishZ+30)checkpoints.push({x:0,z:front-6});
   const narrow=Math.max(3.6,6.4-l.challenge*2.7);
   if(kind==='track')addPlatform(front,back,l.width);
-  else{addPlatform(front,front-24,l.width);if(kind==='vanishing'){for(let j=0;j<3;j++)addPlatform(front-24-j*17,front-38-j*17,narrow,'vanishing',-j*.24+index*.11);addPlatform(front-75,back,l.width)}else{addPlatform(front-24,front-76,narrow,kind,index*.7);addPlatform(front-76,back,l.width)}}
+  else{addPlatform(front,front-32,l.width);if(kind==='vanishing'){for(let j=0;j<3;j++)addPlatform(front-32-j*17,front-46-j*17,narrow,'vanishing',-j*.22+index*.11);addPlatform(front-83,back,l.width)}else{addPlatform(front-32,front-76,narrow,kind,index*.7);addPlatform(front-76,back,l.width)}}
   const section={index,front,back,z:(front+back)/2,kind,title:kind==='track'?'Obstacle arena':kind==='bridge'?'Sea crossing':kind==='moving'?'Drifting island':'Vanishing islands'};sections.push(section);
   if(kind!=='track'){
    hazard(kind,front-48,0,{w:narrow,d:40});
-   if(has('wind')){hazard('wind',front-44,0,{w:narrow,d:20});section.title='Crosswind crossing'}
-   if(has('fireballs')&&index%2===0)hazard('fireballs',front-67,0,{w:narrow});
+   if(has('wind')&&kind==='bridge'){hazard('wind',front-44,0,{w:narrow,d:16});section.title='Crosswind crossing'}
+   // Crossing hazards occupy stable decks and bridge spans. Drifting and
+   // disappearing floors remain readable, with hazards on their approaches.
+   hazard('hurdle',front-16);
+   if(l.worldIndex>=1)hazard('hurdle',front-86);
+   if(kind==='bridge'){
+    hazard('hurdle',front-35,0,{w:narrow,height:.65+l.challenge*.35});
+    if(has('fireballs')&&index%2===0)hazard('fireballs',front-62,0,{w:narrow});
+    else hazard('hurdle',front-62,0,{w:narrow,height:.65+l.challenge*.35});
+    if(has('laser'))hazard('laser',front-75);
+    if(has('magnet')&&index%2)hazard('magnet',front-53,(index%4===1?-1:1)*narrow*.6,{w:3,d:6});
+   }
+   if(l.worldIndex>=2){for(const x of[-l.width/2+1.4,l.width/2-1.4])hazard('bumper',front-10,x)}
+   if(l.worldIndex>=1)hazard('conveyor',front-12,0,{d:5});
+   if(l.worldIndex>=3){for(const x of[-l.width/2+1.4,l.width/2-1.4])hazard('bumper',front-80,x)}
   }else{
    const sectionStart=hazards.length;
-   const rows=Math.max(1,Math.min(Math.floor((length-24)/10),Math.round((length-24)/l.spacing)));
+   const rows=Math.max(1,Math.min(8,Math.round((length-20)/l.spacing)));
    for(let j=0;j<rows;j++){
-    const z=front-18-j*(length-32)/Math.max(1,rows-1);
+    const z=front-16-j*(length-28)/Math.max(1,rows-1);
     let type=types[(index*5+j*3+Math.floor(index/3))%types.length];
     if(l.number===1)type='hurdle';
     if(index===0&&j===0&&l.newObstacles.length)type=l.newObstacles.at(-1).type;
@@ -78,18 +95,23 @@ export function buildLevel(value=1){
     // The outside lanes are part of the course, not a permanent bypass.
     const lane=['bumper','hammer','boulder'].includes(type)?(j%2?1:-1)*(l.width/2-1.2):0;
     hazard(type,z,lane);
+    if(type==='bumper'&&l.worldIndex>=1)hazard('bumper',z,-lane);
+    if(l.worldIndex>=3&&j===1&&['hurdle','laser','tunnel'].includes(type))hazard('conveyor',z,0,{d:5});
    }
    // A section has one authored combo; replace its generic rows so unrelated
    // barriers cannot accidentally seal the intended route.
    let combo=null;
    if(l.worldIndex>=1&&length>85){if(has('laser')&&index%5===0)combo='gate';else if(has('piston')&&index%5===2)combo='press';else if(has('pulse')&&index%5===4)combo='pulse'}
-   if(finale&&index%3===2&&length>85)combo='finale';
-   if(combo){hazards.splice(sectionStart);hazard('hurdle',front-18);
+   if(finale&&index%2===0&&length>85)combo='finale';
+   if(combo){hazards.splice(sectionStart);hazard('hurdle',front-16);
+    if(l.worldIndex>=1)for(const x of[-l.width/2+1.4,l.width/2-1.4])hazard('bumper',front-25,x);
     if(combo==='gate'){hazard('gate',front-35);hazard('laser',front-46);hazard('wheel',front-68);section.title='Gate + laser'}
     if(combo==='press'){hazard('conveyor',front-46);hazard('piston',front-46);hazard('wheel',front-70);section.title='Pressure belt'}
     if(combo==='pulse'){hazard('slalom',front-40);hazard('pulse',front-53);hazard('fireballs',front-72);section.title='Shockwave slalom'}
     if(combo==='finale'){hazard('wheel',front-34);hazard('gate',front-53);hazard('fireballs',front-72);section.title='Finale gauntlet'}
-    if(l.worldIndex>=2)hazard('hurdle',front-87);
+    hazard('hurdle',front-87);
+    if(l.worldIndex>=2)hazard('conveyor',front-87,0,{d:5});
+    if(l.worldIndex>=3)hazard('laser',front-78);
    }
 
   }
@@ -97,6 +119,9 @@ export function buildLevel(value=1){
   if(gap&&has('ice'))hazard(index%2&&has('mud')?'mud':'ice',back+5,0,{d:8});
   front=back-gap;index++;
  }
+ // Reserve a clear finish apron: timed floors and impacts must not obscure
+ // the finish trigger or push a crossing runner back out of the result.
+ for(let i=hazards.length-1;i>=0;i--)if(hazards[i].z<l.finishZ+10)hazards.splice(i,1);
  // Keep first introductions legible and preserve safe checkpoint landing areas.
  hazards.sort((a,b)=>b.z-a.z);for(const p of checkpoints.slice(1))boosts.push({x:0,z:p.z-6,w:3,d:2});
  let coinId=0;for(let z=-12;z>l.finishZ+12;z-=9){const p=nearby(platforms,z,100).find(p=>Math.abs(z-p.z)<p.d/2-2);if(p)coins.push({id:coinId++,x:Math.sin(coinId*.7)*Math.min(3,p.w*.25),y:1.2,z})}
@@ -104,7 +129,7 @@ export function buildLevel(value=1){
 }
 // Populate lobby counts from the same section generator used by physics.
 for(const l of[...LEVELS,...ENDURANCE_LEVELS])l.hazardCount=buildLevel(l.id).hazardCount;
-export function platformPosition(p,t=0){if(p.motion==='moving')return {x:Math.sin(t*.8+p.phase)*2.1,active:true};if(p.motion==='vanishing'){const cycle=((t*.16+p.phase)%1+1)%1;return {x:0,active:cycle<.76,warning:cycle>.58}}return {x:p.x,active:true}}
+export function platformPosition(p,t=0){if(p.motion==='moving')return {x:Math.sin(t*.8+p.phase)*2.1,active:true};if(p.motion==='vanishing'){const cycle=((t/(p.period||8)+p.phase)%1+1)%1,active=p.activeFraction||.82;return {x:0,active:cycle<active,warning:cycle>active-.18}}return {x:p.x,active:true}}
 export function obstaclePosition(h,t,level){
  const l=levelById(level),cycle=((t*Math.abs(h.speed)*.22+h.phase)%1+1)%1,width=h.trackWidth||l.width;
  if(h.type==='wheel'||h.type==='roller')return {x:Math.sin(t*Math.abs(h.speed)+h.phase)*(width/2-.3),y:h.type==='wheel'?1.8:1.1,z:h.z};

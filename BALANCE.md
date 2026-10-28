@@ -1,35 +1,58 @@
-# Course balance — V5
+# Course balance — V6
 
-World Tour now takes roughly 2–10 minutes per reference run. The previous 1–60 km progression remains available as Endurance, with separate best times. Length alone should not define difficulty.
+[Play](https://bean-dash-online.onrender.com/) · [CI results](https://github.com/IntelliCoder-AI/Fall-Guys-Game/actions/workflows/test.yml) · [Pass/fail balance test](tests/balance.test.mjs)
 
-## Design
+World Tour ranges from 1 to 5.125 km. Finales include an extra 150–450 m of obstacle sections. The 1–60 km progression remains in Endurance with separate best times.
 
-- Level 1 teaches full-width hurdles. Wheels arrive at 2, open sea bridges at 3, and crossing fireball volleys at 4. The catalog grows to 24 mechanics.
-- Full-width barriers and moving gate openings prevent a permanent safe edge lane. Bridges have exposed sides from their introduction; normal tracks lose rails in world 2.
-- Late tracks narrow from 20 to about 10 m. Gaps grow from 3 to 7.8 m. Moving islands, disappearing platforms, checkerboard trapdoors, and wind introduce real falls.
-- Authored sections combine gate + laser, conveyor + crusher, and slalom + shockwave. Finale sections combine wheel + gate + fireballs. Combinations replace generic rows to preserve a usable route.
-- Each world's opening eases off. New mechanics get a gentler introduction; finales spike. Therefore every individual level is not monotonically harder.
-- Bot speed rises from 8.4 to 10 m/s across worlds. Online Tour races qualify 12 of 16, or 8 in finales. A player's finish still shows results immediately.
+## What changed
 
-## Reference times and checks
+- Challenge starts at 0.15. Normal-track rails end at level 6; bridges already have open edges. Level 1 stays hurdles-only.
+- Hazard density rises from **2.9 to 9.15 per 100 m**, excluding bridge/platform label markers. Crossings now include approach and exit hazards, and bridge spans have hurdles, lasers, fireballs, wind, or magnet fields.
+- Authored combos retain their reserved middle section, with hazards in the unused approaches and exits. Generic rows do not overlap the intended route through a combo.
+- Vanishing islands use an eight-second cycle with a longer visible window and staggered phases. Stable approaches are longer, and wind is confined to fixed bridges. Moving-platform AI stays on the deck until the exit. Trapdoor jumps and paired-bumper avoidance no longer cause repeated failure loops.
+- Every finale is the longest measured run in its world, and level 50 is the overall peak. Gold targets cannot fall within a world; the next world's opening deliberately eases off.
+- The last ten metres are clear of hazards. Finishes remain immediate.
+- Locked or invalid levels cannot grant rewards, best times, or unlocks. Later courses joined through a friend show a practice result.
 
-`node scripts/calibrate.mjs` runs three ordinary player-speed controllers per level, using the shared movement and collision code. The median sets gold at 1.10× reference time; silver is 1.30× gold. These are reproducible controller references, not measured expert human performances.
+## Measured results
 
-The recorded runs in `tests/balance-reference.json` currently give:
+Six player-speed reference runners finish each Tour level using normal shared physics. Aggregate results from the live regression test:
 
-| World | Pace (m/s) | Hits / km | Falls across 30 runs |
-|---|---:|---:|---:|
-| Sunshore | 10.44 | 1.62 | 0 |
-| Sundown City | 10.47 | 0.86 | 0 |
-| Neon Heights | 10.10 | 1.64 | 32 |
-| Frostline | 8.75 | 3.20 | 290 |
-| Skyline Summit | 8.78 | 5.59 | 299 |
+| World | Pace (m/s) | Hits / km | Falls across 60 runs | Finale reference |
+|---|---:|---:|---:|---:|
+| Sunshore | 10.385 | 1.68 | 0 | 182.60 s |
+| Sundown City | 10.273 | 1.45 | 0 | 262.33 s |
+| Neon Heights | 10.009 | 1.86 | 36 | 354.13 s |
+| Frostline | 9.857 | 3.00 | 60 | 439.10 s |
+| Skyline Summit | 9.649 | 4.92 | 64 | 556.57 s |
 
-The late worlds require more corrections and recoveries; the curve is not strictly monotonic. Controller strategies react differently to each mechanic. Human playtesting should inform future tuning, especially disappearing platforms and gold targets.
+The controller can still clear early worlds without falling. Open edges are separately tested to permit real falls; clean play is not artificially penalized. These controller measurements are regression evidence, not a substitute for human playtesting.
 
-`npm test` verifies six starting runners can finish all 50 Tour levels, late-world pace drops and impacts rise overall, open edges can cause falls, and fixed edge-running is not a clean bypass. It also checks dynamic floors, hazard phases, guest saves, customization, immediate results, qualification caps, and live WebSocket identities.
+| Previously flagged level | V5 reference | V6 reference |
+|---|---:|---:|
+| 24 | 302.67 s | 268.37 s |
+| 32 | 375.97 s | 321.67 s |
+| 36 | 550.93 s | 368.40 s |
+| 39 | 481.37 s | 393.93 s |
+| 45 | 535.57 s | 439.60 s |
+| 50 | 507.97 s | 556.57 s |
 
-`node tests/endurance.mjs` checks full 16-runner Tour rooms and Endurance levels 1, 25, and 50. GitHub Actions runs both checks. Browser scripts in `tests/*browser.cjs` additionally exercise WebGL rendering, mobile layouts, customizer persistence, checkpoint resume, and bounded course streaming when Playwright and Chromium are available.
+## Reproduce the checks
+
+```sh
+npm ci
+npm run test:balance
+npm test
+node tests/endurance.mjs
+```
+
+`test:balance` actually simulates six runners through all 50 levels. It fails if a runner misses the timer, any successive world's aggregate pace gets faster, a level takes longer than its finale, level 50 loses its overall peak, density misses its bounds, or the reference data is stale. It also checks open edges, dynamic floors, and medal-target order.
+
+`npm test` adds 60 Hz browser-physics completion, safe finish areas, hazard phases, progress validation, customization, immediate results, qualification caps, and live WebSocket checks. GitHub Actions runs this suite plus full 16-runner Tour rooms and Endurance levels 1, 25, and 50.
+
+To intentionally recalibrate after a design change, run `npm run calibrate`. Three starting positions produce the raw median times in `dist/balance.js` and the detailed attempts in `tests/balance-reference.json`. Gold is 1.10× the highest reference so far within that world, rounded up; silver is 1.30× gold. The test limits smoothing to 10% so padding cannot conceal a large spike. Endurance targets scale by its distance relative to the corresponding Tour course.
+
+Browser scripts exercise the rendered editor and courses, practice results, checkpoint resume, mobile layouts, and bounded streaming when Playwright and Chromium are available.
 
 ## References
 

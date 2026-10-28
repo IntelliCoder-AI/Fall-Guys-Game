@@ -10,5 +10,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm test
-      - run: node tests/endurance.mjs
+      - name: Verify 50-level balance, progression, physics and multiplayer
+        run: npm test
+      - name: Simulate full Tour rooms and Endurance courses
+        run: node tests/endurance.mjs

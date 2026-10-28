@@ -66,15 +66,18 @@ export function botInput(b,t,level){
  const width=aheadSurface?.w||c.width,limit=Math.min(c.width,width)/2-.8;
  if(h){const arrival=Math.max(0,(b.z-h.z)/(b.speed||10.5)),p=obstaclePosition(h,t+Math.min(.5,arrival),level),delta=b.z-h.z;
   if(h.type==='gate')target=p.x;
-  else if(['wheel','bumper','roller','hammer','boulder'].includes(h.type)){const options=[-limit,0,limit];target=options.filter(x=>Math.abs(x-p.x)>(h.type==='wheel'?2.5:2)).sort((a,d)=>Math.abs(a-b.x)-Math.abs(d-b.x))[0]??(p.x>0?-limit:limit);if(delta<4&&Math.abs(b.x-p.x)<2.5)wait=true}
+  else if(['wheel','bumper','roller','hammer','boulder'].includes(h.type)){const row=local.filter(other=>['wheel','bumper','roller','hammer','boulder'].includes(other.type)&&Math.abs(other.z-h.z)<3).map(other=>({...obstaclePosition(other,t+Math.min(.5,arrival),level),radius:other.type==='wheel'?2.5:2}));const options=[-limit,0,limit];target=options.filter(x=>row.every(p=>Math.abs(x-p.x)>p.radius)).sort((a,d)=>Math.abs(a-b.x)-Math.abs(d-b.x))[0]??(p.x>0?-limit:limit);if(delta<4&&row.some(p=>Math.abs(b.x-p.x)<p.radius))wait=true}
   else if(h.type==='slalom'){const row=Math.max(0,Math.min(2,Math.floor((h.z+4-b.z)/3)));target=(row%2?-1:1)*.9}
-  else if(h.type==='trapdoor'){const tiles=trapdoorTiles(h,t+.35,level).filter(tile=>!tile.active&&Math.abs(tile.z-(b.z-2))<5);target=tiles.sort((a,d)=>Math.abs(a.x-b.x)-Math.abs(d.x-b.x))[0]?.x||0;jump=delta<7&&delta>-5;}
+  else if(h.type==='trapdoor'){const tiles=trapdoorTiles(h,t+.35,level).filter(tile=>!tile.active&&(b.z>h.z?tile.z>h.z:tile.z<h.z));target=tiles.sort((a,d)=>Math.abs(a.x-b.x)-Math.abs(d.x-b.x))[0]?.x||0;jump=delta<4.6&&delta>-5;}
   else if(h.type==='fireballs'){const balls=fireballPositions(h,t+.3);const options=[-limit*.8,0,limit*.8];target=options.sort((a,d)=>Math.min(...balls.map(f=>Math.abs(d-f.x)))-Math.min(...balls.map(f=>Math.abs(a-f.x))))[0];jump=delta<5&&delta>-4}
   if(['hurdle','laser','sweeper','pulse'].includes(h.type))jump=delta<(h.type==='sweeper'?h.r*.65:3.2)&&delta>-.8;
   if(h.type==='piston'){target=(b.x<0?-1:1)*Math.min(limit,h.w/2+.75);if(delta<6&&delta>3&&p.y<3.5&&Math.abs(b.x)<h.w/2+.4)wait=true;}
   if(h.type==='tunnel'&&delta<4&&delta>-2)dive=true;
  }
  if(aheadSurface&&width<c.width*.7)target=platformPosition(aheadSurface,t+.4).x;
+ // Follow a drifting deck until its actual exit, rather than steering off
+ // its open side when the wide landing comes into the look-ahead window.
+ if(surface?.motion==='moving'&&b.z>surface.z-surface.d/2+.5)target=platformPosition(surface,t+.15).x;
  const edge=surface?surface.z-surface.d/2:null;
  const gap=edge!==null&&!groundAt(b.x,edge-.4,c.platforms,t);
  const gapDistance=edge===null?0:b.z-edge;
