@@ -1,0 +1,1 @@
+export function normalizeCosmetics(c={}){return Object.fromEntries(Object.entries(c||{}).filter(([k,v])=>({helmet:['helmet'],accessory:['wings'],look:['aurora','ranger'],trail:['trail'],effect:['sparkles'],victory:['victory']})[k]?.includes(v)));}

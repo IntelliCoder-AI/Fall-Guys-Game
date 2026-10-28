@@ -13,7 +13,7 @@ export function createGameServer({waitSeconds=45,maxRooms=40}={}){
  const server=http.createServer(async(req,res)=>{res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'");
   if(req.method!=='GET'&&req.method!=='HEAD'){res.writeHead(405);return res.end()}
   let pathname;try{pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname)}catch{res.writeHead(400);return res.end()}
-  if(pathname==='/health'){res.setHeader('Content-Type','application/json');return res.end(JSON.stringify({ok:true,version:'8.0.0',rooms:rooms.size}))}
+  if(pathname==='/health'){res.setHeader('Content-Type','application/json');return res.end(JSON.stringify({ok:true,version:'9.0.0',rooms:rooms.size}))}
   const target=path.resolve(root,'.'+(pathname==='/'?'/index.html':pathname));if(!target.startsWith(root)){res.writeHead(403);return res.end()}
   try{if(!(await stat(target)).isFile())throw Error();const body=await readFile(target);res.setHeader('Content-Type',mime[path.extname(target)]||'application/octet-stream');res.setHeader('Cache-Control',pathname.includes('/vendor/')?'public, max-age=86400':'no-cache');res.end(req.method==='HEAD'?undefined:body)}catch{res.writeHead(404);res.end('Not found')}
  });
@@ -26,7 +26,7 @@ export function createGameServer({waitSeconds=45,maxRooms=40}={}){
     if(data.room){room=rooms.get(String(data.room).toUpperCase());if(!room||room.phase!=='waiting'||room.players.length>=16)return send(ws,{type:'error',message:'Room not found, already started, or full. Check the code or ask your friend to generate a new one.'})}
     else if(data.action!=='create')room=[...rooms.values()].find(r=>!r.privateRoom&&r.phase==='waiting'&&r.level===levelById(data.level).number&&r.mode===(data.mode==='endurance'?'endurance':'tour')&&r.players.length<16);
     if(!room){if(rooms.size>=maxRooms)return send(ws,{type:'error',message:'All races are full. Please try again shortly.'});room=new RaceRoom({waitSeconds,level:data.level,mode:data.mode,privateRoom:data.action==='create'});rooms.set(room.id,room)}
-    const p=room.add({name:data.name,color:data.color,outfit:data.outfit,appearance:data.appearance});if(!p)return;connections.set(ws,{room,id:p.id});send(ws,{type:'joined',id:p.id,room:room.id});send(ws,room.snapshot());
+    const p=room.add({name:data.name,color:data.color,outfit:data.outfit,appearance:data.appearance,cosmetics:data.cosmetics});if(!p)return;connections.set(ws,{room,id:p.id});send(ws,{type:'joined',id:p.id,room:room.id});send(ws,room.snapshot());
    }else if(data.type==='start'){const c=connections.get(ws);if(c&&c.room.privateRoom&&c.room.hostId===c.id&&c.room.phase==='waiting'){if(c.room.players.filter(p=>!p.isBot&&p.connected).length<2)return send(ws,{type:'notice',message:'Wait for at least one friend to join.'});c.room.start();}}else if(data.type==='input'){const c=connections.get(ws);if(c)c.room.input(c.id,data)}else if(data.type==='ping')send(ws,{type:'pong',at:data.at});
   });
   ws.on('close',()=>{const c=connections.get(ws);if(c){c.room.remove(c.id);connections.delete(ws)}});

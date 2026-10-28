@@ -3,6 +3,7 @@ import {terrainHeightAt} from './terrain.js';
 import {groundAt,segmentDistance,checkpointFor,resetPosition} from './physics.js';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 export const courseFor=buildLevel;
+export function reviveRunner(b,level){const cp=resetPosition(b.cp||0,level);Object.assign(b,{x:0,z:cp.z,y:0,vy:0,vx:0,vz:0,actualSpeed:0,hit:0,dive:0,spring:0,eliminated:false,finished:false,deathReason:null,deathProgress:undefined,grounded:true,coyote:.12,invincible:3,impactGrace:0,blockedBy:null,airJumped:false});}
 const collectedCache=new WeakMap();
 function collectedSet(b){let cached=collectedCache.get(b);if(!cached||cached.array!==b.collected||cached.set.size!==b.collected.length){cached={array:b.collected,set:new Set(b.collected)};collectedCache.set(b,cached)}return cached.set}
 export function visibleCollected(b,level){const taken=collectedSet(b);return nearby(buildLevel(level).coins,b.z,300).filter(c=>taken.has(c.id)).map(c=>c.id)}
@@ -10,6 +11,8 @@ export function runnerState(index=0){return {x:(index%4-1.5)*2.4,z:4+Math.floor(
 export function stepRunner(b,input,dt,t,level=1){
  if(b.finished||b.eliminated)return [];
  const c=buildLevel(level),events=[],local=nearby(c.hazards,b.z,24);
+ for(const key of ['invincible','impactGrace','shieldTime','speedTime','jumpTime','magnetTime'])b[key]=Math.max(0,(b[key]||0)-dt);
+ if(!b.shieldTime)b.shield=false;
  const inPatch=h=>Math.abs(b.x-h.x)<h.w/2&&Math.abs(b.z-h.z)<h.d/2;
  const floor=(x,z)=>groundAt(x,z,c.platforms,t)&&!local.some(h=>h.type==='trapdoor'&&trapdoorTiles(h,t,level).some(tile=>tile.active&&Math.abs(x-tile.x)<tile.w/2&&Math.abs(z-tile.z)<tile.d/2));
  let dx=Number.isFinite(input.dx)?clamp(input.dx,-1,1):0,dz=Number.isFinite(input.dz)?clamp(input.dz,-1,1):0;
@@ -17,7 +20,8 @@ export function stepRunner(b,input,dt,t,level=1){
  b.hit=Math.max(0,b.hit-dt);b.dive=Math.max(0,b.dive-dt);b.boost=Math.max(0,b.boost-dt);b.spring=Math.max(0,(b.spring||0)-dt);
  const riding=nearby(c.platforms,b.z,100).find(p=>p.motion==='moving'&&Math.abs(b.z-p.z)<p.d/2&&Math.abs(b.x-platformPosition(p,t-dt).x)<p.w/2&&b.y===0);if(riding)b.x+=platformPosition(riding,t).x-platformPosition(riding,t-dt).x;
  const grounded=b.y>=-.03&&b.y<=.025&&floor(b.x,b.z)&&b.vy<=0;b.grounded=grounded;b.coyote=grounded?.12:Math.max(0,b.coyote-dt);
- if(input.jump&&b.coyote>0){b.vy=10.6;b.coyote=0;b.grounded=false;events.push('jump')}
+ if(grounded)b.airJumped=false;
+ if(input.jump&&(b.coyote>0||(b.jumpTime>0&&!b.airJumped))){if(b.coyote<=0)b.airJumped=true;b.vy=10.6;b.coyote=0;b.grounded=false;events.push('jump')}
  if(input.dive&&b.dive===0){if(!b.grounded&&b.y>.4){b.dive=.65;b.vx+=dx*8;b.vz+=(dz||-1)*8;b.vy=Math.max(b.vy,2);events.push('dive')}else if(b.grounded){b.dive=.75;b.vz+=(dz||-1)*5;events.push('dive')}}
  let friction=4,terrainSpeed=1,forceX=0,forceZ=0;
  for(const h of local){const patch=inPatch(h);if(patch&&b.y<.35){
@@ -29,7 +33,7 @@ export function stepRunner(b,input,dt,t,level=1){
  if(patch&&b.y<5&&h.type==='wind')forceX+=Math.sin(t*1.8+h.phase)*(6+c.challenge*3);
  if(h.type==='magnet'&&Math.abs(b.z-h.z)<6&&b.y<3){const strength=(Math.sin(t*2+h.phase)+1)*2;forceX+=clamp(h.x-b.x,-1,1)*strength}
  }
- const speed=(b.isBot?(b.speed||8.4):10.5)*(b.boost>0?1.4:1)*terrainSpeed,control=b.hit>.5?.35:1;
+ const speed=(b.isBot?(b.speed||8.4):10.5)*(b.boost>0||b.speedTime>0?1.4:1)*terrainSpeed,control=b.hit>.5?.35:1;
  const previousX=b.x,previousZ=b.z;
  b.x+=(dx*speed*control+b.vx+forceX)*dt;b.z+=(dz*speed*control+b.vz+forceZ)*dt;
  b.vx=clamp(b.vx*Math.exp(-friction*dt),-12,12);b.vz=clamp(b.vz*Math.exp(-friction*dt),-12,12);
@@ -73,13 +77,13 @@ export function stepRunner(b,input,dt,t,level=1){
   else if(h.type==='slalom'){for(let i=0;i<3;i++){const x=(i%2?1:-1)*c.width*.23;if(Math.abs(b.z-(h.z+3-i*3))<.65&&Math.abs(b.x-x)<c.width*.25&&b.y<2.6)collides=true}}
   else if(h.type==='tunnel')collides=Math.abs(b.x-h.x)<h.w/2&&Math.abs(b.z-h.z)<1&&b.dive<=0&&b.y<2.8;
   else if(h.type==='pulse')collides=p.active&&b.y<.8&&Math.abs(Math.hypot(b.x,b.z-h.z)-p.radius)<.55;
-  if(collides){b.hits++;events.push('hit');die(h.type);return events}
+  if(collides&&!(b.invincible>0||b.impactGrace>0)){if(b.shield){b.shield=false;b.shieldTime=0;b.impactGrace=1.5;events.push('shield');continue;}b.hits++;events.push('hit');die(h.type);return events}
  }
- if(b.y<-3||Math.abs(b.x)>c.width+8){b.falls++;events.push('fall');die('water');return events}
+ if(b.y<-3||Math.abs(b.x)>c.width+8){if(b.invincible>0){const remaining=b.invincible;reviveRunner(b,level);b.invincible=remaining;return events;}b.falls++;events.push('fall');die('water');return events}
  b.elevation=terrainHeightAt(c,b.z);
  b.actualSpeed=Math.hypot(b.x-previousX,b.z-previousZ)/dt;
  if(b.grounded){const cp=checkpointFor(b.z,b.cp,level);if(cp>b.cp){b.cp=cp;events.push('checkpoint')}for(const pad of nearby(c.boosts,b.z,4))if(Math.abs(b.z-pad.z)<pad.d/2&&Math.abs(b.x-pad.x)<pad.w/2&&b.boost<.5){b.boost=1.5;events.push('boost')}}
- if(!b.isBot)for(const coin of nearby(c.coins,b.z,2))if(Math.abs(b.z-coin.z)<1.1&&Math.abs(b.x-coin.x)<1.05&&Math.abs(b.y+1-coin.y)<1.6&&!collectedSet(b).has(coin.id)){const taken=collectedSet(b);b.collected.push(coin.id);taken.add(coin.id);b.coins++;events.push('coin')}
+ if(!b.isBot)for(const coin of nearby(c.coins,b.z,b.magnetTime>0?5:2))if(Math.abs(b.z-coin.z)<(b.magnetTime>0?5:1.1)&&Math.abs(b.x-coin.x)<(b.magnetTime>0?5:1.05)&&Math.abs(b.y+1-coin.y)<(b.magnetTime>0?5:1.6)&&(!(b.magnetTime>0)||Math.hypot(b.x-coin.x,b.z-coin.z,b.y+1-coin.y)<5)&&!collectedSet(b).has(coin.id)){const taken=collectedSet(b);b.collected.push(coin.id);taken.add(coin.id);b.coins++;events.push('coin')}
  if(b.z<c.finishZ&&b.y>=0&&b.y<3&&floor(b.x,b.z)){b.finished=true;events.push('finish')}
  return events;
 }
