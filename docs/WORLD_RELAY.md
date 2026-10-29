@@ -7,11 +7,13 @@ Choose **Play with friends → Create World Relay**. Share the six-character roo
 ## One team, three beacons
 
 - **Runners** carry a lantern, jump low barriers and collect blue crystals. Each crystal adds **2 shared energy**, once per crossing. Get every Runner to the glowing beacon.
-- **The Shaper** watches a Runner and powers three mechanisms in order: lower the bridge (**3 energy**), lift the gate (**3**) and steady the wind (**4**). Use the labelled buttons or **1, 2, 3**. Powered mechanisms stay on; holding or double-tapping cannot spend again.
+- **The Shaper** watches a Runner and powers three mechanisms in the order shown for the current island: lower the bridge (**3 energy**), lift the gate (**3**) and steady the wind (**4**). Use the labelled buttons or **1, 2, 3**. Machinery is timed: the bridge stays down for 8 seconds, the gate opens for 7, and wind steadies for 9. First activation costs energy; repeat cycles are free. A countdown and flashing bridge ring warn before closing. Double-tapping cannot start a second cycle.
 - **At each beacon**, the team gathers and roles rotate after a four-second celebration. The Shaper becomes a Runner and another teammate takes the controls.
 - **Win together:** reach all three beacons before the storm clock reaches zero. Falls return you to the last beacon for free. Room energy does not affect coins, cosmetics or solo medals.
 
-The first crossing is interactive practice. The storm remains stopped until a Runner moves, jumps and collects a crystal, and the Shaper powers the bridge. Then the team has four minutes. Roles and the next action stay visible at the top of the screen.
+Each island has a different route order: **Bridge → Gate → Wind**, **Gate → Wind → Bridge**, then **Wind → Bridge → Gate**. Geometry, labels and collision use the same layout.
+
+The first crossing is interactive practice. The storm remains stopped until a Runner moves, jumps and collects a crystal, and the Shaper powers the bridge. Then the team has two minutes. Roles and the next action stay visible at the top of the screen.
 
 ## Controls
 

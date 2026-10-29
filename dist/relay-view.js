@@ -1,5 +1,5 @@
 import * as T from './vendor/three.module.js';
-import {RELAY,RELAY_NAMES,RELAY_CRYSTALS,relayOffset,mechanismProgress} from './relay-rules.js';
+import {RELAY,RELAY_NAMES,relayCrystals,relayLayout,mechanismTimeLeft,relayOffset,mechanismProgress} from './relay-rules.js';
 
 // Uses the existing renderer, lighting, animated wardrobe and camera rig. No second canvas.
 export function installRelayView(view){
@@ -89,28 +89,30 @@ export function installRelayView(view){
    const rock=add(backdrop,geo,stone,side*(32+i%4*13),6+i%3*4,20-i*22,5+i%3,6+i%4,8+i%5);rock.rotation.y=i*.8;
   }
   for(let stage=0;stage<RELAY.stages;stage++){
+   const l=relayLayout(stage),B=l.bridge,G=l.gate,W=l.wind;
    const root=new T.Group();root.position.z=-relayOffset(stage);view.world.add(root);
-   island(root,-7,30,stage);island(root,44,74,stage);island(root,92,112,stage);
-   const bridge=new T.Group();bridge.position.set(0,0,-30);root.add(bridge);
+   const gaps=[[B,B+14],[W,W+18]].sort((a,b)=>a[0]-b[0]);let start=-7;for(const[a,b]of gaps){island(root,start,a,stage);start=b;}island(root,start,112,stage);
+   const warning=new T.Mesh(rimGeo,own(new T.MeshBasicMaterial({color:0xffb04c})));warning.rotation.x=-Math.PI/2;warning.position.set(0,.06,-B+1);root.add(warning);
+   const bridge=new T.Group();bridge.position.set(0,0,-B);root.add(bridge);
    box(bridge,wood,0,-.18,-7,5,.36,14);
    for(let d=0;d<14;d+=.8)box(bridge,bronze,0,.015,-d,5,.03,.06);
    for(const x of[-2.35,2.35]){box(bridge,steel,x,-.4,-7,.22,.4,14);for(let d=1;d<14;d+=3)cyl(bridge,bronze,x,.5,-d,.08,1);box(bridge,bronze,x,1,-7,.08,.08,14);}
-   for(const x of[-3.1,3.1]){cyl(root,bronze,x,0,-30,.65,.7).rotation.z=Math.PI/2;box(root,steel,x,.6,-29,1,1.2,1.8);}
-   const gate=new T.Group();gate.position.z=-58;root.add(gate);
-   for(const x of[-5.9,5.9]){box(root,stone,x,3.7,-58,1,7.4,1.2);box(root,bronze,x,3.7,-57.3,.2,7.4,.2);}
-   box(root,bronze,0,7.2,-58,12.8,.45,1.3);
+   for(const x of[-3.1,3.1]){cyl(root,bronze,x,0,-B,.65,.7).rotation.z=Math.PI/2;box(root,steel,x,.6,-B+1,1,1.2,1.8);}
+   const gate=new T.Group();gate.position.z=-G;root.add(gate);
+   for(const x of[-5.9,5.9]){box(root,stone,x,3.7,-G,1,7.4,1.2);box(root,bronze,x,3.7,-G+.7,.2,7.4,.2);}
+   box(root,bronze,0,7.2,-G,12.8,.45,1.3);
    box(gate,steel,0,2.7,0,12,5.4,.55);
    for(let x=-5.4;x<=5.4;x+=1.2){box(gate,bronze,x,2.7,.32,.13,5.4,.09);for(const y of[.3,5.1])cyl(gate,bronze,x,y,.4,.09,.1).rotation.x=Math.PI/2;}
-   box(root,wood,0,-.18,-83,3.4,.36,18);for(let d=75;d<92;d+=1)box(root,bronze,0,.025,-d,3.4,.05,.08);
-   for(const x of[-1.63,1.63])box(root,light,x,.03,-83,.09,.06,18);
+   box(root,wood,0,-.18,-W-9,3.4,.36,18);for(let d=W+1;d<W+18;d+=1)box(root,bronze,0,.025,-d,3.4,.05,.08);
+   for(const x of[-1.63,1.63])box(root,light,x,.03,-W-9,.09,.06,18);
    const turbines=[];
-   for(const d of[78,87]){
+   for(const d of[W+4,W+13]){
     cyl(root,steel,-6,1.7,-d,.22,4);const rotor=new T.Group();rotor.position.set(-6,3.5,-d);rotor.rotation.y=Math.PI/2;root.add(rotor);
     cyl(rotor,bronze,0,0,0,.36,.7).rotation.x=Math.PI/2;
     for(let i=0;i<3;i++){const blade=box(rotor,steel,0,1,0,.45,2,.15);const pivot=new T.Group();rotor.remove(blade);pivot.add(blade);pivot.rotation.z=i*Math.PI*2/3;rotor.add(pivot);}turbines.push(rotor);
    }
-   for(const d of[18,102]){box(root,wood,0,.4,-d,12,.8,.6);for(let x=-5;x<6;x+=2)box(root,bronze,x,.45,-d+.32,.5,.6,.04);}
-   const crystals=RELAY_CRYSTALS.map(o=>{const g=new T.Group();g.position.set(o.x,1.1,-o.d);root.add(g);add(g,orbGeo,light,0,0,0);const ring=add(g,rimGeo,bronze,0,0,0,.7,.7,.7);ring.rotation.x=Math.PI/2;return g;});
+   for(const d of l.hurdles){box(root,wood,0,.4,-d,12,.8,.6);for(let x=-5;x<6;x+=2)box(root,bronze,x,.45,-d+.32,.5,.6,.04);}
+   const crystals=relayCrystals(stage).map(o=>{const g=new T.Group();g.position.set(o.x,1.1,-o.d);root.add(g);add(g,orbGeo,light,0,0,0);const ring=add(g,rimGeo,bronze,0,0,0,.7,.7,.7);ring.rotation.x=Math.PI/2;return g;});
    const beacon=new T.Group();beacon.position.set(0,0,-109);root.add(beacon);
    cyl(beacon,bronze,0,.1,0,2,.2);cyl(beacon,light,0,.22,0,1.7,.1);
    const halo=add(beacon,rimGeo,light,0,3.5,0,1.7,1.7,1.7);
@@ -121,15 +123,15 @@ export function installRelayView(view){
    box(root,steel,-4.5,.6,-2,2.2,1.2,1);box(root,bronze,-4.5,1.25,-2,2.5,.16,1.4);
    for(let i=0;i<3;i++)cyl(root,light,-5.2+i*.7,1.39,-2,.17,.16);
    label(root,RELAY_NAMES[stage].toUpperCase(),-8,2,-7).scale.setScalar(.6);
-   label(root,'01  BRIDGE · SHAPER LOWERS',0,4,-27);
-   label(root,'02  GATE · SHAPER LIFTS',0,8,-58);
-   label(root,'03  WIND · SHAPER STEADIES',0,4,-72);
+   label(root,'01  BRIDGE · SHAPER LOWERS',0,4,-B+3);
+   label(root,'02  GATE · SHAPER LIFTS',0,8,-G);
+   label(root,'03  WIND · SHAPER STEADIES',0,4,-W+2);
    label(root,'TEAM BEACON · GATHER HERE',0,6,-109);
    const gusts=new T.Group();root.add(gusts);
-   for(let i=0;i<14;i++)box(gusts,light,(i%4)*3-6,.8+(i%3)*.6,-76-(i%9)*1.7,.9,.035,.035);
+   for(let i=0;i<14;i++)box(gusts,light,(i%4)*3-6,.8+(i%3)*.6,-W-2-(i%9)*1.7,.9,.035,.035);
    batch(bridge);batch(gate);for(const rotor of turbines)batch(rotor);
-   batch(root,[bridge,gate,...turbines,...crystals,halo,gusts]);
-   sections.push({stage,root,bridge,gate,turbines,crystals,halo,gusts});
+   batch(root,[bridge,gate,...turbines,...crystals,halo,gusts,warning]);
+   sections.push({stage,root,bridge,gate,turbines,crystals,halo,gusts,warning});
   }
   view.snapCamera=true;view.resetCamera?.();
  };
@@ -142,7 +144,8 @@ export function installRelayView(view){
    for(const runner of view.runners.values()){decorateRunner?.(runner);const data=args.states.find(s=>view.runners.get(s.id)===runner);if(runner.relayLantern)runner.relayLantern.visible=data?.role==='runner';}
    for(const part of sections){
     part.root.visible=Math.abs(-relayOffset(part.stage)-56-focusZ)<185;
-    const m=part.stage===relay.stage?relay.mechanisms:part.stage<relay.stage?{bridge:-99,gate:-99,wind:-99}:{bridge:null,gate:null,wind:null};
+    const m=part.stage===relay.stage?relay.mechanisms:part.stage<relay.stage?{bridge:clock-2,gate:clock-2,wind:clock-2}:{bridge:null,gate:null,wind:null};
+    const left=mechanismTimeLeft(m,'bridge',clock);part.warning.visible=left>0&&left<1.5&&Math.sin(clock*16)>0;
     part.bridge.rotation.x=(1-mechanismProgress(m,'bridge',clock))*Math.PI*.48;
     part.gate.position.y=mechanismProgress(m,'gate',clock)*6;
     const steady=mechanismProgress(m,'wind',clock);

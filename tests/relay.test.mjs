@@ -4,7 +4,7 @@ import {once} from 'node:events';
 import WebSocket from 'ws';
 import {RelayRoom} from '../server/relay-room.js';
 import {createGameServer} from '../server/index.js';
-import {RELAY,MECHANISMS,relayOffset,stepRelayRunner,relaySpawn,mechanismProgress} from '../dist/relay-rules.js';
+import {RELAY,MECHANISMS,relayOffset,stepRelayRunner,relaySpawn,mechanismProgress,relayLayout} from '../dist/relay-rules.js';
 import {runnerState} from '../dist/simulation.js';
 const setup=(count=2)=>{const room=new RelayRoom();for(let i=0;i<count;i++)room.add({name:'Friend '+i});room.start();room.tick(3.1);return room;};
 const tick=(r,seconds)=>{for(let t=0;t<seconds;t+=1/30)r.tick(1/30);};
@@ -21,10 +21,10 @@ test('mechanisms require Shaper authority, stage and energy; duplicate requests 
  assert(r.activate(a.id,'gate',0));assert(r.activate(a.id,'wind',0));assert.equal(r.energy,0);
 });
 test('interactive practice stops storm until move, jump, crystal and Shaper action occur',()=>{
- const r=setup(),p=r.players[1];tick(r,2);assert.equal(r.storm,240);
+ const r=setup(),p=r.players[1];tick(r,2);assert.equal(r.storm,120);
  Object.assign(p,{x:0,z:-10});r.input(p.id,{dz:-1,jump:true});r.tick(1/30);assert(r.tutorial.energy);assert(r.tutorial.jumped);
  for(let i=0;i<10;i++){r.input(p.id,{dz:-1});r.tick(1/30);}assert(r.tutorial.moved);
- assert(r.activate(r.shaperId,'bridge',0));tick(r,.1);assert(r.tutorialDone);assert(r.storm<240);
+ assert(r.activate(r.shaperId,'bridge',0));tick(r,.1);assert(r.tutorialDone);assert(r.storm<120);
 });
 test('falls recover upright without duplicating shared crystals or wallet rewards',()=>{
  const r=setup(),p=r.players[1];Object.assign(p,{x:0,z:-10});r.tick(1/30);assert.equal(r.energy,4);
@@ -60,9 +60,9 @@ test('real 30Hz inputs complete three islands with 2, 3 and 8 players; timeout a
    shapers.add(r.shaperId);
    for(const key of Object.keys(MECHANISMS))r.activate(r.shaperId,key,r.stage);
    for(const p of r.active().filter(p=>p.role==='runner'&&!p.ready)){
-    const d=-p.z-relayOffset(r.stage),x=p.x;
-    const wait=d>27&&d<31&&mechanismProgress(r.mechanisms,'bridge',r.clock)<1;
-    r.input(p.id,{dz:wait?0:-1,dx:Math.abs(x)>.12?Math.max(-1,Math.min(1,-x*1.5)):0,jump:(d>14&&d<18)||(d>98&&d<102)});
+    const d=-p.z-relayOffset(r.stage),x=p.x,l=relayLayout(r.stage);
+    const wait=d>l.bridge-3&&d<l.bridge+1&&mechanismProgress(r.mechanisms,'bridge',r.clock)<1;
+    r.input(p.id,{dz:wait?0:-1,dx:Math.abs(x)>.12?Math.max(-1,Math.min(1,-x*1.5)):0,jump:l.hurdles.some(h=>d>h-4&&d<h)});
    }r.tick(1/30);
   }
   assert.equal(r.reason,'rescued',JSON.stringify({n,stage:r.stage,energy:r.energy,players:r.players.map(p=>({z:p.z,x:p.x,y:p.y,ready:p.ready})),phase:r.phase,storm:r.storm}));
@@ -75,7 +75,7 @@ test('WebSocket Relay: separate clients, synchronized mechanisms, socket-bound a
  const app=createGameServer();app.server.listen(0,'127.0.0.1');await once(app.server,'listening');const clients=Array.from({length:3},()=>new WebSocket(`ws://127.0.0.1:${app.server.address().port}/ws`));
  try{
   await Promise.all(clients.map(ws=>once(ws,'open')));
-  const join=async(i,data)=>{const reply=until(clients[i],s=>s.type==='joined');clients[i].send(JSON.stringify({type:'join',protocol:2,...data}));return reply;};
+  const join=async(i,data)=>{const reply=until(clients[i],s=>s.type==='joined');clients[i].send(JSON.stringify({type:'join',protocol:4,...data}));return reply;};
   const a=await join(0,{mode:'relay',action:'create'}),b=await join(1,{room:a.room}),r=app.rooms.get(a.room);
   clients[0].send(JSON.stringify({type:'start'}));await until(clients[1],s=>s.phase==='countdown');r.tick(3.1);r.energy=10;
   clients[1].send(JSON.stringify({type:'mechanism',id:a.id,key:'bridge',stage:0}));await until(clients[1],s=>s.phase==='race');assert.equal(r.mechanisms.bridge,null);
@@ -91,4 +91,12 @@ test('repeated arrivals and departures do not accumulate disconnected runner rec
 
 test('host can start as Runner; teammate receives machinery authority',()=>{
  const r=new RelayRoom(),host=r.add({name:'Host'}),friend=r.add({name:'Friend'});assert.equal(r.snapshot().relay.hostRoleChoice,true);r.start({hostRole:'runner'});r.tick(3.1);assert.equal(host.role,'runner');assert.equal(friend.role,'shaper');const z=host.z;r.input(host.id,{dz:-1,jump:true});r.tick(.1);assert(host.z<z);assert(host.y>0);r.energy=4;assert(!r.activate(host.id,'bridge',0));assert(r.activate(friend.id,'bridge',0));
+});
+
+test('timed machinery expires, warns and reopens without another energy charge',()=>{
+ const r=setup();r.energy=10;assert(r.activate(r.shaperId,'bridge',0));const paid=r.energy;tick(r,1.7);assert.equal(mechanismProgress(r.mechanisms,'bridge',r.clock),1);assert(!r.activate(r.shaperId,'bridge',0));tick(r,9);assert.equal(mechanismProgress(r.mechanisms,'bridge',r.clock),0);assert(r.activate(r.shaperId,'bridge',0));assert.equal(r.energy,paid);
+});
+test('three stage layouts reorder devices and align ground and gate collision',()=>{
+ assert.deepEqual(relayLayout(0).order,['bridge','gate','wind']);assert.deepEqual(relayLayout(1).order,['gate','wind','bridge']);assert.deepEqual(relayLayout(2).order,['wind','bridge','gate']);
+ for(let stage=0;stage<3;stage++){const l=relayLayout(stage),p=runnerState();relaySpawn(p,stage);p.x=0;p.z=-relayOffset(stage)-l.gate+4;for(let i=0;i<90;i++)stepRelayRunner(p,{dz:-1},1/30,stage,{bridge:null,gate:null,wind:null},i/30);assert(p.z>=-relayOffset(stage)-l.gate+.69);}
 });

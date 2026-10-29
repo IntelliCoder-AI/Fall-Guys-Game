@@ -8,6 +8,8 @@ Also shipped: closed mountain meshes, checkpoint camera recovery, late-level bot
 
 ## Stage 2 — learning and personal progress
 
+Shipped for World Relay: interactive movement practice, jump buffering, short stages and checkpoint celebrations. The following remain planned for solo racing.
+
 Interactive movement tutorial; jump buffering; personal best ghosts; short stages and celebrations; assistance after repeated failures; live medal pace; tune finale transitions from measured player runs. Add a true buffered death replay (the current impact scene shows the aftermath).
 
 ## Stage 3 — rewards and replay
@@ -15,6 +17,8 @@ Interactive movement tutorial; jump buffering; personal best ghosts; short stage
 Daily visit and challenge rewards, larger first-clear rewards, a free revival allowance, and finish share cards. The existing clean-run XP bonus, distance-based Endurance earnings and gentler capped revival prices are already implemented.
 
 ## Stage 4 — friends and competition
+
+Shipped: Room Remix spectating, votes, next-round promotion, same-code rematches, and World Relay cooperation with role rotation and timed machinery. The following additions remain planned.
 
 Weekly seeded challenge, server-verified leaderboard, friend ghost codes, spectating and a next-race queue. Preserve cosmetics-only competitive multiplayer.
 

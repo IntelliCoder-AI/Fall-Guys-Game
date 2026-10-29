@@ -1,12 +1,12 @@
 import {RaceRoom} from './rooms.js';
-import {RELAY,MECHANISMS,RELAY_CRYSTALS,relayOffset,relaySpawn,stepRelayRunner,mechanismProgress} from '../dist/relay-rules.js';
+import {RELAY,MECHANISMS,relayCrystals,relayLayout,mechanismTimeLeft,relayOffset,relaySpawn,stepRelayRunner,mechanismProgress} from '../dist/relay-rules.js';
 
 /** Cooperative state is separate from race qualification, wallet and progression. */
 export class RelayRoom extends RaceRoom {
  constructor(options={}){
   super({...options,privateRoom:true,level:1});this.mode='relay';this.stage=0;this.energy=2;
   this.shaperId=null;this.spectators=[];this.mechanisms={bridge:null,gate:null,wind:null};
-  this.collected=new Set();this.tutorial={moved:false,jumped:false,energy:false,shaped:false};
+  this.powered=new Set();this.collected=new Set();this.tutorial={moved:false,jumped:false,energy:false,shaped:false};
   this.tutorialDone=false;this.storm=RELAY.seconds;this.paused=false;this.transition=0;this.event='';
  }
  humans(){return [...this.players,...this.spectators].filter(p=>p.connected&&!p.isBot);}
@@ -50,7 +50,7 @@ export class RelayRoom extends RaceRoom {
   this.resetStage();for(const p of this.players){p.recoveries=0;p.falls=0;}this.assignShaper(this.players[hostRole==='runner'?1:0].id);
  }
  resetStage(){
-  this.mechanisms={bridge:null,gate:null,wind:null};this.collected=new Set();this.transition=0;
+  this.mechanisms={bridge:null,gate:null,wind:null};this.powered=new Set();this.collected=new Set();this.transition=0;
   this.players.forEach((p,i)=>{p.spectator=false;relaySpawn(p,this.stage,i);});
  }
  input(id,data){
@@ -60,10 +60,10 @@ export class RelayRoom extends RaceRoom {
  }
  activate(id,key,stage){
   if(this.phase!=='race'||this.paused||this.transition>0||stage!==this.stage||id!==this.shaperId||typeof key!=='string'||!Object.hasOwn(MECHANISMS,key))return false;
-  if(!this.findPlayer(id)?.connected||this.mechanisms[key]!==null||this.energy<MECHANISMS[key].cost)return false;
-  const order=Object.keys(MECHANISMS),previous=order[order.indexOf(key)-1];
-  if(previous&&this.mechanisms[previous]===null)return false;
-  this.energy-=MECHANISMS[key].cost;this.mechanisms[key]=this.clock;
+  if(!this.findPlayer(id)?.connected||mechanismTimeLeft(this.mechanisms,key,this.clock)>0||mechanismProgress(this.mechanisms,key,this.clock)>0||(!this.powered.has(key)&&this.energy<MECHANISMS[key].cost))return false;
+  const order=relayLayout(this.stage).order,previous=order[order.indexOf(key)-1];
+  if(previous&&!this.powered.has(previous))return false;
+  if(!this.powered.has(key)){this.energy-=MECHANISMS[key].cost;this.powered.add(key);}this.mechanisms[key]=this.clock;
   if(key==='bridge')this.tutorial.shaped=true;
   this.event=MECHANISMS[key].verb+' activated';return true;
  }
@@ -98,10 +98,10 @@ export class RelayRoom extends RaceRoom {
    if(p.actualSpeed>1)this.tutorial.moved=true;
    if(events.includes('jump'))this.tutorial.jumped=true;
    const d=-p.z-relayOffset(this.stage);
-   RELAY_CRYSTALS.forEach((orb,i)=>{
+   relayCrystals(this.stage).forEach((orb,i)=>{
     if(!this.collected.has(i)&&Math.hypot(p.x-orb.x,d-orb.d)<1.5&&p.y<2){this.collected.add(i);this.energy+=2;this.tutorial.energy=true;}
    });
-   if(d>=108&&p.grounded&&Object.keys(MECHANISMS).every(k=>mechanismProgress(this.mechanisms,k,this.clock)>=1)){
+   if(d>=108&&p.grounded&&Object.keys(MECHANISMS).every(k=>this.powered.has(k))){
     p.ready=true;p.actualSpeed=0;p.input={};this.event=p.name+' reached the beacon. Waiting for the team.';
    }
   }
@@ -112,7 +112,7 @@ export class RelayRoom extends RaceRoom {
  }
  snapshot(){
   const base=super.snapshot();return {...base,mode:'relay',capacity:RELAY.capacity,humans:this.humans().length,
-   relay:{hostRoleChoice:true,stage:this.stage,energy:this.energy,shaperId:this.shaperId,mechanisms:this.mechanisms,collected:[...this.collected],
+   relay:{revision:2,powered:[...this.powered],hostRoleChoice:true,stage:this.stage,energy:this.energy,shaperId:this.shaperId,mechanisms:this.mechanisms,collected:[...this.collected],
     tutorial:this.tutorial,tutorialDone:this.tutorialDone,storm:this.storm,paused:this.paused,transition:this.transition,event:this.event},
    players:[...base.players,...this.spectators.map(p=>({id:p.id,name:p.name,connected:p.connected,x:0,y:0,z:-relayOffset(this.stage),spectator:true}))].map(p=>{
     const original=this.findPlayer(p.id);return {...p,role:original.role,spectator:!!original.spectator,ready:!!original.ready,

@@ -1,35 +1,38 @@
 # Handshake submission kit
 
-**Title:** Bean Dash: Room Remix
+**Title:** Bean Dash: World Relay
 
 **Public URL:** https://bean-dash-online.vercel.app/
 
 **Backup URL:** https://bean-dash-online.onrender.com/
 
-**Cover:** [Room Remix in action](images/bean-dash.jpg). Captured from the actual local game with software WebGL and a staged party session. The pictured room code is an example, not a permanent invitation.
+**Cover:** [World Relay gameplay](images/world-relay.jpg). Actual local 3D gameplay, staged for the cover with interface/sign overlays hidden.
 
 ## Description to paste
 
-Your room. Your rules. Bean Dash: Room Remix turns a browser race into a game-night vote. Two to eight friends join with one room code, choose a short course, and vote Calm or Wild to change moving hazards and runner speeds for everyone. Miss a jump? Recover at your last flag for free. Finish early? Watch and vote. Arrive late? Join the next round. Play one quick race or a three-round tour, then rematch with the same code. Most points wins; ties share victory.
+Your friends control the crossing. At the next beacon, it's your turn.
 
-Built with ChatGPT Work through iterative planning, player feedback, implementation and automated testing. Includes customizable 3D runners, touch controls, a 50-level solo tour and optional competitive racing. No player account, install or paid gameplay advantages online.
+Bean Dash: World Relay is a cooperative browser expedition for 2–8 friends. Runners carry lanterns and collect energy while a Shaper operates bridges, gates and wind machines. Coordinate the eight-second bridge window, regroup at a beacon, then swap roles. Three different routes and a two-minute storm turn each expedition into a conversation. Interactive practice teaches the controls; free checkpoint recovery keeps everyone involved.
+
+Friends join with a room code from their own phone or laptop. No player account, download or paid gameplay advantages. Prefer competition? Room Remix offers short races with shared hazard votes. A 50-level solo tour, Endurance, wardrobe and earned-coin shop are also included.
+
+Built with ChatGPT Work through planning, player feedback, implementation and automated testing. The creator confirmed Work-mode use and entrant eligibility.
 
 ## Reviewer walkthrough
 
-1. Open the public URL on two devices. Choose **Play with friends** on the first.
-2. Keep **Wheel Works** and **One quick race**, then generate a code.
-3. Enter that code on the second device, or use the host's invite link. The host starts after both join; the countdown is three seconds.
-4. Move with WASD/arrows, jump with Space and dive with Shift; touch controls appear on supported phones. Vote when Calm/Wild buttons appear. Race to the finish for points.
-5. The race ends when all runners finish or three minutes elapse. Unfinished places use course progress. Select **Play again — same code** for a rematch, or select a three-round tour in the room settings.
+1. Open the public URL in two independent browsers/devices. Choose **Play with friends → Create World Relay**.
+2. Copy the code or invite link to the second player. The host selects **Runner**, then **Begin World Relay**; the teammate starts as **Shaper**.
+3. Runner: WASD/arrows or touch arrows move; Space/JUMP clears barriers. Collect a blue crystal. Shaper: press **1** or **Lower bridge** when the Runner is ready. The practice prompts explain each step before the storm starts.
+4. Coordinate the timed machinery. Countdowns show remaining open time; repeat cycles are free after the first activation. Gather at the beacon, then follow the new role instructions.
+5. Complete all three crossings before the storm, or rematch with the same code. To try competitive play, generate a **Room Remix** code instead.
 
-## Entrant's final checks
+## Before pressing Submit
 
-- Confirm the published version in the release validation report; don't submit a local preview URL.
-- Complete a race on two actual devices, including a phone if possible. Automated browser emulation is not physical-device testing.
-- Use the same Handshake account/email required by the official rules. Entrant eligibility and Work-mode use were self-confirmed by the creator.
-- Submit the title, cover, description and public URL inside Handshake. No entry has been submitted automatically.
-- Use the **earlier deadline** until Handshake resolves the conflicting dates: the official rules state **30 October 2026, 11:59 PM Pacific**, while the supplied mission text says 31 October. The earlier deadline is **31 October, 12:29 PM IST**.
+- Run an expedition on two actual devices, ideally including a phone. Emulated touch is not physical-device testing.
+- Use the same Handshake account/email required by the official rules. Eligibility and Work-mode use were self-confirmed, not independently verified.
+- Paste the title, cover, description and public URL into Handshake. No entry has been submitted automatically.
+- Use the earlier deadline until Handshake resolves its conflicting dates: the official rules state **30 October 2026, 11:59 PM Pacific**, while the supplied mission text says 31 October. The earlier deadline is **31 October, 12:29 PM IST**.
 
-Netlify is optional in the supplied mission's build-your-own path. The Vercel frontend and existing Render multiplayer server preserve the game's authoritative WebSocket architecture. Scheduled judging-week health checks are best effort; free Render service restarts, cold starts and usage limits remain possible.
+The supplied build-your-own path allows a reachable public host; Netlify is optional. Free Render cold starts, room loss on restarts and usage limits remain possible. Scheduled judging health checks are best effort. No score, acceptance or prize is guaranteed.
 
-Sources: [mission](https://joinhandshake.com/learn/create-a-multiplayer-game-8d7d59b5/) and [official rules](https://go.joinhandshake.com/rs/390-ZTF-353/images/%5BAI_Skills_Studio_Challenge%5D_Contest_Official_Rules.pdf?version=0). The logged-in mission text was supplied by the creator. No score, prize or acceptance is guaranteed.
+[Mission](https://joinhandshake.com/learn/create-a-multiplayer-game-8d7d59b5/) · [Official rules](https://go.joinhandshake.com/rs/390-ZTF-353/images/%5BAI_Skills_Studio_Challenge%5D_Contest_Official_Rules.pdf?version=0)

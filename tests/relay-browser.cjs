@@ -1,7 +1,7 @@
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs');
 const out='/workspace/bean-dash-relay';fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const {createGameServer}=await import('../server/index.js');const app=createGameServer();await new Promise(r=>app.server.listen(0,'127.0.0.1',r));
+ const {createGameServer}=await import('../server/index.js');const {relayLayout}=await import('../dist/relay-rules.js');const app=createGameServer();await new Promise(r=>app.server.listen(0,'127.0.0.1',r));
  const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-background-timer-throttling','--disable-renderer-backgrounding','--disable-backgrounding-occluded-windows','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
  const waitFor=async test=>{const end=Date.now()+15000;while(!test()){if(Date.now()>end)throw Error('server condition timed out');await new Promise(r=>setTimeout(r,30));}};
  const url='http://127.0.0.1:'+app.server.address().port;let pages=[];
@@ -44,7 +44,7 @@ const out='/workspace/bean-dash-relay';fs.mkdirSync(out,{recursive:true});
   fs.writeFileSync(out+'/layouts.json',JSON.stringify(layouts,null,2));await a.setViewportSize({width:1280,height:720});await b.setViewportSize({width:390,height:700});
   // Advance all three checkpoint transitions using server state; physics traversal is tested separately.
   for(let stage=0;stage<3;stage++){
-   room.energy=20;for(const key of['bridge','gate','wind'])room.activate(room.shaperId,key,stage);tick(2);
+   room.energy=20;for(const key of relayLayout(stage).order)room.activate(room.shaperId,key,stage);tick(2);
    for(const p of room.active().filter(p=>p.role==='runner'))Object.assign(p,{x:0,y:0,vy:0,z:-stage*112-109});tick(1/30);
    if(stage<2){tick(4.1);await a.waitForFunction(n=>beanDash.getState().relay.stage===n,stage+1);await b.waitForFunction(n=>beanDash.getState().relay.stage===n,stage+1);}
   }

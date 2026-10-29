@@ -1,12 +1,13 @@
-# Bean Dash: Room Remix
+# Bean Dash Online
 
 
 ### ***[Play free in your browser →](https://bean-dash-online.vercel.app/)***
 
 ## About
 
-Bean Dash: Room Remix is a free browser party racer built with ChatGPT Work. It includes private rooms, customizable runners, 50 solo World Tour levels, and an Endurance mode reaching 60 km. Race across hills, ridge trails, circular stepping drums, and bridges above flowing blue water. Overhead hammer frames, warning lines and flashing platform edges make crossings easier to read. No account required.
+Bean Dash Online is a free browser game with cooperative expeditions and party races, built with ChatGPT Work. It includes private rooms, customizable runners, 50 solo World Tour levels, and an Endurance mode reaching 60 km. Race across hills, ridge trails, circular stepping drums, and bridges above flowing blue water. Overhead hammer frames, warning lines and flashing platform edges make crossings easier to read. No account required.
 
+- **World Relay:** 2–8 friends cooperate across three different island crossings. Runners collect energy; Shapers time bridge, gate and wind cycles. Roles rotate at beacons, with free recovery and a 120-second storm after practice. [Relay rules and controls](WORLD_RELAY.md).
 - **World Tour:** 50 levels across five worlds, from 1 to 5.825 km. Denser crossings and obstacle combinations increase the challenge; each world ends in an extended gauntlet.
 - **Endurance:** a separate long-distance mode reaching **60 km**.
 - **24 mechanics:** roaming wheels, fireball volleys, sea bridges, moving platforms, vanishing islands, crushers, and more.
@@ -30,7 +31,9 @@ A clean-run bonus requires no obstacle hits (including shield impacts), no water
 
 ## Play with friends
 
-1. Choose **Play with friends**, choose a course and one or three races, then **Generate room code**.
+For cooperative play, choose **Create World Relay**. The host chooses Runner or Shaper; everyone joins the same code.
+
+For racing, choose **Play with friends**, choose a course and one or three races, then **Generate room code**.
 2. Friends enter that six-character code using **Join by code**, or open your invite link and confirm joining.
 3. The host starts after at least two people join. Empty places fill with labeled bots. Vote Calm or Wild during each 10-second voting window. The majority effect lasts 30 seconds; ties and no votes choose Calm.
 4. Stay for scores and the next round. The host can select **Play again — same code**, change the course, and start another session. Late arrivals enter the next round or rematch.

@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.6.0 — 29 October 2026
+
+- Shorten Relay's storm to 120 seconds. Machinery runs timed cycles: bridge 8s, gate 7s, wind 9s, with visible countdowns and a bridge closing warning. First activations cost energy; later cycles are free.
+- Give each beacon a distinct device order and matching geometry, labels and collision. Fix gate contact rounding on later stages.
+- Clarify wardrobe, settings, shop affordability, medal timing and graphics-help copy; correct singular obstacle labels.
+- Refresh the README and submission kit with an actual gameplay cover. Add a validated GitHub release workflow and retain bounded judging-week health checks.
+
 ## 9.5.1 — 29 October 2026
 
 - Let Relay hosts choose Runner or Shaper before starting; default the browser flow to Runner and explain the different controls clearly.

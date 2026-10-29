@@ -1,51 +1,46 @@
-# Bean Dash Online
+# Bean Dash Online · World Relay
 
 [![Game checks](https://github.com/IntelliCoder-AI/bean-dash-online/actions/workflows/test.yml/badge.svg)](https://github.com/IntelliCoder-AI/bean-dash-online/actions/workflows/test.yml)
 
-[Play on Vercel](https://bean-dash-online.vercel.app/) · [Play on Render](https://bean-dash-online.onrender.com/) · [Player guide](docs/GAME_GUIDE.md) · [Submission kit](docs/SUBMISSION.md)
+**Your friends control the crossing. At the next beacon, it's your turn.**
 
-Cooperative adventures and party races in a shared 3D world. In **World Relay**, friends alternate between running with the light and shaping bridges, gates and wind. Room Remix lets your friends vote to remix a race. Choose Calm for steadier hazards or Wild for a faster, tougher race. Mistakes return you to the last flag for free, so everyone stays in the game. Built with ChatGPT Work; no player account or installation required.
+[Play now](https://bean-dash-online.vercel.app/) · [Render backup](https://bean-dash-online.onrender.com/) · [Latest release](https://github.com/IntelliCoder-AI/bean-dash-online/releases/latest)
 
-![Room Remix party race, captured from a staged local session](docs/images/bean-dash.jpg)
+![World Relay: teammates carrying lanterns across a timed bridge between floating islands](docs/images/world-relay.jpg)
 
-- **World Relay:** 2–8 friends, three floating-island crossings, shared energy, Runner/Shaper roles, interactive practice, free recovery and team victory. [Rules and controls](docs/WORLD_RELAY.md).
-- **Room Remix:** 2–8 friends, six short courses, a quick race or three-round tour, crowd votes, checkpoint respawns, spectator voting and same-code rematches.
-- **World Tour:** 50 courses, checkpoints, medals and separate Hardcore records.
-- **Endurance:** longer courses reaching 60 km, with solo checkpoint revivals.
-- **Your runner:** four characters, modular clothing, cosmetics and a coin shop.
-- **Competitive online:** the original 16-runner Tour/Endurance races remain available. Labeled bots fill empty places in both modes. Paid powers stay solo only.
+*Captured from the actual 3D game in a staged local session; interface/sign overlays are hidden for the cover.*
 
 ## Play with friends
 
-1. Choose **Play with friends** → **Create World Relay** for cooperation, or select a Room Remix course and **Generate room code** to race.
-2. Friends use **Join by code**, or open your invite link. The host starts once at least two people join.
-3. In Relay, collect blue crystals, help your Shaper power the mechanisms, and gather at each beacon to switch roles. In Room Remix, race, vote Calm or Wild, and score 8 to 1 points by place. Each race ends within three minutes; unfinished places use course progress. Most total points wins; ties share victory.
+1. Choose **Play with friends → Create World Relay**. Share the room code or invite link.
+2. Friends join from their browsers. The host chooses **Runner** or **Shaper**, then starts.
+3. Runners collect blue energy crystals. Shapers time the bridge (8s), gate (7s) and wind (9s) using **1–3** or the labelled buttons.
+4. Bring every Runner to each beacon. Roles rotate, routes change, and everyone wins together by beating the **120-second storm**. Interactive practice comes first; falls recover for free. Repeat machinery cycles cost no extra energy.
 
-Finishers watch and vote while the race continues. Late arrivals watch, vote and enter the next round or rematch. A three-round tour has 10-second breaks; the host can rematch without changing the code. Party points do not alter solo medals or coins. Choose **Competitive Tour & Endurance** for the original one-life, 16-runner rules.
+WASD / arrows move Runners; Space jumps; Shift dives. Phones show touch controls. Drag to look around, scroll to zoom, and C resets the camera. No player login, installation or real-money purchases. Built with **ChatGPT Work** through iterative design, player feedback and testing.
 
-**Controls:** WASD/arrow keys · Space to jump · Shift to dive/slide · Esc to pause solo or open the online menu · R to restart solo. Drag to look around, scroll to zoom, C to reset the camera. Touch controls appear on supported phones and tablets.
+## More ways to play
 
-On mobile, the timer sits at the upper-right edge. Open the race menu for course/checkpoint details, controls, settings and solo power-ups; activating a power resumes the race. Ability buttons stay off the playfield on every device.
+- **Room Remix:** 2–8 friends race on short courses, vote on hazards and rematch with the same code.
+- **World Tour:** 50 solo levels, medals and separate Hardcore records.
+- **Endurance:** long runs reaching 60 km, checkpoint saves and capped revival prices.
+- **Competitive races:** up to 16 runners, with labelled bots filling empty slots.
+- **Wardrobe & shop:** modular runners, cosmetics and earned coins; purchased gameplay powers stay solo.
 
-## Run locally
+[Relay rules](docs/WORLD_RELAY.md) · [Player guide](docs/GAME_GUIDE.md) · [Submission kit](docs/SUBMISSION.md)
 
-Requires Node.js 22 or later.
+## Development
+
+Requires Node.js 22 or later. Maintained browser source is in `dist/`; the authoritative WebSocket server is in `server/`.
 
 ```sh
 npm ci
-npm run build
+npm test
 npm start
 ```
 
-Open http://localhost:3000. Run `npm test` for the automated suite.
+Open http://localhost:3000. `npm run build:vercel` builds the static frontend. [Contributing](CONTRIBUTING.md) describes browser and balance checks. Tagged releases publish only after automated tests and the production build pass.
 
-| Folder | Purpose |
-| --- | --- |
-| `dist/` | Browser game, UI and bundled 3D assets |
-| `server/` | Authoritative WebSocket races and private rooms |
-| `tests/` | Physics, economy, persistence, multiplayer and UI regressions |
-| `scripts/` | Production verification and balance tooling |
+Vercel serves the frontend; Render hosts shared online rooms. Free Render cold starts and restarts remain possible. Bounded judging-week health checks run through 6 November 2026 and are best effort. Rooms are temporary. Guest saves stay in each browser and are separate between the two domains; clearing site data removes that save. WebGL is required. Automated viewport tests do not certify physical devices, Safari or real-GPU performance.
 
-Vercel serves the homepage and solo game independently of the shared Render race server. Online connections can still wait for that free server to wake after inactivity. A temporary ten-minute health check runs through November 6; scheduled checks are best effort, not an uptime guarantee. Both addresses join the same multiplayer rooms, but each address has its own browser save and wallet; Render saves are preserved. Clearing browser data removes that site's progress. Rooms end when the server restarts. WebGL is required; real-device compatibility and capacity are not guaranteed by automated tests.
-
-[Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Deployment](docs/DEPLOYMENT.md) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [Changelog](CHANGELOG.md) · [Balance](BALANCE.md) · [Roadmap](ROADMAP.md)
+[Changelog](CHANGELOG.md) · [Deployment](docs/DEPLOYMENT.md) · [Security](SECURITY.md) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [Roadmap](ROADMAP.md)
