@@ -13,7 +13,9 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
   for(const id of['helmet','shield','speed']){await page.locator('[data-buy="'+id+'"]').click();await page.locator('#purchase-confirm').evaluate(b=>{b.click();b.click()});await page.waitForSelector('#purchase-done');await page.locator('#purchase-done').click();}
   assert.equal((await page.evaluate(()=>qa.profile())).coins,320);await page.locator('[data-equip="helmet"]').click();await page.waitForFunction(()=>qa.profile().equipped.helmet==='helmet');
   await page.setViewportSize({width:390,height:844});await page.screenshot({path:'economy-shop-mobile.png'});assert(await page.locator('#modal').evaluate(e=>e.scrollWidth<=e.clientWidth+1));await page.locator('#shop-done').click();
-  await page.setViewportSize({width:1440,height:900});await page.evaluate(()=>qa.begin());await page.locator('[data-power="speed"]').evaluate(b=>{b.click();b.click()});
+  await page.setViewportSize({width:1440,height:900});await page.evaluate(()=>qa.begin());
+  for(const viewport of[{width:1440,height:900},{width:1882,height:462},{width:1280,height:720},{width:821,height:462}]){await page.setViewportSize(viewport);assert(await page.locator('.power-bar').isHidden());assert.equal(await page.locator('[data-power]').count(),0);}
+  await page.screenshot({path:'abilities-cleared-desktop.png'});await page.setViewportSize({width:1440,height:900});await page.locator('#pause').click();await page.locator('[data-menu-power="speed"]').evaluate(b=>{b.click();b.click()});await page.waitForFunction(()=>qa.state().mode==='race');
   await page.waitForFunction(()=>qa.profile().inventory.speed===0);assert((await page.evaluate(()=>qa.state())).player.speedTime>0);
   await page.evaluate(()=>qa.kill());assert.equal((await page.evaluate(()=>qa.state())).mode,'dying');await page.waitForSelector('#revive',{timeout:30000});
   const before=await page.evaluate(()=>qa.state()),wallet=(await page.evaluate(()=>qa.profile())).coins;assert.equal(wallet,330);await page.screenshot({path:'economy-revival.png'});

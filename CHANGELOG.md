@@ -1,5 +1,9 @@
 # Changelog
 
+## 9.3.1 — 29 October 2026
+
+- Remove ability buttons from the desktop playfield too; owned solo abilities remain available through the race menu on every device.
+
 ## 9.3.0 — 29 October 2026
 
 - Clear the mobile playfield: remove the course card and power row, and anchor the clock/pause button to the upper-right edge.

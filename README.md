@@ -23,7 +23,7 @@ Jump gaps, avoid dangerous moving hazards and clear solid barriers. The first ru
 
 **Controls:** WASD/arrow keys · Space to jump · Shift to dive/slide · Esc to pause solo or open the online menu · R to restart solo. Drag to look around, scroll to zoom, C to reset the camera. Touch controls appear on supported phones and tablets.
 
-On mobile, the timer sits at the upper-right edge. Open the race menu for course/checkpoint details, controls, settings and solo power-ups; activating a power resumes the race. Desktop also offers power buttons on the playfield.
+On mobile, the timer sits at the upper-right edge. Open the race menu for course/checkpoint details, controls, settings and solo power-ups; activating a power resumes the race. Ability buttons stay off the playfield on every device.
 
 ## Run locally
 
