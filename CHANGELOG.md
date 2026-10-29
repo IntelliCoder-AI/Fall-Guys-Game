@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.3.0 — 29 October 2026
+
+- Clear the mobile playfield: remove the course card and power row, and anchor the clock/pause button to the upper-right edge.
+- Keep course details, settings/help and owned solo powers available in the race menu; activation resumes play without duplicate consumption.
+- Add a static Vercel frontend that shares the existing Render race server with a strict owned-origin allowlist.
+- Wake an idle backend once per page visit; allow cancellable online startup retries without delaying solo play.
+- Preserve the Render deployment, all course/physics rules, and each origin's browser saves.
+
 ## 9.2.1 — 29 October 2026
 
 - Replace external game references in About with Bean Dash’s own description and technical credits.

@@ -2,7 +2,7 @@
 
 [![Game checks](https://github.com/IntelliCoder-AI/bean-dash-online/actions/workflows/test.yml/badge.svg)](https://github.com/IntelliCoder-AI/bean-dash-online/actions/workflows/test.yml)
 
-[Play Bean Dash](https://bean-dash-online.onrender.com/) · [Player guide](docs/GAME_GUIDE.md) · [Game checks](.github/workflows/test.yml)
+[Play on Vercel](https://bean-dash-online.vercel.app/) · [Play on Render](https://bean-dash-online.onrender.com/) · [Player guide](docs/GAME_GUIDE.md) · [Game checks](.github/workflows/test.yml)
 
 A multiplayer 3D obstacle racer for friends. Join a private room with a six-character code, dodge moving hazards, and race for a place at the finish. No player account or installation required.
 
@@ -23,6 +23,8 @@ Jump gaps, avoid dangerous moving hazards and clear solid barriers. The first ru
 
 **Controls:** WASD/arrow keys · Space to jump · Shift to dive/slide · Esc to pause solo or open the online menu · R to restart solo. Drag to look around, scroll to zoom, C to reset the camera. Touch controls appear on supported phones and tablets.
 
+On mobile, the timer sits at the upper-right edge. Open the race menu for course/checkpoint details, controls, settings and solo power-ups; activating a power resumes the race. Desktop also offers power buttons on the playfield.
+
 ## Run locally
 
 Requires Node.js 22 or later.
@@ -42,6 +44,6 @@ Open http://localhost:3000. Run `npm test` for the automated suite.
 | `tests/` | Physics, economy, persistence, multiplayer and UI regressions |
 | `scripts/` | Production verification and balance tooling |
 
-Progress and purchases stay in the current browser profile. Clearing browser data removes them. Online rooms are temporary and end when the server restarts. The free hosting service can take about a minute to wake after inactivity. WebGL is required; real-device compatibility and capacity are not guaranteed by automated tests.
+Vercel serves the homepage and solo game independently of the shared Render race server. Online connections can still wait for that free server to wake after inactivity. Both addresses join the same multiplayer rooms, but each address has its own browser save and wallet; Render saves are preserved. Clearing browser data removes that site's progress. Rooms end when the server restarts. WebGL is required; real-device compatibility and capacity are not guaranteed by automated tests.
 
 [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Deployment](docs/DEPLOYMENT.md) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [Changelog](CHANGELOG.md) · [Balance](BALANCE.md) · [Roadmap](ROADMAP.md)

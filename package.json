@@ -1,6 +1,6 @@
 {
   "name": "bean-dash-online",
-  "version": "9.2.1",
+  "version": "9.3.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "node scripts/verify-build.mjs",
+    "build:vercel": "npm run build && node scripts/build-vercel.mjs",
     "pretest": "npm run build",
     "start": "node server/index.js",
     "dev": "node server/index.js",

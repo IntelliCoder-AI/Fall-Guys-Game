@@ -79,3 +79,14 @@ dialog p,dialog input,dialog select{font-size:16px;line-height:1.55}.mini-label,
  .hero>#online{grid-row:4;grid-column:1;padding:10px;gap:4px}.hero>#online>span{display:none}.hero>#shop-open{grid-row:4;grid-column:2;padding:10px}
  .hero>.selected-course{grid-row:5;margin-top:14px}.hero>.play-caption{grid-row:6}.hero>.guest-strip{grid-row:7}
 }
+/* Keep the mobile race view clear; detailed controls live in the race menu. */
+.pause-powers{padding:16px;margin:18px 0;border:1px solid #d4dfe5;border-radius:14px;background:#edf2fa;text-align:left}
+.pause-powers h3{margin:0 0 6px}.pause-powers p{font-size:14px;margin:6px 0 12px}.pause-powers>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pause-powers button{min-height:44px;padding:10px;border:1px solid #c2d0db;border-radius:10px;background:#fffaf0;color:#203b48;font-size:14px}.pause-powers button:disabled{opacity:.55}
+@media(pointer:coarse),(max-width:700px){
+ .racing header,.racing .hud-left,.racing .power-bar{display:none!important}
+ .racing .hud-right{position:absolute;top:calc(10px + env(safe-area-inset-top));right:calc(12px + env(safe-area-inset-right));width:auto;display:flex;align-items:flex-start;gap:8px;z-index:6}
+ .racing .race-clock{min-width:112px;padding:8px 12px;border-radius:12px}.racing .race-clock .mini-label{font-size:11px}.racing .race-clock b{font-size:25px;line-height:1.1}.racing .race-clock small{display:none}
+ .racing .hud-right #pause{width:44px;height:44px;min-height:44px}
+ .racing #online-status{top:calc(82px + env(safe-area-inset-top));right:12px;left:auto;transform:none;max-width:calc(100% - 24px);font-size:11px}
+}

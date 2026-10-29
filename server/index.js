@@ -7,20 +7,23 @@ import {RaceRoom} from './rooms.js';
 import {visibleCollected} from '../dist/simulation.js';
 import {levelById} from '../dist/levels.js';
 const {version}=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8'));
+const hosting=JSON.parse(await readFile(new URL('../hosting.json',import.meta.url),'utf8'));
 const commit=/^[a-f0-9]{40}$/i.test(process.env.RENDER_GIT_COMMIT||'')?process.env.RENDER_GIT_COMMIT:null;
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const mime={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8','.woff2':'font/woff2','.txt':'text/plain; charset=utf-8','.svg':'image/svg+xml'};
-export function createGameServer({waitSeconds=45,maxRooms=40}={}){
+export function createGameServer({waitSeconds=45,maxRooms=40,allowedOrigins=hosting.vercelOrigins}={}){
+ const trusted=new Set(allowedOrigins);
+ const originAllowed=(origin,host)=>{try{const url=new URL(origin);return ['https:','http:'].includes(url.protocol)&&url.origin===origin&&(url.host===host||trusted.has(origin));}catch{return false;}};
  const rooms=new Map(),connections=new Map();
  const server=http.createServer(async(req,res)=>{res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'");
   if(req.method!=='GET'&&req.method!=='HEAD'){res.writeHead(405);return res.end()}
   let pathname;try{pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname)}catch{res.writeHead(400);return res.end()}
-  if(pathname==='/health'){res.setHeader('Content-Type','application/json');return res.end(JSON.stringify({ok:true,version,commit,rooms:rooms.size}))}
+  if(pathname==='/health'){if(req.headers.origin&&originAllowed(req.headers.origin,req.headers.host)){res.setHeader('Access-Control-Allow-Origin',req.headers.origin);res.setHeader('Vary','Origin');}res.setHeader('Content-Type','application/json');return res.end(JSON.stringify({ok:true,version,commit,rooms:rooms.size}))}
   const target=path.resolve(root,'.'+(pathname==='/'?'/index.html':pathname));if(!target.startsWith(root)){res.writeHead(403);return res.end()}
   try{if(!(await stat(target)).isFile())throw Error();const body=await readFile(target);res.setHeader('Content-Type',mime[path.extname(target)]||'application/octet-stream');res.setHeader('Cache-Control',pathname.includes('/vendor/')?'public, max-age=86400':'no-cache');res.end(req.method==='HEAD'?undefined:body)}catch{res.writeHead(404);res.end('Not found')}
  });
  const wss=new WebSocketServer({noServer:true,maxPayload:2048,perMessageDeflate:false});
- server.on('upgrade',(req,socket,head)=>{let valid=false;try{const u=new URL(req.url,'http://localhost');const origin=req.headers.origin;valid=u.pathname==='/ws'&&(!origin||new URL(origin).host===req.headers.host)}catch{}if(!valid||wss.clients.size>=1600){socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');return socket.destroy()}wss.handleUpgrade(req,socket,head,ws=>wss.emit('connection',ws,req))});
+ server.on('upgrade',(req,socket,head)=>{let valid=false;try{const u=new URL(req.url,'http://localhost');const origin=req.headers.origin;valid=u.pathname==='/ws'&&(!origin||originAllowed(origin,req.headers.host))}catch{}if(!valid||wss.clients.size>=1600){socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');return socket.destroy()}wss.handleUpgrade(req,socket,head,ws=>wss.emit('connection',ws,req))});
  const send=(ws,data)=>{if(ws.readyState===WebSocket.OPEN&&ws.bufferedAmount<128000)ws.send(JSON.stringify(data))};
  wss.on('connection',ws=>{ws.alive=true;ws.rate=0;ws.rateAt=Date.now();ws.on('pong',()=>ws.alive=true);ws.on('error',()=>{});
   ws.on('message',raw=>{if(Date.now()-ws.rateAt>1000){ws.rate=0;ws.rateAt=Date.now()}if(++ws.rate>80)return ws.close(1008,'Too many messages');let data;try{data=JSON.parse(raw)}catch{return send(ws,{type:'error',message:'Invalid message'})}if(!data||typeof data!=='object')return;

@@ -1,3 +1,5 @@
 node_modules/
 *.png
 *.tar.gz
+vercel-dist/
+.vercel/
