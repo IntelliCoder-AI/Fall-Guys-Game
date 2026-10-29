@@ -1,0 +1,32 @@
+name: Bug report
+description: Report a reproducible game or interface problem.
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, personal data or private room codes. Report security vulnerabilities using SECURITY.md.
+  - type: input
+    id: environment
+    attributes:
+      label: Browser, device and viewport
+      placeholder: Chrome on Android, 821×462 landscape
+    validations:
+      required: true
+  - type: input
+    id: mode
+    attributes:
+      label: Game mode and level
+      placeholder: Private online room, level 4
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and version
+      description: Add the release/commit, a screenshot or a redacted error if available.

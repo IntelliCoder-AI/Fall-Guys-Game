@@ -29,4 +29,4 @@ node tests/review-fixes-browser.cjs
 
 Local Chromium checks cover landscape/portrait/tablet geometry, checkpoint camera recovery, all graphics quality modes, shops, wardrobe and private-room UI. Software rendering does not establish physical GPU performance, real phone usability or production multiplayer capacity.
 
-Original character and obstacle models remain procedural assets. The course references include Fall Guys Creative and Trackmania's replayable timed courses; no third-party game models are used.
+Character and obstacle models are procedural assets built for Bean Dash. Courses emphasize readable timing, varied routes and replayable races; no third-party game models are used.
