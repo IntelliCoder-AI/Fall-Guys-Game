@@ -1,0 +1,29 @@
+import {PARTY_COURSES,REMIXES} from './party-rules.js';
+import {levelById} from './levels.js';
+const escape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export const courseOptions=selected=>PARTY_COURSES.map(id=>`<option value="${id}" ${id===selected?'selected':''}>${levelById(id).name} · ${levelById(id).distance.toLocaleString()} m</option>`).join('');
+export function createPartyUI({modal,send,leave,toast,formatTime}){
+ const $=id=>document.getElementById(id);let key='';
+ const panel=document.createElement('aside');panel.id='party-vote';panel.hidden=true;panel.setAttribute('aria-label','Room Remix crowd vote');$('hud').append(panel);
+ const copy=async(value,id)=>{try{await navigator.clipboard.writeText(value);$(id).textContent='COPIED ✓';}catch{toast('Room code: '+value);}};
+ function reset(){key='';panel.hidden=true;document.body.classList.remove('party-race');}
+ function update(s,myId){document.body.classList.add('party-race');const own=s.players.find(p=>p.id===myId),host=s.hostId===myId;
+  const nextKey=[s.room,s.phase,s.round,s.hostId,s.settings.level,s.settings.rounds].join(':');
+  if(key!==nextKey){key=nextKey;
+   if(s.phase==='waiting'){
+    modal(`<span class="pill">ROOM REMIX · 2–8 FRIENDS</span><h2>Your room. Your rules.</h2><div id="room-code" class="room-code">${escape(s.room)}</div><p id="queue-count" aria-live="polite"></p><div class="party-settings"><label>COURSE<select id="party-course" ${host?'':'disabled'}>${courseOptions(s.settings.level)}</select></label><label>SESSION<select id="party-rounds" ${host?'':'disabled'}><option value="1" ${s.rounds===1?'selected':''}>One quick race · 2–3 min</option><option value="3" ${s.rounds===3?'selected':''}>Three-round party tour</option></select></label></div><p>WASD / arrows to move · Space to jump · Shift to dive. Phones show touch buttons.</p><p>Race to the finish. Vote <b>Calm</b> for steadier hazards or <b>Wild</b> for a faster, tougher race. Mistakes return you to the last flag for free. Empty places fill with clearly labelled bots.</p><p>Finishers earn 8 to 1 points by place. At the 3-minute limit, remaining places use course progress. Most points wins; ties share victory. Party points do not change Tour medals or coins.</p><div class="party-actions"><button id="copy-code" class="secondary-button">COPY CODE</button><button id="invite" class="secondary-button">COPY INVITE LINK</button></div>${host?'<button id="start-room" class="primary-button">START PARTY RACE</button>':'<p>Waiting for the host to start.</p>'}<button id="cancel-queue" class="secondary-button">Leave room</button>`,{closable:false});
+    $('copy-code').onclick=()=>copy(s.room,'copy-code');$('invite').onclick=()=>{const url=new URL('/',location.origin);url.searchParams.set('room',s.room);copy(url.href,'invite');};$('cancel-queue').onclick=leave;const settings=$('party-course').closest('.party-settings');settings.after(document.querySelector('.party-actions'));if(host)settings.after($('start-room'));
+    if(host){const configure=()=>send({type:'configure',level:Number($('party-course').value),rounds:Number($('party-rounds').value)});$('party-course').onchange=configure;$('party-rounds').onchange=configure;$('start-room').onclick=()=>send({type:'start'});}
+   }else if(['intermission','complete'].includes(s.phase)){
+    const scores=[...s.players].filter(p=>!p.spectator).sort((a,b)=>(b.totalPoints||0)-(a.totalPoints||0)),best=scores[0]?.totalPoints,winners=scores.filter(p=>p.totalPoints===best).map(p=>escape(p.name)).join(' & ');
+    modal(`<span class="pill">ROOM REMIX · ROUND ${s.roundIndex} / ${s.rounds}</span><h2>${s.phase==='complete'?`${winners} ${scores.filter(p=>p.totalPoints===best).length>1?'win!':'wins!'}`:'Next starting line.'}</h2><p id="party-next" aria-live="polite"></p><div class="party-scores">${scores.map(p=>`<div><span>${escape(p.name)}${p.isBot?' · BOT':''}${p.connected?'':' · LEFT'}</span><b>${p.totalPoints||0} pts <small>+${p.roundPoints||0}</small></b></div>`).join('')}</div><p>Finished runners keep their place. Unfinished runners are placed by progress when the clock ends.</p>${s.phase==='complete'?(host?'<button id="party-rematch" class="primary-button">PLAY AGAIN · SAME CODE</button>':'<p>The host can start another party with this code.</p>'):''}<button id="party-leave" class="secondary-button">Leave room</button>`,{closable:false});$('party-leave').onclick=leave;if($('party-rematch'))$('party-rematch').onclick=()=>send({type:'rematch'});
+   }else{$('modal').close();}
+  }
+  if($('queue-count')){$('queue-count').textContent=`${s.humans} / ${s.capacity} friends connected · ${host?'You are the host':'Host chooses the course'}`;if($('start-room'))$('start-room').disabled=s.humans<2;}
+  if($('party-next'))$('party-next').textContent=s.phase==='intermission'?`Next race in ${Math.max(0,Math.ceil(s.remaining))}s · late joiners race next`:'Party complete. Stay for a rematch, or leave at any time.';
+  const vote=s.vote;panel.hidden=s.phase!=='race'||!vote||vote.closed;
+  if(!panel.hidden){const selected=vote.ballots[myId];if(panel.dataset.vote!==s.round+':'+vote.index){panel.dataset.vote=s.round+':'+vote.index;panel.innerHTML=`<b></b><div>${Object.entries(REMIXES).map(([id,r])=>`<button data-remix="${id}" title="${r.description}"></button>`).join('')}</div><small>Calm: steady · Wild: fast</small>`;panel.querySelectorAll('button').forEach(b=>b.onclick=()=>send({type:'vote',choice:b.dataset.remix}));}panel.querySelector('b').textContent=`ROOM VOTE · ${Math.max(0,Math.ceil(vote.endsAt-s.time))}s`;panel.querySelectorAll('button').forEach(b=>{const id=b.dataset.remix;b.setAttribute('aria-pressed',String(selected===id));b.textContent=`${REMIXES[id].name} · ${vote.counts[id]}${selected===id?' ✓':''}`;});}
+  return own;
+ }
+ return {update,reset};
+}

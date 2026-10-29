@@ -1,0 +1,30 @@
+name: Judging-week availability check
+on:
+  schedule:
+    - cron: '7,17,27,37,47,57 * 29-31 10 *'
+    - cron: '7,17,27,37,47,57 * 1-6 11 *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: judging-health
+  cancel-in-progress: true
+jobs:
+  health:
+    # Bounded monitoring, not a promise of always-on hosting. Delete after judging.
+    if: github.repository == 'IntelliCoder-AI/bean-dash-online'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check the existing race service through 6 November 2026
+        shell: bash
+        run: |
+          if [ "$(date -u +%Y%m%d)" -gt 20261106 ]; then
+            echo 'Judging checks have expired; no request sent.'
+            exit 0
+          fi
+          curl --fail --silent --show-error --max-time 75 \
+            --retry 1 --retry-delay 5 \
+            https://bean-dash-online.onrender.com/health \
+            --output health.json
+          node -e "const h=require('./health.json'); if(h.ok!==true) process.exit(1); console.log('Race service healthy; version '+h.version);"

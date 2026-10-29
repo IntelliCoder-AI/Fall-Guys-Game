@@ -1,5 +1,8 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {once} from 'node:events';import {mkdtemp,readFile,rm,stat} from 'node:fs/promises';import {tmpdir} from 'node:os';import {join} from 'node:path';import {pathToFileURL} from 'node:url';import WebSocket from 'ws';
-import {serverOrigin,raceSocketUrl,waitForRaceServer,wakeRaceServer} from '../dist/connection.js';import {createGameServer} from '../server/index.js';import {buildVercel} from '../scripts/build-vercel.mjs';
+import {serverOrigin,raceSocketUrl,waitForRaceServer,wakeRaceServer,createConnectionWatchdog} from '../dist/connection.js';import {createGameServer} from '../server/index.js';import {buildVercel} from '../scripts/build-vercel.mjs';
+test('connection watchdog allows suspended/graphics-blocked tabs to drain messages but detects a real stall',()=>{
+ const watch=createConnectionWatchdog();assert(!watch.expired(1000,900));assert(!watch.expired(20000,900));for(let now=20100;now<25000;now+=100)assert(!watch.expired(now,900));assert(watch.expired(25000,900));assert(!watch.expired(25100,25050));assert(!watch.expired(50000,25050,false));assert(!watch.expired(50100,25050));assert(!watch.expired(50200,50150));watch.reset();assert(!watch.expired(90000,50150));
+});
 test('race endpoint stays same-origin on Render and uses the configured backend on static hosts',()=>{
  assert.equal(raceSocketUrl('https://render.example'),'wss://render.example/ws');assert.equal(raceSocketUrl('http://127.0.0.1:1234'),'ws://127.0.0.1:1234/ws');assert.equal(raceSocketUrl('https://owned.vercel.app','https://race.example'),'wss://race.example/ws');
  for(const value of['javascript:alert(1)','https://user:pass@example.com','https://example.com/path','https://example.com/?x=1'])assert.throws(()=>serverOrigin(value));

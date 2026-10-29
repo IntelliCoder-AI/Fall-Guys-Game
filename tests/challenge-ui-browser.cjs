@@ -19,9 +19,9 @@ fs.mkdirSync(out,{recursive:true});
    for(const e of buttons){if(e.scrollWidth>e.clientWidth+3&&e.tagName!=='SELECT')bad.push('clipped content: '+name(e));const r=e.getBoundingClientRect();for(const q of buttons.slice(buttons.indexOf(e)+1)){if(e.contains(q)||q.contains(e))continue;const b=q.getBoundingClientRect();if(Math.min(r.right,b.right)-Math.max(r.left,b.left)>2&&Math.min(r.bottom,b.bottom)-Math.max(r.top,b.top)>2)bad.push('overlap: '+name(e)+' / '+name(q));}}
    return bad;
   },{root});findings.push(...result.map(issue=>({tag,screen,issue})));checked.push({tag,screen});}
-  await inspect('lobby','#lobby');for(const id of['play','online','shop-open']){const r=await p.locator('#'+id).boundingBox();if(!r||r.y<58||r.y+r.height>viewport.height)findings.push({tag,screen:'lobby',issue:id+' not fully visible on entry'});}await p.screenshot({path:path.join(out,tag+'-lobby.png')});
+  await inspect('lobby','#lobby');for(const id of['friends','online','shop-open']){const r=await p.locator('#'+id).boundingBox();if(!r||r.y<58||r.y+r.height>viewport.height)findings.push({tag,screen:'lobby',issue:id+' not fully visible on entry'});}await p.screenshot({path:path.join(out,tag+'-lobby.png')});
   for(const screen of['help','settings','map','crew','shop','brief','online']){
-   await p.evaluate(name=>qa[name](),screen);if(screen==='crew')await p.locator('#modal details').evaluateAll(es=>es.forEach(e=>e.open=true));await inspect(screen,'#modal');
+   await p.evaluate(name=>qa[name](),screen);if(['crew','online'].includes(screen))await p.locator('#modal details').evaluateAll(es=>es.forEach(e=>e.open=true));await inspect(screen,'#modal');
    const buttons=p.locator('#modal-content button');if(await buttons.count()){const last=buttons.last();await last.scrollIntoViewIfNeeded();const r=await last.boundingBox();assert(r&&r.y>=0&&r.y+r.height<=viewport.height+1,tag+' '+screen+' last action unreachable');}
    await p.screenshot({path:path.join(out,tag+'-'+screen+'.png')});await p.evaluate(()=>qa.close());
   }

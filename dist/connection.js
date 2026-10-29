@@ -6,6 +6,16 @@ export function serverOrigin(pageOrigin, configuredOrigin=''){
 export function raceSocketUrl(pageOrigin,configuredOrigin=''){
  const url=new URL('/ws',serverOrigin(pageOrigin,configuredOrigin));url.protocol=url.protocol==='https:'?'wss:':'ws:';return url.href;
 }
+// A suspended tab or a long graphics frame must get time to drain queued
+// WebSocket messages before it is treated as a stalled race connection.
+export function createConnectionWatchdog({timeout=10000,resumeGrace=5000}={}){
+ let lastFrame=0,graceUntil=0;
+ return {reset(){lastFrame=0;graceUntil=0;},expired(now,lastMessage,visible=true){
+  if(!visible||!lastFrame||now-lastFrame>2000)graceUntil=now+resumeGrace;
+  lastFrame=now;
+  return visible&&lastMessage>0&&now>=graceUntil&&now-lastMessage>timeout;
+ }};
+}
 function pause(ms,signal){return new Promise((resolve,reject)=>{if(signal?.aborted)return reject(signal.reason);const abort=()=>{clearTimeout(timer);reject(signal.reason);},timer=setTimeout(()=>{signal?.removeEventListener('abort',abort);resolve();},ms);signal?.addEventListener('abort',abort,{once:true});});}
 // Retry only while the player is waiting; cancel immediately on leaving the queue.
 export async function waitForRaceServer(origin,{signal,fetcher=globalThis.fetch,now=Date.now,delay=pause,timeout=90000,onWait=()=>{}}={}){

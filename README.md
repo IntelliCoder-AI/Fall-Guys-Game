@@ -1,25 +1,26 @@
-# Bean Dash Online
+# Bean Dash: Room Remix
 
 [![Game checks](https://github.com/IntelliCoder-AI/bean-dash-online/actions/workflows/test.yml/badge.svg)](https://github.com/IntelliCoder-AI/bean-dash-online/actions/workflows/test.yml)
 
-[Play on Vercel](https://bean-dash-online.vercel.app/) · [Play on Render](https://bean-dash-online.onrender.com/) · [Player guide](docs/GAME_GUIDE.md) · [Game checks](.github/workflows/test.yml)
+[Play on Vercel](https://bean-dash-online.vercel.app/) · [Play on Render](https://bean-dash-online.onrender.com/) · [Player guide](docs/GAME_GUIDE.md) · [Submission kit](docs/SUBMISSION.md)
 
-A multiplayer 3D obstacle racer for friends. Join a private room with a six-character code, dodge moving hazards, and race for a place at the finish. No player account or installation required.
+A 3D party racer where your friends vote to remix the course. Choose Calm for steadier hazards or Wild for a faster, tougher race. Mistakes return you to the last flag for free, so everyone stays in the game. Built with ChatGPT Work; no player account or installation required.
 
-![Bean Dash’s 3D runner and World Tour lobby](docs/images/bean-dash.jpg)
+![Room Remix party race, captured from a staged local session](docs/images/bean-dash.jpg)
 
+- **Room Remix:** 2–8 friends, six short courses, a quick race or three-round tour, crowd votes, checkpoint respawns, spectator voting and same-code rematches.
 - **World Tour:** 50 courses, checkpoints, medals and separate Hardcore records.
 - **Endurance:** longer courses reaching 60 km, with solo checkpoint revivals.
 - **Your runner:** four characters, modular clothing, cosmetics and a coin shop.
-- **Fair online races:** up to 16 runners; labeled bots fill empty places. Purchased powers and revivals are solo only.
+- **Competitive online:** the original 16-runner Tour/Endurance races remain available. Labeled bots fill empty places in both modes. Paid powers stay solo only.
 
 ## Play with friends
 
-1. Open the game and choose **Race Online → Generate Room Code**.
-2. Friends open the same game, choose **Race Online**, enter the code and select **Join by Code**.
-3. Once at least two people have joined, the host selects **Start Race**.
+1. Choose **Play with friends**, pick a course and session, then **Generate room code**.
+2. Friends use **Join by code**, or open your invite link. The host starts once at least two people join.
+3. Race, vote Calm or Wild, and score 8 to 1 points by place. Each race ends within three minutes; unfinished places use course progress. Most total points wins; ties share victory.
 
-Jump gaps, avoid dangerous moving hazards and clear solid barriers. The first runners across the finish qualify: 12 on regular Tour courses, 8 on finales; Endurance accepts all 16. A player’s result appears immediately on finishing.
+Finishers watch and vote while the race continues. Late arrivals watch, vote and enter the next round or rematch. A three-round tour has 10-second breaks; the host can rematch without changing the code. Party points do not alter solo medals or coins. Choose **Competitive Tour & Endurance** for the original one-life, 16-runner rules.
 
 **Controls:** WASD/arrow keys · Space to jump · Shift to dive/slide · Esc to pause solo or open the online menu · R to restart solo. Drag to look around, scroll to zoom, C to reset the camera. Touch controls appear on supported phones and tablets.
 
@@ -44,6 +45,6 @@ Open http://localhost:3000. Run `npm test` for the automated suite.
 | `tests/` | Physics, economy, persistence, multiplayer and UI regressions |
 | `scripts/` | Production verification and balance tooling |
 
-Vercel serves the homepage and solo game independently of the shared Render race server. Online connections can still wait for that free server to wake after inactivity. Both addresses join the same multiplayer rooms, but each address has its own browser save and wallet; Render saves are preserved. Clearing browser data removes that site's progress. Rooms end when the server restarts. WebGL is required; real-device compatibility and capacity are not guaranteed by automated tests.
+Vercel serves the homepage and solo game independently of the shared Render race server. Online connections can still wait for that free server to wake after inactivity. A temporary ten-minute health check runs through November 6; scheduled checks are best effort, not an uptime guarantee. Both addresses join the same multiplayer rooms, but each address has its own browser save and wallet; Render saves are preserved. Clearing browser data removes that site's progress. Rooms end when the server restarts. WebGL is required; real-device compatibility and capacity are not guaranteed by automated tests.
 
 [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Deployment](docs/DEPLOYMENT.md) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [Changelog](CHANGELOG.md) · [Balance](BALANCE.md) · [Roadmap](ROADMAP.md)

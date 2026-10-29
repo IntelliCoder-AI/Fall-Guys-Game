@@ -4,6 +4,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {WebSocketServer,WebSocket} from 'ws';
 import {RaceRoom} from './rooms.js';
+import {PartyRoom} from './party-room.js';
 import {visibleCollected} from '../dist/simulation.js';
 import {levelById} from '../dist/levels.js';
 const {version}=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8'));
@@ -30,15 +31,16 @@ export function createGameServer({waitSeconds=45,maxRooms=40,allowedOrigins=host
    if(data.type==='join'){if(connections.has(ws))return;
     if(['name','color','outfit','mode','room','action'].some(k=>data[k]!==undefined&&typeof data[k]!=='string')||(data.level!==undefined&&!Number.isInteger(data.level)))return send(ws,{type:'error',message:'Invalid join fields'});
     let room;
-    if(data.room){room=rooms.get(String(data.room).toUpperCase());if(!room||room.phase!=='waiting'||room.players.length>=16)return send(ws,{type:'error',message:'Room not found, already started, or full. Check the code or ask your friend to generate a new one.'})}
-    else if(data.action!=='create')room=[...rooms.values()].find(r=>!r.privateRoom&&r.phase==='waiting'&&r.level===levelById(data.level).number&&r.mode===(data.mode==='endurance'?'endurance':'tour')&&r.players.length<16);
-    if(!room){if(rooms.size>=maxRooms)return send(ws,{type:'error',message:'All races are full. Please try again shortly.'});room=new RaceRoom({waitSeconds,level:data.level,mode:data.mode,privateRoom:data.action==='create'});rooms.set(room.id,room)}
+    if(data.room){room=rooms.get(String(data.room).toUpperCase());if(!room||(room.mode==='party'?!room.canJoin():room.phase!=='waiting'||room.players.length>=16))return send(ws,{type:'error',message:'Room not found, already started, or full. Check the code or ask your friend to generate a new one.'})}
+    else if(data.action!=='create'&&data.mode!=='party')room=[...rooms.values()].find(r=>!r.privateRoom&&r.phase==='waiting'&&r.level===levelById(data.level).number&&r.mode===(data.mode==='endurance'?'endurance':'tour')&&r.players.length<16);
+    if(!room){if(rooms.size>=maxRooms)return send(ws,{type:'error',message:'All races are full. Please try again shortly.'});const Room=data.mode==='party'?PartyRoom:RaceRoom;room=new Room({waitSeconds,level:data.level,rounds:data.rounds,mode:data.mode,privateRoom:data.action==='create'});rooms.set(room.id,room)}
     const p=room.add({name:data.name,color:data.color,outfit:data.outfit,appearance:data.appearance,cosmetics:data.cosmetics});if(!p)return;connections.set(ws,{room,id:p.id});send(ws,{type:'joined',id:p.id,room:room.id});send(ws,room.snapshot());
-   }else if(data.type==='start'){const c=connections.get(ws);if(c&&c.room.privateRoom&&c.room.hostId===c.id&&c.room.phase==='waiting'){if(c.room.players.filter(p=>!p.isBot&&p.connected).length<2)return send(ws,{type:'notice',message:'Wait for at least one friend to join.'});c.room.start();}}else if(data.type==='input'){const c=connections.get(ws);if(c)c.room.input(c.id,data)}else if(data.type==='ping')send(ws,{type:'pong',at:data.at});
+   }else if(['configure','vote','rematch'].includes(data.type)){const c=connections.get(ws);if(c?.room.mode==='party'){if(data.type==='configure')c.room.configure(c.id,data);if(data.type==='vote')c.room.castVote(c.id,data.choice);if(data.type==='rematch')c.room.rematch(c.id);}}
+   else if(data.type==='start'){const c=connections.get(ws);if(c&&c.room.privateRoom&&c.room.hostId===c.id&&c.room.phase==='waiting'){const humans=c.room.mode==='party'?c.room.humans():c.room.players.filter(p=>!p.isBot&&p.connected);if(humans.length<2)return send(ws,{type:'notice',message:'Wait for at least one friend to join.'});c.room.start();}}else if(data.type==='input'){const c=connections.get(ws);if(c)c.room.input(c.id,data)}else if(data.type==='ping')send(ws,{type:'pong',at:data.at});
   });
   ws.on('close',()=>{const c=connections.get(ws);if(c){c.room.remove(c.id);connections.delete(ws)}});
  });
- let frames=0;const loop=setInterval(()=>{for(const [id,r]of rooms){r.tick(1/30);if(r.emptyTime>30||(r.phase==='complete'&&r.remaining<-15)){for(const [ws,c]of connections)if(c.room===r)ws.close(1000,'Race complete');rooms.delete(id)}}if(++frames%2===0){const snapshots=new Map();for(const [ws,c]of connections){if(!snapshots.has(c.room))snapshots.set(c.room,c.room.snapshot());send(ws,{...snapshots.get(c.room),self:{collected:visibleCollected(c.room.players.find(p=>p.id===c.id),c.room.courseId)}})}}},1000/30);
+ let frames=0;const loop=setInterval(()=>{for(const [id,r]of rooms){r.tick(1/30);if(r.emptyTime>30||(r.phase==='complete'&&r.remaining<-15)){for(const [ws,c]of connections)if(c.room===r)ws.close(1000,'Race complete');rooms.delete(id)}}if(++frames%2===0){const snapshots=new Map();for(const [ws,c]of connections){if(!snapshots.has(c.room))snapshots.set(c.room,c.room.snapshot());const p=c.room.mode==='party'?c.room.findPlayer(c.id):c.room.players.find(p=>p.id===c.id);send(ws,{...snapshots.get(c.room),self:{collected:p&&!p.spectator?visibleCollected(p,c.room.courseId):[]}})}}},1000/30);
  const heartbeat=setInterval(()=>{for(const ws of wss.clients){if(!ws.alive)ws.terminate();else{ws.alive=false;ws.ping()}}},25000);
  return {server,rooms,wss,async close(){clearInterval(loop);clearInterval(heartbeat);for(const ws of wss.clients)ws.close(1001,'Server restarting');await new Promise(resolve=>{server.close(resolve);setTimeout(()=>{for(const ws of wss.clients)ws.terminate();resolve()},1000).unref()})}};
 }

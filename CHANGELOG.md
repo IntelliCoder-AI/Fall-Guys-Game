@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.4.0 — 29 October 2026
+
+- Introduce Room Remix: 2–8 friends, host-selected short courses, one race or a three-round tour, shared Calm/Wild hazard votes, free flag recovery, session points and same-code rematches.
+- Let late arrivals and finishers spectate and vote; queued players enter the next round. Preserve competitive Tour/Endurance, solo medals, saves, cosmetics and shops.
+- Make Play with friends the primary entry action; explain no-WebGL invites while preserving the room code.
+- Add party physics, protocol and multi-browser regression coverage, a submission kit and bounded judging-week health checks.
+- Give blocked graphics frames and resumed tabs a bounded grace period before stale-connection detection. Use SVG direction icons on touch controls.
+
 ## 9.3.1 — 29 October 2026
 
 - Remove ability buttons from the desktop playfield too; owned solo abilities remain available through the race menu on every device.

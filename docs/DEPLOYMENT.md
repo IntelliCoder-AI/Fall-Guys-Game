@@ -8,7 +8,7 @@ The game has two public entry points: a static Vercel frontend and the existing 
 - `vercel.json` sets static routing/security headers; no Vercel Function hosts race state.
 - The build copies only browser assets, adds the public race-server origin to HTML, and produces static `/health` metadata with role=frontend.
 - `hosting.json` declares the shared server and the exact owned frontend origins allowed by Render. Verify domain ownership before adding an origin. Arbitrary Vercel previews are not allowed to create rooms.
-- A page visit makes one anonymous, nonblocking request to wake the backend. There is no periodic keep-alive. Online joining retries readiness with cancellation; solo never waits for backend health.
+- A page visit makes one anonymous, nonblocking request to wake the backend. The browser does not run a periodic keep-alive. A bounded GitHub Actions availability check requests `/health` every ten minutes through 6 November 2026; delays or missed checks can still allow sleep, and Render may restart free instances. Remove the workflow after judging. No paid plan was enabled. Online joining retries readiness with cancellation; solo never waits for backend health.
 - Vercel and Render browser saves remain separate by origin. They share room codes, not wallets or solo records.
 
 ## Existing service settings
