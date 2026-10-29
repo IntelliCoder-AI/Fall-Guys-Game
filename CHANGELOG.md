@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.5.0 — 29 October 2026
+
+- Add World Relay: a server-authoritative cooperative expedition for 2–8 friends. Runners collect shared energy while a Shaper operates bridges, gates and wind; roles rotate at team beacons.
+- Teach movement, jumping, energy collection and shaping through the first crossing, with a stopped practice timer. Add free recovery, late-join spectators, role/host transfer, a missing-teammate pause, shared victory and same-code rematches.
+- Render three floating-island crossings with textured cliffs, articulated machinery, lanterns, natural lighting and atmospheric depth. Batch repeated scenery and reuse existing graphics quality, wardrobe, animations and camera controls.
+- Add a role-specific responsive HUD, readable controls, an elevated Shaper camera, and Relay physics/protocol/browser regression tests. Keep all existing race modes and persistent economy independent.
+
 ## 9.4.0 — 29 October 2026
 
 - Introduce Room Remix: 2–8 friends, host-selected short courses, one race or a three-round tour, shared Calm/Wild hazard votes, free flag recovery, session points and same-code rematches.

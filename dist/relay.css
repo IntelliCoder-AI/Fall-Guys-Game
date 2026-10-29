@@ -1,0 +1,32 @@
+/* World Relay owns its HUD bands; other modes retain their established layout. */
+.relay-race header,.relay-race .hud-left,.relay-race .hud-bottom,.relay-race #online-status,.relay-race .race-clock,.relay-race #race-message{display:none!important}
+.relay-race .hud-right{top:calc(12px + env(safe-area-inset-top))!important;right:calc(12px + env(safe-area-inset-right))!important;width:auto!important;z-index:12!important}
+.relay-race #pause{width:44px!important;height:44px!important;background:#fff8ec;color:#345475}
+#relay-ui{position:absolute;inset:0;pointer-events:none;color:#334d70;font-size:15px}
+#relay-ui[hidden]{display:none}
+.relay-top{position:absolute;left:max(14px,env(safe-area-inset-left));top:calc(12px + env(safe-area-inset-top));width:min(540px,calc(100% - 82px));display:grid;gap:8px}
+.relay-stats{display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid #fff;border-radius:17px;background:#fff9eeeF;box-shadow:0 6px 22px #42577d1c;overflow:hidden}
+.relay-stats>div{padding:10px 14px;border-right:1px solid #d9dce5}.relay-stats>div:last-child{border:0}
+.relay-stats span{display:block;font-size:11px;letter-spacing:.7px;font-weight:700}.relay-stats b{display:block;font-size:23px;line-height:1.3}
+.relay-objective{padding:10px 14px;border:1px solid white;border-radius:14px;background:#edf1fbea;line-height:1.4}.relay-objective b{display:block;font-size:13px;margin-bottom:3px}.relay-objective span{font-size:15px}
+.relay-dock{position:absolute;bottom:calc(16px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(620px,calc(100% - 28px));pointer-events:auto}
+#relay-mechanisms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:8px}
+#relay-mechanisms[hidden]{display:none}
+#relay-mechanisms button{border:1px solid #c8b4df;border-radius:16px;background:linear-gradient(145deg,#fcf6ea,#e4e4fa);color:#3d4267;padding:12px 9px;min-height:86px;box-shadow:0 5px 15px #3d477922;font:inherit;transition:transform .15s}
+#relay-mechanisms button:not(:disabled):hover{transform:translateY(-3px);border-color:#8267ad}#relay-mechanisms button:disabled{opacity:.8;cursor:default}
+#relay-mechanisms span,#relay-mechanisms b,#relay-mechanisms small{display:block}#relay-mechanisms span{font-size:12px;font-weight:750}#relay-mechanisms b{font-size:16px;margin:3px 0}#relay-mechanisms small{font-size:13px}#relay-mechanisms .powered{background:#deebff;border-color:#7b9ccc}
+.relay-tools{display:flex;justify-content:center;gap:8px}.relay-tools button{min-height:44px;padding:10px 15px;border:1px solid #bac8d9;border-radius:12px;background:#fff9eeeF;color:#344d70;font:inherit;font-size:14px;max-width:75%;overflow-wrap:anywhere}
+#relay-announcement{position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);border-radius:22px;background:#fff6e9f5;color:#4b4774;text-align:center;font-size:20px;font-weight:800;padding:16px;max-width:85%}#relay-announcement:empty{display:none}
+.relay-rules{text-align:left;padding-left:22px}.relay-rules li{padding:8px 0;font-size:16px;line-height:1.5}.relay-result{display:grid;gap:10px;margin:20px 0;color:#5c5686}
+.relay-entry{padding:18px;border:1px solid #d4c7e5;border-radius:18px;background:linear-gradient(135deg,#fbf3e9,#e7e5fa);margin:14px 0 20px;text-align:left}.relay-entry h3{font-size:24px;margin:0}.relay-entry p{font-size:15px;margin:8px 0 14px}.relay-entry button{margin:0;background:#746397;color:white}
+@media(pointer:coarse),(max-width:700px){
+ .relay-top{width:calc(100% - 80px);left:10px;gap:6px}.relay-stats>div{padding:7px}.relay-stats span{font-size:10px;letter-spacing:0}.relay-stats b{font-size:18px}.relay-objective{padding:8px 10px}.relay-objective span{font-size:14px}.relay-objective b{font-size:12px}
+ .relay-race #touch{bottom:calc(12px + env(safe-area-inset-bottom))}.relay-dock{bottom:calc(146px + env(safe-area-inset-bottom));width:calc(100% - 20px)}.is-shaper .relay-dock{bottom:calc(14px + env(safe-area-inset-bottom))}
+ #relay-mechanisms{gap:6px}#relay-mechanisms button{padding:9px 5px;min-height:90px}#relay-mechanisms b{font-size:14px}#relay-mechanisms small{font-size:12px}
+}
+@media(orientation:landscape) and (max-height:600px){
+ .relay-top{width:min(620px,calc(100% - 78px));grid-template-columns:260px 1fr;align-items:start}.relay-stats>div{padding:8px}.relay-stats b{font-size:19px}.relay-stats span{font-size:10px}.relay-objective{padding:8px 10px}.relay-objective span{font-size:13px}.relay-objective b{font-size:12px}
+ .relay-dock{bottom:12px;width:calc(100% - 320px)}.is-shaper .relay-dock{bottom:12px;width:min(620px,calc(100% - 30px))}#relay-mechanisms button{min-height:72px;padding:6px}#relay-mechanisms b{font-size:15px}.relay-tools button{font-size:13px}
+ #relay-announcement{font-size:17px}
+}
+@media(prefers-reduced-motion:reduce){#relay-mechanisms button{transition:none}}

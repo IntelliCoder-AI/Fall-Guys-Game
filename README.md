@@ -1,13 +1,14 @@
-# Bean Dash: Room Remix
+# Bean Dash Online
 
 [![Game checks](https://github.com/IntelliCoder-AI/bean-dash-online/actions/workflows/test.yml/badge.svg)](https://github.com/IntelliCoder-AI/bean-dash-online/actions/workflows/test.yml)
 
 [Play on Vercel](https://bean-dash-online.vercel.app/) · [Play on Render](https://bean-dash-online.onrender.com/) · [Player guide](docs/GAME_GUIDE.md) · [Submission kit](docs/SUBMISSION.md)
 
-A 3D party racer where your friends vote to remix the course. Choose Calm for steadier hazards or Wild for a faster, tougher race. Mistakes return you to the last flag for free, so everyone stays in the game. Built with ChatGPT Work; no player account or installation required.
+Cooperative adventures and party races in a shared 3D world. In **World Relay**, friends alternate between running with the light and shaping bridges, gates and wind. Room Remix lets your friends vote to remix a race. Choose Calm for steadier hazards or Wild for a faster, tougher race. Mistakes return you to the last flag for free, so everyone stays in the game. Built with ChatGPT Work; no player account or installation required.
 
 ![Room Remix party race, captured from a staged local session](docs/images/bean-dash.jpg)
 
+- **World Relay:** 2–8 friends, three floating-island crossings, shared energy, Runner/Shaper roles, interactive practice, free recovery and team victory. [Rules and controls](docs/WORLD_RELAY.md).
 - **Room Remix:** 2–8 friends, six short courses, a quick race or three-round tour, crowd votes, checkpoint respawns, spectator voting and same-code rematches.
 - **World Tour:** 50 courses, checkpoints, medals and separate Hardcore records.
 - **Endurance:** longer courses reaching 60 km, with solo checkpoint revivals.
@@ -16,9 +17,9 @@ A 3D party racer where your friends vote to remix the course. Choose Calm for st
 
 ## Play with friends
 
-1. Choose **Play with friends**, pick a course and session, then **Generate room code**.
+1. Choose **Play with friends** → **Create World Relay** for cooperation, or select a Room Remix course and **Generate room code** to race.
 2. Friends use **Join by code**, or open your invite link. The host starts once at least two people join.
-3. Race, vote Calm or Wild, and score 8 to 1 points by place. Each race ends within three minutes; unfinished places use course progress. Most total points wins; ties share victory.
+3. In Relay, collect blue crystals, help your Shaper power the mechanisms, and gather at each beacon to switch roles. In Room Remix, race, vote Calm or Wild, and score 8 to 1 points by place. Each race ends within three minutes; unfinished places use course progress. Most total points wins; ties share victory.
 
 Finishers watch and vote while the race continues. Late arrivals watch, vote and enter the next round or rematch. A three-round tour has 10-second breaks; the host can rematch without changing the code. Party points do not alter solo medals or coins. Choose **Competitive Tour & Endurance** for the original one-life, 16-runner rules.
 
