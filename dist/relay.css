@@ -30,3 +30,5 @@
  #relay-announcement{font-size:17px}
 }
 @media(prefers-reduced-motion:reduce){#relay-mechanisms button{transition:none}}
+
+.relay-role-choice{display:block;text-align:left;font-size:13px;font-weight:750;margin:16px 0}.relay-role-choice select{display:block;width:100%;min-height:46px;margin-top:6px;border:1px solid #b7c6d6;border-radius:10px;padding:10px;font:inherit;color:#334d70;background:#fff9ee}

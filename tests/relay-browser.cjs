@@ -18,7 +18,7 @@ const out='/workspace/bean-dash-relay';fs.mkdirSync(out,{recursive:true});
   await a.locator('#friends').click();await a.locator('#create-relay').click();await a.waitForSelector('#room-code');
   const code=await a.locator('#room-code').innerText(),room=app.rooms.get(code),tick=room.tick.bind(room);room.tick=()=>{};
   await b.locator('#friends').click();await b.locator('#join-code').fill(code);await b.locator('#join-room-form button').click();await b.waitForSelector('#room-code');
-  await a.waitForFunction(()=>!document.querySelector('#start-room').disabled);await a.locator('#start-room').click();await a.waitForFunction(()=>beanDash.getState().phase==='countdown');tick(3.1);
+  await a.waitForFunction(()=>!document.querySelector('#start-room').disabled);await a.locator('#relay-start-role').selectOption('shaper');await a.locator('#start-room').click();await a.waitForFunction(()=>beanDash.getState().phase==='countdown');tick(3.1);
   await b.waitForFunction(()=>beanDash.getState().mode==='race');await a.waitForSelector('#relay-mechanisms:not([hidden])');assert.equal(await a.locator('#relay-role').innerText(),'Shaper');assert.equal(await b.locator('#relay-role').innerText(),'Runner');assert.equal(await b.locator('#relay-clock').innerText(),'Practice');
   assert(await a.locator('[data-mechanism=bridge]').isDisabled());
   const runner=room.players.find(p=>p.name==='Sam');Object.assign(runner,{x:0,z:-10});tick(1/30);await a.waitForFunction(()=>beanDash.getState().relay.energy===4);
@@ -50,7 +50,7 @@ const out='/workspace/bean-dash-relay';fs.mkdirSync(out,{recursive:true});
   }
   await a.waitForSelector('#relay-rematch');await b.waitForSelector('#relay-leave');assert.equal(room.reason,'rescued');assert(!room.spectators.length);await a.screenshot({path:out+'/team-result.png'});
   await a.locator('#relay-rematch').click();await a.waitForSelector('#room-code');assert.equal(await a.locator('#room-code').innerText(),code);
-  await a.locator('#start-room').click();await a.waitForFunction(()=>beanDash.getState().phase==='countdown');tick(3.1);await b.waitForFunction(()=>beanDash.getState().mode==='race');
+  await a.locator('#relay-start-role').selectOption('shaper');await a.locator('#start-room').click();await a.waitForFunction(()=>beanDash.getState().phase==='countdown');tick(3.1);await b.waitForFunction(()=>beanDash.getState().mode==='race');
   // Shaper leaves: authority moves to an actual connected player and UI reflects it.
   await a.locator('#pause').click();await a.locator('#quit').click();await b.waitForFunction(()=>beanDash.getState().mode==='spectating');assert.equal(room.shaperId,room.players.find(p=>p.name==='Sam').id);assert.equal(await b.locator('#relay-role').innerText(),'Shaper');
   assert.equal(await a.locator('#wallet').innerText(),'300');assert.equal((await a.evaluate(()=>beanDash.getState())).level,1);assert.equal(await a.locator('#relay-ui').isVisible(),false);

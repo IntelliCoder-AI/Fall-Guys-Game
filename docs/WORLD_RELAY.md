@@ -2,7 +2,7 @@
 
 **Your friends control the world you cross. At the next beacon, it's your turn.**
 
-Choose **Play with friends → Create World Relay**. Share the six-character room code or invite link. Two to eight people can play; there are no bots. The host starts the expedition.
+Choose **Play with friends → Create World Relay**. Share the six-character room code or invite link. Two to eight people can play; there are no bots. The host chooses a starting role (Runner by default), then starts the expedition. A Shaper operates machinery with 1–3 or the labelled buttons; WASD and Space move only Runners.
 
 ## One team, three beacons
 
@@ -25,7 +25,7 @@ The first crossing is interactive practice. The storm remains stopped until a Ru
 | Follow another Runner | Watching… button | Watching… button |
 | Rules / menu | How to play / Esc | How to play / pause button |
 
-Menus do not pause a connected team. If fewer than two active teammates remain, simulation and storm time pause until someone joins. A departing Shaper transfers the role to a connected teammate. Late arrivals watch and enter at the next beacon, or immediately if needed to restore a two-person team. Rejoining creates a new guest slot, not a claim to another player's identity.
+Menus do not pause a connected team. If fewer than two active teammates remain, simulation and storm time pause until someone joins. A brief lobby connection loss automatically retries the same code twice. A backend restart can still remove a room; the game will explain if a code no longer exists. A departing Shaper transfers the role to a connected teammate. Late arrivals watch and enter at the next beacon, or immediately if needed to restore a two-person team. Rejoining creates a new guest slot, not a claim to another player's identity.
 
 The host can start another expedition with the same room code after either result. In a group larger than three, only three people shape in a single expedition. Rooms are temporary and disappear on server restart. Persistent browser progress remains unchanged.
 

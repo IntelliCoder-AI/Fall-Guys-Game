@@ -88,3 +88,7 @@ test('WebSocket Relay: separate clients, synchronized mechanisms, socket-bound a
 test('repeated arrivals and departures do not accumulate disconnected runner records',()=>{
  const r=setup();for(let i=0;i<100;i++){const p=r.add({name:'Visitor'});r.remove(p.id);}assert.equal(r.players.length,2);assert.equal(r.spectators.length,0);
 });
+
+test('host can start as Runner; teammate receives machinery authority',()=>{
+ const r=new RelayRoom(),host=r.add({name:'Host'}),friend=r.add({name:'Friend'});assert.equal(r.snapshot().relay.hostRoleChoice,true);r.start({hostRole:'runner'});r.tick(3.1);assert.equal(host.role,'runner');assert.equal(friend.role,'shaper');const z=host.z;r.input(host.id,{dz:-1,jump:true});r.tick(.1);assert(host.z<z);assert(host.y>0);r.energy=4;assert(!r.activate(host.id,'bridge',0));assert(r.activate(friend.id,'bridge',0));
+});

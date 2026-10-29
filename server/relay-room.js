@@ -42,12 +42,12 @@ export class RelayRoom extends RaceRoom {
    this.event='A teammate left. Roles have been checked; the team can continue.';
   }
  }
- start(){
+ start({hostRole='shaper'}={}){
   if(this.phase!=='waiting'||this.humans().length<2)return;
   this.players=this.humans();this.spectators=[];this.stage=0;this.energy=2;this.storm=RELAY.seconds;
   this.tutorial={moved:false,jumped:false,energy:false,shaped:false};this.tutorialDone=false;
   this.serial++;this.elapsed=0;this.clock=0;this.remaining=3;this.phase='countdown';this.reason=null;
-  this.resetStage();for(const p of this.players){p.recoveries=0;p.falls=0;}this.assignShaper(this.players[0].id);
+  this.resetStage();for(const p of this.players){p.recoveries=0;p.falls=0;}this.assignShaper(this.players[hostRole==='runner'?1:0].id);
  }
  resetStage(){
   this.mechanisms={bridge:null,gate:null,wind:null};this.collected=new Set();this.transition=0;
@@ -112,7 +112,7 @@ export class RelayRoom extends RaceRoom {
  }
  snapshot(){
   const base=super.snapshot();return {...base,mode:'relay',capacity:RELAY.capacity,humans:this.humans().length,
-   relay:{stage:this.stage,energy:this.energy,shaperId:this.shaperId,mechanisms:this.mechanisms,collected:[...this.collected],
+   relay:{hostRoleChoice:true,stage:this.stage,energy:this.energy,shaperId:this.shaperId,mechanisms:this.mechanisms,collected:[...this.collected],
     tutorial:this.tutorial,tutorialDone:this.tutorialDone,storm:this.storm,paused:this.paused,transition:this.transition,event:this.event},
    players:[...base.players,...this.spectators.map(p=>({id:p.id,name:p.name,connected:p.connected,x:0,y:0,z:-relayOffset(this.stage),spectator:true}))].map(p=>{
     const original=this.findPlayer(p.id);return {...p,role:original.role,spectator:!!original.spectator,ready:!!original.ready,

@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.5.1 — 29 October 2026
+
+- Let Relay hosts choose Runner or Shaper before starting; default the browser flow to Runner and explain the different controls clearly.
+- Recover brief waiting-room transport failures with two bounded reconnect attempts to the same code; retain the code in connection error messages.
+- Restore the filled Continue the Tour button style. Add real-time lobby/reconnect and desktop keyboard regression coverage.
+
 ## 9.5.0 — 29 October 2026
 
 - Add World Relay: a server-authoritative cooperative expedition for 2–8 friends. Runners collect shared energy while a Shaper operates bridges, gates and wind; roles rotate at team beacons.
