@@ -6,7 +6,7 @@
 
 [Play now](https://bean-dash-online.vercel.app/) · [Render backup](https://bean-dash-online.onrender.com/) · [Latest release](https://github.com/IntelliCoder-AI/bean-dash-online/releases/latest)
 
-![World Relay: teammates carrying lanterns across a timed bridge between floating islands](docs/images/world-relay.jpg)
+![World Relay: teammates carrying lanterns across a timed bridge between floating islands](docs/images/Bean-Dash.png)
 
 *Captured from the actual 3D game in a staged local session; interface/sign overlays are hidden for the cover.*
 
