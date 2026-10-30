@@ -1,7 +1,7 @@
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs');
-const out='/workspace/bean-dash-relay';fs.mkdirSync(out,{recursive:true});
+const out='/workspace/bean-dash-relay-97';fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const {createGameServer}=await import('../server/index.js');const {relayLayout}=await import('../dist/relay-rules.js');const app=createGameServer();await new Promise(r=>app.server.listen(0,'127.0.0.1',r));
+ const {createGameServer}=await import('../server/index.js');const {relayLayout,relayBeacon,relayOffset}=await import('../dist/relay-rules.js');const app=createGameServer();await new Promise(r=>app.server.listen(0,'127.0.0.1',r));
  const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-background-timer-throttling','--disable-renderer-backgrounding','--disable-backgrounding-occluded-windows','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
  const waitFor=async test=>{const end=Date.now()+15000;while(!test()){if(Date.now()>end)throw Error('server condition timed out');await new Promise(r=>setTimeout(r,30));}};
  const url='http://127.0.0.1:'+app.server.address().port;let pages=[];
@@ -33,19 +33,25 @@ const out='/workspace/bean-dash-relay';fs.mkdirSync(out,{recursive:true});
   await a.screenshot({path:out+'/shaper-desktop.png'});await b.screenshot({path:out+'/runner-mobile.png'});await c.screenshot({path:out+'/spectator-landscape.png'});
   // Check bounds and disjoint reserved UI bands at each requested viewport.
   const sizes=[[320,568],[390,700],[412,844],[568,320],[821,462],[907,510],[1280,720],[800,450],[1024,768]];
-  const layouts=[];for(const p of[a,b])for(const[width,height]of sizes){await p.setViewportSize({width,height});const result=await p.evaluate(()=>{
+  const layouts=[];async function checkLayouts(clients,stage){for(const p of clients)for(const[width,height]of sizes){await p.setViewportSize({width,height});const result=await p.evaluate(()=>{
    const rect=s=>{const e=document.querySelector(s);if(!e||!e.getClientRects().length||getComputedStyle(e).display==='none')return null;const r=e.getBoundingClientRect();return{x:r.x,y:r.y,w:r.width,h:r.height};};
    return {top:rect('.relay-top'),dock:rect('.relay-dock'),pause:rect('#pause'),touch:rect('#touch'),dpad:rect('.dpad'),actions:rect('.touch-actions'),buttons:[...document.querySelectorAll('#relay-ui button')].filter(e=>e.getClientRects().length).map(e=>{const r=e.getBoundingClientRect();return{x:r.x,y:r.y,w:r.width,h:r.height,text:e.textContent,clipped:e.scrollWidth>e.clientWidth+2};})};
   });
    for(const r of[result.top,result.dock,result.pause,...result.buttons].filter(Boolean)){assert(r.x>=-1&&r.y>=-1&&r.x+r.w<=width+1&&r.y+r.h<=height+1,JSON.stringify({width,height,r}));assert(!r.clipped,JSON.stringify(r));}
    assert(result.top.y+result.top.h<result.dock.y,JSON.stringify({width,height,result}));
-   if(result.touch&&p===b)for(const control of[result.dpad,result.actions]){const d=result.dock;assert(d.x+d.w<=control.x+1||control.x+control.w<=d.x+1||d.y+d.h<=control.y+1||control.y+control.h<=d.y+1,JSON.stringify({width,height,result}));}layouts.push({width,height,role:p===a?'Shaper':'Runner',...result});
-  }
+   if(result.touch&&p===b)for(const control of[result.dpad,result.actions]){const d=result.dock;assert(d.x+d.w<=control.x+1||control.x+control.w<=d.x+1||d.y+d.h<=control.y+1||control.y+control.h<=d.y+1,JSON.stringify({width,height,result}));}layouts.push({width,height,stage,role:await p.locator('#relay-role').innerText(),...result});
+  }}
+  await checkLayouts([a,b],0);
   fs.writeFileSync(out+'/layouts.json',JSON.stringify(layouts,null,2));await a.setViewportSize({width:1280,height:720});await b.setViewportSize({width:390,height:700});
   // Advance all three checkpoint transitions using server state; physics traversal is tested separately.
   for(let stage=0;stage<3;stage++){
-   room.energy=20;for(const key of relayLayout(stage).order)room.activate(room.shaperId,key,stage);tick(2);
-   for(const p of room.active().filter(p=>p.role==='runner'))Object.assign(p,{x:0,y:0,vy:0,z:-stage*112-109});tick(1/30);
+   if(stage===2){
+    await c.waitForFunction(()=>beanDash.getState().relay.stage===2);await checkLayouts([c,b],2);fs.writeFileSync(out+'/layouts.json',JSON.stringify(layouts,null,2));
+    await c.setViewportSize({width:390,height:700});await b.setViewportSize({width:390,height:700});
+    await c.screenshot({path:out+'/final-lift-mobile.png'});assert(await c.locator('[data-mechanism=lift]').isVisible());
+   }
+   room.energy=20;for(const key of relayLayout(stage).order)room.activate(room.shaperId,key,stage);room.seals=new Set([0,1]);tick(2);
+   for(const p of room.active().filter(p=>p.role==='runner'))Object.assign(p,{x:0,y:0,vy:0,z:-relayOffset(stage)-relayBeacon()});tick(1/30);
    if(stage<2){tick(4.1);await a.waitForFunction(n=>beanDash.getState().relay.stage===n,stage+1);await b.waitForFunction(n=>beanDash.getState().relay.stage===n,stage+1);}
   }
   await a.waitForSelector('#relay-rematch');await b.waitForSelector('#relay-leave');assert.equal(room.reason,'rescued');assert(!room.spectators.length);await a.screenshot({path:out+'/team-result.png'});

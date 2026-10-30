@@ -1,15 +1,10 @@
-World Relay is a cooperative expedition for 2–8 friends: Runners collect energy while Shapers operate the route. Roles rotate at team beacons.
+World Relay now keeps your team together through brief network interruptions and gives each crossing more to do.
 
-## Coordination update
+- Automatic same-player, same-room recovery for up to 45 seconds. Position, roles, seals, energy and machinery are preserved; the storm pauses during recovery.
+- Three 160-metre islands with separated machinery, two required gold seals on side routes, moving sentinels and a final timed rescue lift.
+- First activations use shared energy; repeat cycles and checkpoint recoveries remain free. The storm still lasts 120 seconds after interactive practice.
+- Existing Tour, Endurance, Hardcore, Room Remix, progression, wardrobe and shop remain included.
 
-- 120-second storm after interactive practice.
-- Timed machinery: bridge 8s, gate 7s, wind 9s. Coordinate each crossing, watch the countdown, and repeat cycles for free after the first energy purchase.
-- Three different orders: Bridge / Gate / Wind, Gate / Wind / Bridge, Wind / Bridge / Gate.
-- Free checkpoint recovery, late-join spectators, starting-role choice and same-code lobby reconnection.
-- Refined UI copy, graphics-help entry, shop affordability and wardrobe labels.
+[Play](https://bean-dash-online.vercel.app/) · [Rules](https://github.com/IntelliCoder-AI/bean-dash-online/blob/main/docs/WORLD_RELAY.md)
 
-[Play World Relay](https://bean-dash-online.vercel.app/) · [Render backup](https://bean-dash-online.onrender.com/) · [Rules](https://github.com/IntelliCoder-AI/bean-dash-online/blob/main/docs/WORLD_RELAY.md)
-
-World Tour, Hardcore, Endurance, Room Remix, competitive races, saved progression, shop and modular runners remain included. No account or installation is required.
-
-The release workflow publishes this tag only after the automated suite and production build pass. Browser testing uses Chromium/software WebGL and emulated viewports; physical phones, Safari, real GPUs and production capacity are not certified. Free Render cold starts remain possible; judging-week health monitoring is best effort. Browser saves are separate for the Vercel and Render origins.
+Keep the game page open during connection recovery. Server restarts and expired recovery windows can still end temporary rooms. Free hosting, physical-device compatibility and production capacity are not guaranteed by browser emulation or automated tests.

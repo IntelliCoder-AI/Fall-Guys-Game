@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.7.0 — Relay recovery and expanded crossings
+
+- Automatically resume the same Relay player after temporary WebSocket loss; reserve identity and pause team state for 45 seconds. Explicit departures release slots immediately; expired rooms produce an honest error.
+- Keep Relay connections active with lightweight application heartbeats; prevent a stalled socket's late close event from removing its replacement.
+- Expand each island to 160 metres with shared side-route energy seals, moving sentinels and a timed final rescue lift. Keep the 120-second storm, role rotation and free recoveries.
+- Add server authority, recovery, expiry, full-physics traversal, browser offline/reconnect and responsive HUD regression checks.
+
+
 ## 9.6.0 — 29 October 2026
 
 - Shorten Relay's storm to 120 seconds. Machinery runs timed cycles: bridge 8s, gate 7s, wind 9s, with visible countdowns and a bridge closing warning. First activations cost energy; later cycles are free.

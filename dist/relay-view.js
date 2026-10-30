@@ -1,5 +1,5 @@
 import * as T from './vendor/three.module.js';
-import {RELAY,RELAY_NAMES,relayCrystals,relayLayout,mechanismTimeLeft,relayOffset,mechanismProgress} from './relay-rules.js';
+import {RELAY,RELAY_NAMES,relayCrystals,relayLayout,relayBeacon,relaySweeperX,mechanismTimeLeft,relayOffset,mechanismProgress} from './relay-rules.js';
 
 // Uses the existing renderer, lighting, animated wardrobe and camera rig. No second canvas.
 export function installRelayView(view){
@@ -91,7 +91,7 @@ export function installRelayView(view){
   for(let stage=0;stage<RELAY.stages;stage++){
    const l=relayLayout(stage),B=l.bridge,G=l.gate,W=l.wind;
    const root=new T.Group();root.position.z=-relayOffset(stage);view.world.add(root);
-   const gaps=[[B,B+14],[W,W+18]].sort((a,b)=>a[0]-b[0]);let start=-7;for(const[a,b]of gaps){island(root,start,a,stage);start=b;}island(root,start,112,stage);
+   const gaps=[[B,B+14],[W,W+18],...(l.lift?[[l.lift,l.lift+10]]:[])].sort((a,b)=>a[0]-b[0]);let start=stage===0?-7:0;for(const[a,b]of gaps){island(root,start,a,stage);start=b;}island(root,start,RELAY.stageLength,stage);
    const warning=new T.Mesh(rimGeo,own(new T.MeshBasicMaterial({color:0xffb04c})));warning.rotation.x=-Math.PI/2;warning.position.set(0,.06,-B+1);root.add(warning);
    const bridge=new T.Group();bridge.position.set(0,0,-B);root.add(bridge);
    box(bridge,wood,0,-.18,-7,5,.36,14);
@@ -112,8 +112,25 @@ export function installRelayView(view){
     for(let i=0;i<3;i++){const blade=box(rotor,steel,0,1,0,.45,2,.15);const pivot=new T.Group();rotor.remove(blade);pivot.add(blade);pivot.rotation.z=i*Math.PI*2/3;rotor.add(pivot);}turbines.push(rotor);
    }
    for(const d of l.hurdles){box(root,wood,0,.4,-d,12,.8,.6);for(let x=-5;x<6;x+=2)box(root,bronze,x,.45,-d+.32,.5,.6,.04);}
+   const sweepers=l.sweepers.map((d,i)=>{
+    const head=new T.Group();head.position.set(0,.65,-d);root.add(head);
+    box(root,bronze,0,.025,-d,11,.05,1.6);
+    add(head,orbGeo,bronze,0,0,0,1.4,1.4,1.4);const halo=add(head,rimGeo,light,0,0,0,1.1,1.1,1.1);halo.rotation.x=Math.PI/2;
+    label(root,'MOVING SENTINEL · JUMP OR DODGE',0,3,-d+3).scale.setScalar(.7);return head;
+   });
+   const seals=l.seals.map(o=>{
+    const g=new T.Group();g.position.set(o.x,1.1,-o.d);root.add(g);
+    add(g,orbGeo,bronze,0,0,0,1.3,1.3,1.3);add(g,rimGeo,light,0,0,0,1.2,1.2,1.2);
+    label(root,'ENERGY SEAL · COLLECT BOTH',o.x,3,-o.d).scale.setScalar(.65);return g;
+   });
+   let lift=null;
+   if(l.lift){
+    lift=new T.Group();lift.position.z=-l.lift-5;root.add(lift);box(lift,bronze,0,-.22,0,5,.44,10);
+    for(const x of[-2.7,2.7]){box(root,steel,x,1,-l.lift-5,.22,18,.22);box(lift,light,x*.9,.1,0,.08,.2,10);}
+    label(root,'04  RESCUE LIFT · SHAPER RAISES',0,5,-l.lift+3);
+   }
    const crystals=relayCrystals(stage).map(o=>{const g=new T.Group();g.position.set(o.x,1.1,-o.d);root.add(g);add(g,orbGeo,light,0,0,0);const ring=add(g,rimGeo,bronze,0,0,0,.7,.7,.7);ring.rotation.x=Math.PI/2;return g;});
-   const beacon=new T.Group();beacon.position.set(0,0,-109);root.add(beacon);
+   const beacon=new T.Group();beacon.position.set(0,0,-relayBeacon());root.add(beacon);
    cyl(beacon,bronze,0,.1,0,2,.2);cyl(beacon,light,0,.22,0,1.7,.1);
    const halo=add(beacon,rimGeo,light,0,3.5,0,1.7,1.7,1.7);
    add(beacon,orbGeo,light,0,3.5,0,1.1,1.8,1.1);
@@ -126,12 +143,12 @@ export function installRelayView(view){
    label(root,'01  BRIDGE · SHAPER LOWERS',0,4,-B+3);
    label(root,'02  GATE · SHAPER LIFTS',0,8,-G);
    label(root,'03  WIND · SHAPER STEADIES',0,4,-W+2);
-   label(root,'TEAM BEACON · GATHER HERE',0,6,-109);
+   label(root,'TEAM BEACON · GATHER HERE',0,6,-relayBeacon());
    const gusts=new T.Group();root.add(gusts);
    for(let i=0;i<14;i++)box(gusts,light,(i%4)*3-6,.8+(i%3)*.6,-W-2-(i%9)*1.7,.9,.035,.035);
    batch(bridge);batch(gate);for(const rotor of turbines)batch(rotor);
-   batch(root,[bridge,gate,...turbines,...crystals,halo,gusts,warning]);
-   sections.push({stage,root,bridge,gate,turbines,crystals,halo,gusts,warning});
+   batch(root,[bridge,gate,...turbines,...crystals,...seals,...sweepers,...(lift?[lift]:[]),halo,gusts,warning]);
+   sections.push({stage,root,bridge,gate,turbines,crystals,seals,sweepers,lift,halo,gusts,warning});
   }
   view.snapCamera=true;view.resetCamera?.();
  };
@@ -143,8 +160,8 @@ export function installRelayView(view){
    view.scene.background.copy(sky);view.scene.fog.color.copy(sky);view.sea.position.z=focusZ;
    for(const runner of view.runners.values()){decorateRunner?.(runner);const data=args.states.find(s=>view.runners.get(s.id)===runner);if(runner.relayLantern)runner.relayLantern.visible=data?.role==='runner';}
    for(const part of sections){
-    part.root.visible=Math.abs(-relayOffset(part.stage)-56-focusZ)<185;
-    const m=part.stage===relay.stage?relay.mechanisms:part.stage<relay.stage?{bridge:clock-2,gate:clock-2,wind:clock-2}:{bridge:null,gate:null,wind:null};
+    part.root.visible=Math.abs(-relayOffset(part.stage)-RELAY.stageLength/2-focusZ)<220;
+    const m=part.stage===relay.stage?relay.mechanisms:part.stage<relay.stage?{bridge:clock-2,gate:clock-2,wind:clock-2,lift:clock-2}:{bridge:null,gate:null,wind:null,lift:null};
     const left=mechanismTimeLeft(m,'bridge',clock);part.warning.visible=left>0&&left<1.5&&Math.sin(clock*16)>0;
     part.bridge.rotation.x=(1-mechanismProgress(m,'bridge',clock))*Math.PI*.48;
     part.gate.position.y=mechanismProgress(m,'gate',clock)*6;
@@ -152,6 +169,9 @@ export function installRelayView(view){
     part.turbines.forEach(rotor=>rotor.rotation.z=clock*(steady>=1?1.1:5));
     part.gusts.visible=steady<1;part.gusts.children.forEach((g,i)=>g.position.x=((clock*6+i*1.7)%13)-6.5);
     part.crystals.forEach((g,i)=>{g.visible=part.stage>=relay.stage&&!(part.stage===relay.stage&&relay.collected.includes(i));g.rotation.y=clock;g.position.y=1.1+Math.sin(clock*2+i)*.15;});
+    part.seals.forEach((g,i)=>{g.visible=part.stage>=relay.stage&&!(part.stage===relay.stage&&relay.seals.includes(i));g.rotation.y=-clock;});
+    part.sweepers.forEach((g,i)=>g.position.x=relaySweeperX(clock,i,part.stage));
+    if(part.lift)part.lift.position.y=-8*(1-mechanismProgress(m,'lift',clock));
     part.halo.rotation.y=clock*.5;
    }
   }

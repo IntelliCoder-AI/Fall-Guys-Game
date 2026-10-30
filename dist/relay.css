@@ -32,3 +32,7 @@
 @media(prefers-reduced-motion:reduce){#relay-mechanisms button{transition:none}}
 
 .relay-role-choice{display:block;text-align:left;font-size:13px;font-weight:750;margin:16px 0}.relay-role-choice select{display:block;width:100%;min-height:46px;margin-top:6px;border:1px solid #b7c6d6;border-radius:10px;padding:10px;font:inherit;color:#334d70;background:#fff9ee}
+
+#relay-mechanisms button[hidden]{display:none}
+#relay-mechanisms.four-devices{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:420px){#relay-mechanisms.four-devices{grid-template-columns:repeat(2,minmax(0,1fr))}#relay-mechanisms.four-devices button{min-height:70px;padding:5px}}

@@ -12,7 +12,7 @@
 
 Your friends control the crossing. At the next beacon, it's your turn.
 
-Bean Dash: World Relay is a cooperative browser expedition for 2–8 friends. Runners carry lanterns and collect energy while a Shaper operates bridges, gates and wind machines. Coordinate the eight-second bridge window, regroup at a beacon, then swap roles. Three different routes and a two-minute storm turn each expedition into a conversation. Interactive practice teaches the controls; free checkpoint recovery keeps everyone involved.
+Bean Dash: World Relay is a cooperative browser expedition for 2–8 friends. Runners carry lanterns and collect energy while a Shaper operates bridges, gates and wind machines. Coordinate the eight-second bridge window, regroup at a beacon, then swap roles. Three 160-metre routes, gold seals on side paths, moving sentinels, a final rescue lift and a two-minute storm turn each expedition into a conversation. Interactive practice teaches the controls; free checkpoint recovery keeps everyone involved. Brief network interruptions automatically restore the same expedition within a 45-second recovery window.
 
 Friends join with a room code from their own phone or laptop. No player account, download or paid gameplay advantages. Prefer competition? Room Remix offers short races with shared hazard votes. A 50-level solo tour, Endurance, wardrobe and earned-coin shop are also included.
 
@@ -23,7 +23,7 @@ Built with ChatGPT Work through planning, player feedback, implementation and au
 1. Open the public URL in two independent browsers/devices. Choose **Play with friends → Create World Relay**.
 2. Copy the code or invite link to the second player. The host selects **Runner**, then **Begin World Relay**; the teammate starts as **Shaper**.
 3. Runner: WASD/arrows or touch arrows move; Space/JUMP clears barriers. Collect a blue crystal. Shaper: press **1** or **Lower bridge** when the Runner is ready. The practice prompts explain each step before the storm starts.
-4. Coordinate the timed machinery. Countdowns show remaining open time; repeat cycles are free after the first activation. Gather at the beacon, then follow the new role instructions.
+4. Coordinate the timed machinery, collect both gold side-route seals and jump or dodge moving sentinels. Countdowns show remaining open time; repeat cycles are free after the first activation. Gather at each beacon for role rotation. On island three, the Shaper uses key 4 or Raise lift for the final crossing.
 5. Complete all three crossings before the storm, or rematch with the same code. To try competitive play, generate a **Room Remix** code instead.
 
 ## Before pressing Submit

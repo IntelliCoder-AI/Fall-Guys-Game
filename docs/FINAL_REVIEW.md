@@ -1,5 +1,7 @@
 # Final submission review · v9.6.0
 
+For the subsequent recovery and route-expansion update, see [9.7.0 validation](RELAY_RECOVERY_VALIDATION.md).
+
 ## Reviewed scope
 
 Native browser modules, authoritative WebSocket rooms, Relay physics/rendering/UI, all 50 Tour routes, representative late bot survival, Room Remix, competitive rooms, Endurance rules, guest persistence, economy/shop, wardrobe, camera recovery, hosting configuration, dependency licenses, documentation and release/health workflows.

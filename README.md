@@ -14,8 +14,8 @@
 
 1. Choose **Play with friends → Create World Relay**. Share the room code or invite link.
 2. Friends join from their browsers. The host chooses **Runner** or **Shaper**, then starts.
-3. Runners collect blue energy crystals. Shapers time the bridge (8s), gate (7s) and wind (9s) using **1–3** or the labelled buttons.
-4. Bring every Runner to each beacon. Roles rotate, routes change, and everyone wins together by beating the **120-second storm**. Interactive practice comes first; falls recover for free. Repeat machinery cycles cost no extra energy.
+3. Runners collect blue crystals and both gold seals, jumping barriers and dodging moving sentinels. Shapers time the bridge (8s), gate (7s) and wind (9s) using **1–3** or the labelled buttons. The final island adds a rescue lift (**4**, 6s).
+4. Bring every Runner to each beacon. Roles rotate, routes change, and everyone wins together by beating the **120-second storm**. Interactive practice comes first; falls recover for free. Repeat machinery cycles cost no extra energy. Brief disconnections reserve your place for 45 seconds and automatically restore the same expedition.
 
 WASD / arrows move Runners; Space jumps; Shift dives. Phones show touch controls. Drag to look around, scroll to zoom, and C resets the camera. No player login, installation or real-money purchases. Built with **ChatGPT Work** through iterative design, player feedback and testing.
 
